@@ -1,5 +1,0 @@
-const errorHandler = (error, req, res) => {
-	if (error) {
-		res.send("internal server error.")
-	}
-}
