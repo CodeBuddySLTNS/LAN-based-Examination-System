@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import pool from "./database/sqlConnection"
 import errorHandler from "./middlewares/errorHandler";
 
 import auth from "./routes/auth";

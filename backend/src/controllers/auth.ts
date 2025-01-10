@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import { CreateTable } from "../database/dbServices";
-import dbconn from "../database/sqlConnection";
+import { sqlQuery } from "../database/sqlQuery";
 
 export const login = async (req: Request, res: Response) => {
-  const result = await CreateTable("CREATE TABLE test( name varchar(255) not null unique)");
+  const result = await sqlQuery(`CREATE TABLE users ( 
+    id int primary key auto_increment,
+    name varchar(255) not null,
+    username varchar(255) not null unique,
+    password varchar(255) not null
+  )`);
+  res.send(result);
 };
