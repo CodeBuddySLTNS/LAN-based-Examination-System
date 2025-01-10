@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SERVER_ERROR } from "../constants/statusCodes";
 
-export const errorHandler = (
+const errorHandler = (
   error: any,
   req: Request,
   res: Response,
@@ -14,3 +14,5 @@ export const errorHandler = (
   });
   console.log(error);
 };
+
+export default errorHandler;

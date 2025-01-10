@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { errorHandler } from "./middlewares/errorHandler";
-import users from "./routes/users";
+import pool from "./database/sqlConnection"
+import errorHandler from "./middlewares/errorHandler";
+
+import auth from "./routes/auth";
 
 const port = 5000;
 const app = express();
@@ -12,9 +14,9 @@ app.use(cors());
 
 // routes
 app.get("/", (req, res) => {
-  res.send("Success.");
+  res.send("Online.");
 });
-app.use("/users", users);
+app.use("/auth/", auth);
 
 // handle errors
 app.use(errorHandler);
