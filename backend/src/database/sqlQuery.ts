@@ -23,3 +23,10 @@ export const sqlQuery = async (query: string) => {
     }
   }
 };
+
+const createTableQuery = `CREATE TABLE users ( 
+  id int primary key auto_increment,
+  name varchar(255) not null,
+  username varchar(255) not null unique,
+  password varchar(255) not null
+)`;
