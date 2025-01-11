@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import errorHandler from "./middlewares/errorHandler";
 
+// Import routes
 import auth from "./routes/auth";
+import users from "./routes/users";
 
 const port = 5000;
 const app = express();
@@ -19,7 +21,8 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send("Online.");
 });
-app.use("/auth/", auth);
+app.use("/auth", auth);
+app.use("/users", users);
 
 // handle errors
 app.use(errorHandler);
