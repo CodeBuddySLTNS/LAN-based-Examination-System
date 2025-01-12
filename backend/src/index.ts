@@ -1,4 +1,6 @@
 import express from "express";
+import { Server } from "socket.io";
+import http from "http";
 import cors from "cors";
 import errorHandler from "./middlewares/errorHandler";
 
@@ -6,8 +8,10 @@ import errorHandler from "./middlewares/errorHandler";
 import auth from "./routes/auth";
 import users from "./routes/users";
 
-const port = 5000;
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+const port = process.env.PORT || 5000;
 
 // middlewares
 app.use((req, res, next) => {
@@ -28,6 +32,6 @@ app.use("/users", users);
 app.use(errorHandler);
 
 // run the server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on port ${port}.`);
 });
