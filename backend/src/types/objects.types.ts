@@ -3,3 +3,10 @@ export interface User {
   username: string,
   password: string
 }
+
+export interface SignupData {
+  name: string,
+  username: string,
+  password: string,
+  confirmPassword: string
+}
