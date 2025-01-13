@@ -1,3 +1,4 @@
+import { RowDataPacket, QueryResult } from "mysql2";
 import { pool } from "../database/sqlConnection";
 import { CustomError } from "../utils/customError";
 import { BAD_REQUEST, CONFLICT } from "../constants/statusCodes";
@@ -7,8 +8,8 @@ export const sqlQuery = async (query: string) => {
   let error;
   try {
     dbconn = await pool.getConnection();
-    const [result] = await dbconn.query(query);
-    return result;
+    const [rows] = await dbconn.query<RowDataPacket[]>(query);
+    return rows;
   } catch (err: any) {
     error = err;
   } finally {
@@ -19,15 +20,15 @@ export const sqlQuery = async (query: string) => {
         case "ER_TABLE_EXISTS_ERROR":
           throw new CustomError(error.message, BAD_REQUEST);
           break;
-          
+
         case "ER_DUP_ENTRY":
           throw new CustomError(error.message, CONFLICT);
           break;
-          
+
         case "ECONNREFUSED":
           throw new Error("Database connection error.");
           break;
-          
+
         default:
           throw new Error(error);
       }
