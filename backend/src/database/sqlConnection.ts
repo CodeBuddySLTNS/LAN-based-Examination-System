@@ -6,6 +6,5 @@ export const pool = mysql.createPool({
   password: "",
   database: "examSys",
   waitForConnections: true,
-  connectionLimit: 10,
-  rowsAsArray: true
+  connectionLimit: 10
 });

@@ -23,10 +23,6 @@ const signupSchema = Joi.object({
     "string.min": "Password must be at least {#limit} characters long",
     "any.required": "Password is required"
   }),
-  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
-    "any.only": "Passwords do not match",
-    "any.required": "Confirm password is required"
-  })
 });
 
 // Validator functions
