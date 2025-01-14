@@ -5,7 +5,6 @@ import { User } from "../types/objects.types";
 import { BAD_REQUEST } from "../constants/statusCodes";
 import { validateLogin, validateSignup } from "../utils/validator";
 import { CustomError } from "../utils/customError";
-
 export const login = async (req: Request, res: Response) => {
   const { error, value } = validateLogin(req.body);
   
