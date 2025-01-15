@@ -3,6 +3,9 @@ import { Server } from "socket.io";
 import express from "express";
 import http from "http";
 import cors from "cors";
+
+// import middlewares
+import authenticate from "./middlewares/authenticate";
 import errorHandler from "./middlewares/errorHandler";
 
 // Import routes
@@ -21,6 +24,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 app.use(cors());
+app.use(authenticate);
 
 // routes
 app.get("/", (req, res) => {

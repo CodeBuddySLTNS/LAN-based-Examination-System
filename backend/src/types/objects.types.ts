@@ -4,3 +4,10 @@ export interface User {
   password: string,
   confirmPassword?: string
 }
+
+export interface JWTPaylad {
+  iat: number,
+  id: number,
+  username: string,
+  exp: number
+}

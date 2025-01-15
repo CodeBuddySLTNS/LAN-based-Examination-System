@@ -4,6 +4,7 @@ declare namespace NODEJS {
     DB_HOST: string,
     DB_USER: string,
     DB_PASSWORD: string,
-    DB_DBNAME: string
+    DB_DBNAME: string,
+    SYSTEM_SECRET_KEY: string
   }
 }
