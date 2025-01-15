@@ -5,7 +5,7 @@ export interface User {
   confirmPassword?: string
 }
 
-export interface JWTPaylad {
+export interface JWTPayload {
   iat: number,
   id: number,
   username: string,

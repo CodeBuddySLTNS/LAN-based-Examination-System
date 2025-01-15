@@ -7,12 +7,14 @@ const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
+
   try {
-    const authHeader: string | undefined = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+    const secretKey: jwt.Secret = process.env.SYSTEM_SECRET_KEY || "";
     
     if (authHeader && authHeader.startsWith("Bearer")) {
       const token = authHeader.split(" ")[1];
-      jwt.verify("", process.env.SYSTEM_SECRET_KEY, (err, verifiedToken) => {
+      jwt.verify("", secretKey, (err, verifiedToken) => {
         next();
       });
     }
