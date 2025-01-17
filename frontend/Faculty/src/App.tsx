@@ -23,27 +23,26 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
   
-  const { data, error } = useQuery({
+  const fetchData = async () => {
+    const response = await fetch("http://localhost:5000/users");
+    const data = response.json();
+    return data;
+  }
+  
+  const { data, isLoading, error } = useQuery({
     queryKey: ["test"],
-    queryFn: () => fetch("http://localhost:5000/users").then(res => res.json()).then(d => d).catch(e => "heyy error")
+    queryFn: () => fetchData()
   });
   
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
+  
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
   
-  if (error) {
-    return <p>error boss</p>
-  }
-  if (data) {
-    return <p>{data.message}</p>
-  }
-
   return loading ? (
     <Loader />
   ) : (
