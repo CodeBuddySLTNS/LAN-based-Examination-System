@@ -1,4 +1,4 @@
-import { SERVER_ERROR } from "../constants/statusCodes";
+const { SERVER_ERROR } = require("../constants/statusCodes")
 
 const errorHandler = (error, req, res, next) => {
   res.status(error.statusCode || SERVER_ERROR).send({

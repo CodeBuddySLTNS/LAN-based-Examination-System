@@ -7,10 +7,16 @@ const authenticate = async (req, res, next) => {
 
     if (authHeader && authHeader.startsWith("Bearer")) {
       const token = authHeader.split(" ")[1];
-      jwt.verify(token, secretKey, (err, verifiedToken) => {
-        console.log("token", verifiedToken);
-        next();
-      });
+      if (token) {
+        jwt.verify(token, secretKey, (err, verifiedToken) => {
+          if (err) {
+            console.log("No token recieved.");
+            next()
+          }
+          console.log("token", verifiedToken);
+          next();
+        });
+      }
     }
     next();
   } catch (e) {

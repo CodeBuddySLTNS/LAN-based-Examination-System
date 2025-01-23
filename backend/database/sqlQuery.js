@@ -1,6 +1,6 @@
 const { RowDataPacket } = require("mysql2/promise");
 const { pool } = require("../database/sqlConnection");
-const { CustomError } = require("../utils/customError");
+const CustomError = require("../utils/customError");
 const { BAD_REQUEST, CONFLICT } = require("../constants/statusCodes");
 
 // reusable function to query database

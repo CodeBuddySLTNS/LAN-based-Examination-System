@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { CustomError } = require("../utils/customError");
+const  CustomError = require("../utils/customError");
 const { validateLogin, validateSignup } = require("../utils/validator");
 const { sqlQuery, checkUser, createUser } = require("../database/sqlQuery");
 const {

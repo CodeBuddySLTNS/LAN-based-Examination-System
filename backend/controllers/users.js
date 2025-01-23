@@ -1,4 +1,4 @@
-const { CustomError } = require("../utils/customError");
+const  CustomError  = require("../utils/customError");
 const { sqlQuery } = require("../database/sqlQuery");
 
 module.exports.users = async (req, res) => {
