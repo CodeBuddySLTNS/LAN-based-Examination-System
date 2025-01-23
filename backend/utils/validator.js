@@ -1,5 +1,4 @@
-import Joi from "joi";
-import { User } from "../types/objects.types";
+const Joi = require("joi");
 
 // Schemas
 const loginSchema = Joi.object({
@@ -22,11 +21,11 @@ const signupSchema = Joi.object({
   password: Joi.string().min(6).required().messages({
     "string.min": "Password must be at least {#limit} characters long",
     "any.required": "Password is required"
-  }),
+  })
 });
 
 // Validator functions
-export const validateLogin = (payload: User) =>
+module.exports.validateLogin = payload =>
   loginSchema.validate(payload, { abortEarly: false });
-export const validateSignup = (payload: User) =>
+module.exports.validateSignup = payload =>
   signupSchema.validate(payload, { abortEarly: false });

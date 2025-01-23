@@ -1,12 +1,6 @@
-import { Request, Response, NextFunction } from "express";
 import { SERVER_ERROR } from "../constants/statusCodes";
 
-const errorHandler = (
-  error: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const errorHandler = (error, req, res, next) => {
   res.status(error.statusCode || SERVER_ERROR).send({
     status: error.statusCode || SERVER_ERROR,
     errorCode: error.errorCode,
@@ -15,4 +9,4 @@ const errorHandler = (
   console.log(error);
 };
 
-export default errorHandler;
+module.exports = errorHandler;

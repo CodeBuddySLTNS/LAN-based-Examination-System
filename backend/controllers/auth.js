@@ -1,17 +1,15 @@
-import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import { CustomError } from "../utils/customError";
-import { User } from "../types/objects.types";
-import { validateLogin, validateSignup } from "../utils/validator";
-import { sqlQuery, checkUser, createUser } from "../database/sqlQuery";
-import {
+const bcrypt = require("bcryptjs");
+const { CustomError } = require("../utils/customError");
+const { validateLogin, validateSignup } = require("../utils/validator");
+const { sqlQuery, checkUser, createUser } = require("../database/sqlQuery");
+const {
   BAD_REQUEST,
   NOT_FOUND,
   CREATED,
   CONFLICT
-} from "../constants/statusCodes";
+} = require("../constants/statusCodes");
 
-export const login = async (req: Request, res: Response) => {
+module.exports.login = async (req, res) => {
   const { error, value } = validateLogin(req.body);
 
   if (error) {
@@ -20,19 +18,19 @@ export const login = async (req: Request, res: Response) => {
 
   const userExist = await checkUser(value.username);
 
-  if (userExist && typeof userExist !== "boolean") {
+  if (userExist) {
     const isMatch = await bcrypt.compare(value.password, userExist[0].password);
-    
+
     if (isMatch) {
       return res.send("Logged In.");
     }
-    
+
     throw new CustomError("Incorrect Password", CONFLICT);
   }
   return res.status(NOT_FOUND).send("doesn't exist");
 };
 
-export const signup = async (req: Request, res: Response) => {
+module.exports.signup = async (req, res) => {
   const { error, value } = validateSignup(req.body);
 
   if (error) {

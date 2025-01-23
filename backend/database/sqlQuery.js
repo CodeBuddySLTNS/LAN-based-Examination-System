@@ -1,18 +1,17 @@
-import { RowDataPacket } from "mysql2/promise";
-import { pool } from "../database/sqlConnection";
-import { CustomError } from "../utils/customError";
-import { BAD_REQUEST, CONFLICT } from "../constants/statusCodes";
-import { User } from "../types/objects.types";
+const { RowDataPacket } = require("mysql2/promise");
+const { pool } = require("../database/sqlConnection");
+const { CustomError } = require("../utils/customError");
+const { BAD_REQUEST, CONFLICT } = require("../constants/statusCodes");
 
 // reusable function to query database
-export const sqlQuery = async (query: string, params?: string[]) => {
+module.exports.sqlQuery = async (query, params) => {
   let dbconn;
   let error;
   try {
     dbconn = await pool.getConnection();
-    const [rows] = await dbconn.query<RowDataPacket[]>(query, params || []);
+    const [rows] = await dbconn.query(query, params || []);
     return rows;
-  } catch (err: any) {
+  } catch (err) {
     error = err;
   } finally {
     if (dbconn) dbconn.release();
@@ -21,13 +20,13 @@ export const sqlQuery = async (query: string, params?: string[]) => {
       switch (error.code) {
         case "ER_TABLE_EXISTS_ERROR":
           throw new CustomError(error.message, BAD_REQUEST);
-          
+
         case "ER_DUP_ENTRY":
           throw new CustomError(error.message, CONFLICT);
-          
+
         case "ECONNREFUSED":
           throw new Error("Database connection error.");
-          
+
         default:
           throw new Error(error);
       }
@@ -36,7 +35,7 @@ export const sqlQuery = async (query: string, params?: string[]) => {
 };
 
 // check if a user exists in users table
-export const checkUser = async (username: string): Promise<RowDataPacket[] | boolean> => {
+module.exports.checkUser = async username => {
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
   const result = await sqlQuery(query, [username]);
   if (result) {
@@ -46,18 +45,22 @@ export const checkUser = async (username: string): Promise<RowDataPacket[] | boo
     return false;
   }
   return false;
-}
+};
 
 // insert data to users table
-export const createUser = async (payload: User) => {
+module.exports.createUser = async payload => {
   const query = `INSERT INTO users (
     name,
     username,
     password
   ) VALUES ( ?, ?, ?);`;
-  const result = await sqlQuery(query, [payload.name, payload.username, payload.password]);
+  const result = await sqlQuery(query, [
+    payload.name,
+    payload.username,
+    payload.password
+  ]);
   return result;
-}
+};
 
 // table query info => just ignore
 const usersTableQuery = `CREATE TABLE users (
