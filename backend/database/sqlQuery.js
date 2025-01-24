@@ -1,10 +1,9 @@
-const { RowDataPacket } = require("mysql2/promise");
-const { pool } = require("../database/sqlConnection");
 const CustomError = require("../utils/customError");
+const { pool } = require("../database/sqlConnection");
 const { BAD_REQUEST, CONFLICT } = require("../constants/statusCodes");
 
 // reusable function to query database
-module.exports.sqlQuery = async (query, params) => {
+const sqlQuery = async (query, params) => {
   let dbconn;
   let error;
   try {
@@ -35,12 +34,12 @@ module.exports.sqlQuery = async (query, params) => {
 };
 
 // check if a user exists in users table
-module.exports.checkUser = async username => {
+const checkUser = async username => {
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
   const result = await sqlQuery(query, [username]);
   if (result) {
     if (result.length > 0) {
-      return result;
+      return result[0];
     }
     return false;
   }
@@ -48,7 +47,7 @@ module.exports.checkUser = async username => {
 };
 
 // insert data to users table
-module.exports.createUser = async payload => {
+const createUser = async payload => {
   const query = `INSERT INTO users (
     name,
     username,
@@ -63,9 +62,16 @@ module.exports.createUser = async payload => {
 };
 
 // table query info => just ignore
-const usersTableQuery = `CREATE TABLE users (
+const usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
   id int primary key auto_increment,
   name varchar(255) not null,
   username varchar(255) not null unique,
   password varchar(255) not null
 )`;
+
+module.exports = {
+  sqlQuery,
+  checkUser,
+  createUser,
+  usersTableQuery
+};

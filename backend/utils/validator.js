@@ -25,7 +25,9 @@ const signupSchema = Joi.object({
 });
 
 // Validator functions
+// login validation
 module.exports.validateLogin = payload =>
   loginSchema.validate(payload, { abortEarly: false });
+// signup valudation
 module.exports.validateSignup = payload =>
   signupSchema.validate(payload, { abortEarly: false });

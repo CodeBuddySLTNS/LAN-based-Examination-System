@@ -16,7 +16,7 @@ const corsOptions = {
 
 // middlewares
 app.use((req, res, next) => {
-  console.log(req.path, req.cookies || "No cookies found.", req.headers);
+  console.log(req.path);
   next();
 });
 app.use(express.json());

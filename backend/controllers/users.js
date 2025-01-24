@@ -1,15 +1,17 @@
-const  CustomError  = require("../utils/customError");
-const { sqlQuery } = require("../database/sqlQuery");
+const CustomError = require("../utils/customError");
+const { sqlQuery, usersTableQuery } = require("../database/sqlQuery");
 
 module.exports.users = async (req, res) => {
-  res.cookie("user", "JohnDoe", {
-    httpOnly: true, // Cookie can only be accessed by the server
-    sameSite: "None", // Allows cookie to be sent with same-site requests or top-level navigation
-    maxAge: 3600000 // Cookie expiration time (1 hour)
-  });
-  return res.send({ status: true });
-
-  const query = `SELECT * = require( users`;
+  const query = `SELECT * FROM users`;
   const result = await sqlQuery(query);
-  res.json({ result });
+  res.json({users: result});
+};
+
+module.exports.userInfo = async (req, res) => {
+  const username = req.params.username;
+  const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
+  const result = await sqlQuery(query, [username]);
+  const user = result[0];
+  delete user.password;
+  res.json(user);
 };

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
-const  CustomError = require("../utils/customError");
+const CustomError = require("../utils/customError");
 const { validateLogin, validateSignup } = require("../utils/validator");
+const { generateToken } = require("../utils/generateToken");
 const { sqlQuery, checkUser, createUser } = require("../database/sqlQuery");
 const {
   BAD_REQUEST,
@@ -8,6 +9,8 @@ const {
   CREATED,
   CONFLICT
 } = require("../constants/statusCodes");
+
+const expiration = 12 * 60 * 60;
 
 module.exports.login = async (req, res) => {
   const { error, value } = validateLogin(req.body);
@@ -19,10 +22,11 @@ module.exports.login = async (req, res) => {
   const userExist = await checkUser(value.username);
 
   if (userExist) {
-    const isMatch = await bcrypt.compare(value.password, userExist[0].password);
-
+    const isMatch = await bcrypt.compare(value.password, userExist.password);
     if (isMatch) {
-      return res.send("Logged In.");
+      const id = userExist.id;
+      const token = generateToken({ id });
+      return res.json({ id, token });
     }
 
     throw new CustomError("Incorrect Password", CONFLICT);

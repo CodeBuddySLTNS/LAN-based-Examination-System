@@ -10,7 +10,7 @@ const authenticate = async (req, res, next) => {
       if (token) {
         jwt.verify(token, secretKey, (err, verifiedToken) => {
           if (err) {
-            console.log("No token recieved.");
+            console.log("token verication error:", err.message);
             next()
           }
           console.log("token", verifiedToken);
