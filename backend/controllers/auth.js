@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
+const UserModel = require("../database/models/user");
 const CustomError = require("../utils/customError");
 const { validateLogin, validateSignup } = require("../utils/validator");
 const { generateToken } = require("../utils/generateToken");
-const { sqlQuery, checkUser, createUser } = require("../database/sqlQuery");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -10,16 +10,17 @@ const {
   CONFLICT
 } = require("../constants/statusCodes");
 
+const User = new UserModel();
 const expiration = 12 * 60 * 60;
 
-module.exports.login = async (req, res) => {
+const login = async (req, res) => {
   const { error, value } = validateLogin(req.body);
 
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }
 
-  const userExist = await checkUser(value.username);
+  const userExist = await User.checkUser(value.username);
 
   if (userExist) {
     const isMatch = await bcrypt.compare(value.password, userExist.password);
@@ -34,7 +35,7 @@ module.exports.login = async (req, res) => {
   return res.status(NOT_FOUND).send("doesn't exist");
 };
 
-module.exports.signup = async (req, res) => {
+const signup = async (req, res) => {
   const { error, value } = validateSignup(req.body);
 
   if (error) {
@@ -44,6 +45,8 @@ module.exports.signup = async (req, res) => {
   const saltRounds = 10;
   value.password = await bcrypt.hash(value.password, saltRounds);
 
-  const result = await createUser(value);
+  const result = await User.createUser(value);
   res.status(CREATED).send(result);
 };
+
+module.exports = { login, signup };

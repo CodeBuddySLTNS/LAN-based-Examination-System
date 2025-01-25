@@ -10,15 +10,17 @@ const authenticate = async (req, res, next) => {
       if (token) {
         jwt.verify(token, secretKey, (err, verifiedToken) => {
           if (err) {
-            console.log("token verication error:", err.message);
-            next()
+            return next();
           }
-          console.log("token", verifiedToken);
+          res.locals.userId = verifiedToken.id;
           next();
         });
+      } else {
+        next();
       }
+    } else {
+      next();
     }
-    next();
   } catch (e) {
     next();
   }

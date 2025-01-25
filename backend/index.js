@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const socket = new Server(server);
 const port = process.env.PORT || 5000;
 const corsOptions = {
   //origin: 'http://localhost:5173',
@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
+app.use("/questions", require("./routes/questions"));
 
 // handle errors
 app.use(require("./middlewares/errorHandler"));

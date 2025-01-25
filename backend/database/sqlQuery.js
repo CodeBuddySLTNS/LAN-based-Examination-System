@@ -41,9 +41,9 @@ const checkUser = async username => {
     if (result.length > 0) {
       return result[0];
     }
-    return false;
+    return null;
   }
-  return false;
+  return null;
 };
 
 // insert data to users table
@@ -69,9 +69,5 @@ const usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
   password varchar(255) not null
 )`;
 
-module.exports = {
-  sqlQuery,
-  checkUser,
-  createUser,
-  usersTableQuery
-};
+module.exports = 
+  sqlQuery;
