@@ -33,41 +33,22 @@ const sqlQuery = async (query, params) => {
   }
 };
 
-// check if a user exists in users table
-const checkUser = async username => {
-  const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
-  const result = await sqlQuery(query, [username]);
-  if (result) {
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
-  }
-  return null;
-};
-
-// insert data to users table
-const createUser = async payload => {
-  const query = `INSERT INTO users (
-    name,
-    username,
-    password
-  ) VALUES ( ?, ?, ?);`;
-  const result = await sqlQuery(query, [
-    payload.name,
-    payload.username,
-    payload.password
-  ]);
-  return result;
-};
-
-// table query info => just ignore
 const usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
-  id int primary key auto_increment,
-  name varchar(255) not null,
-  username varchar(255) not null unique,
-  password varchar(255) not null
+  id int PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
 )`;
 
-module.exports = 
-  sqlQuery;
+const questionsTableQuery = `CREATE TABLE IF NOT EXISTS questions (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  question VARCHAR(255) NOT NULL,
+  correct_answer JSON NOT NULL,
+  incorrect_answer JSON NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+)`;
+
+
+
+module.exports = sqlQuery;

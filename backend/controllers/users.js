@@ -1,8 +1,7 @@
 const CustomError = require("../utils/customError");
-const { sqlQuery, usersTableQuery } = require("../database/sqlQuery");
+const sqlQuery = require("../database/sqlQuery");
 
 const users = async (req, res) => {
-  console.log(res.locals.userId);
   const query = `SELECT * FROM users`;
   const result = await sqlQuery(query);
   res.json({ users: result });
