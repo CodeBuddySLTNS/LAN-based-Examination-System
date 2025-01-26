@@ -1,9 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+import React from "react";
+import { Link } from "react-router-dom";
+import LogoDark from "../../images/logo/logo-dark.svg";
+import Logo from "../../images/logo/logo.svg";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
 
 const SignUp: React.FC = () => {
+  
+  
   return (
     <div className="mx-auto max-w-screen-2xl p-6  md:p-10 md:px-20 2xl:p-10">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -335,7 +341,7 @@ const SignUp: React.FC = () => {
 
                 <div className="mt-6 text-center">
                   <p>
-                    Already have an account?{' '}
+                    Already have an account?{" "}
                     <Link to="/auth/signin" className="text-primary">
                       Sign in
                     </Link>

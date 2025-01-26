@@ -1,9 +1,43 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+import React from "react";
+import { Link } from "react-router-dom";
+import LogoDark from "../../images/logo/logo-dark.svg";
+import Logo from "../../images/logo/logo.svg";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+
+const schema = Joi.object({
+  username: Joi.string().label("Username").required(),
+  password: Joi.string().label("Password").required()
+});
 
 const SignIn: React.FC = () => {
+  const postData = async payload => {
+    const response = await fetch("http://localhost:5000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return response.json();
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: joiResolver(schema)
+  });
+
+  const { mutateAsync: signIn } = useMutation({
+    mutationFn: postData,
+  });
+
+  const onSubmit = async data => {
+    await signIn(data);
+  };
+
   return (
     <div className="mx-auto max-w-screen-2xl p-6  md:p-10 md:px-20 2xl:p-10">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -152,15 +186,16 @@ const SignIn: React.FC = () => {
                 Sign In to TailAdmin
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Email
+                    Username
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
-                      placeholder="Enter your email"
+                      {...register("username")}
+                      type="text"
+                      placeholder="Enter your username"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -190,6 +225,7 @@ const SignIn: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
+                      {...register("password")}
                       type="password"
                       placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -266,7 +302,7 @@ const SignIn: React.FC = () => {
 
                 <div className="mt-6 text-center">
                   <p>
-                    Don’t have any account?{' '}
+                    Don’t have any account?{" "}
                     <Link to="/auth/signup" className="text-primary">
                       Sign Up
                     </Link>
