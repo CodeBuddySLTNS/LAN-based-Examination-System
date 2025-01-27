@@ -6,10 +6,47 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import { AlertError } from "../../components/Alerts/Alerts";
+
+const schema = Joi.object({
+  name: Joi.string().max(20).label("Name").required(),
+  username: Joi.string().max(15).label("Username").required(),
+  password: Joi.string().min(6).label("Password").required(),
+  confirmPassword: Joi.string().label("Confirm Password").required()
+});
 
 const SignUp: React.FC = () => {
-  
-  
+  const postData = async payload => {
+    const response = await fetch("http://localhost:5000/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    return response.json();
+  };
+
+  const {
+    mutateAsync: signup,
+    isPending,
+    data: signupResponse,
+    error: signupError
+  } = useMutation({ mutationFn: postData });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({ resolver: joiResolver(schema) });
+
+  const onSubmit = data => {
+    delete data.confirmPassword;
+    signup(data);
+  };
+
+  console.log(signupResponse, signupError);
+
   return (
     <div className="mx-auto max-w-screen-2xl p-6  md:p-10 md:px-20 2xl:p-10">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -151,19 +188,32 @@ const SignUp: React.FC = () => {
           </div>
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+            {signupError && (
+              <AlertError
+                text="Signup Error!"
+                description="Unable to connect to the server."
+              />
+            )}
+            {signupResponse && signupResponse.status == 500 && (
+              <AlertError
+                text="Signup Error!"
+                description={signupResponse.message}
+              />
+            )}
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign Up to TailAdmin
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
                   </label>
                   <div className="relative">
                     <input
+                      {...register("name")}
                       type="text"
                       placeholder="Enter your full name"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -190,17 +240,23 @@ const SignUp: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {errors.name && (
+                      <p className="text-red-600 text-sm">
+                        {errors.name.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Email
+                    Username
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
-                      placeholder="Enter your email"
+                      {...register("username")}
+                      type="text"
+                      placeholder="Enter your username"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -221,6 +277,11 @@ const SignUp: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {errors.username && (
+                      <p className="text-red-600 text-sm">
+                        {errors.username.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -230,6 +291,7 @@ const SignUp: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
+                      {...register("password")}
                       type="password"
                       placeholder="Enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -256,6 +318,11 @@ const SignUp: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {errors.password && (
+                      <p className="text-red-600 text-sm">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -265,6 +332,7 @@ const SignUp: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
+                      {...register("confirmPassword")}
                       type="password"
                       placeholder="Re-enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -291,13 +359,19 @@ const SignUp: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {errors.confirmPassword && (
+                      <p className="text-red-600 text-sm">
+                        {errors.confirmPassword.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="mb-5">
                   <input
+                  disabled={isPending}
                     type="submit"
-                    value="Create account"
+                    value={isPending ? "Creating account..." : "Create account"}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
                 </div>

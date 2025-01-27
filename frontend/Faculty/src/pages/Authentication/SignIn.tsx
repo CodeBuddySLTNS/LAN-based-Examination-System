@@ -2,10 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LogoDark from "../../images/logo/logo-dark.svg";
 import Logo from "../../images/logo/logo.svg";
+import { AlertError } from "../../components/Alerts/Alerts";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+// import { useMainStore } from "../../zustand/store";
 
 const schema = Joi.object({
   username: Joi.string().label("Username").required(),
@@ -13,6 +15,7 @@ const schema = Joi.object({
 });
 
 const SignIn: React.FC = () => {
+  // const count = useMainStore(state => state.count);
   const postData = async payload => {
     const response = await fetch("http://localhost:5000/auth/login", {
       method: "POST",
@@ -30,8 +33,13 @@ const SignIn: React.FC = () => {
     resolver: joiResolver(schema)
   });
 
-  const { mutateAsync: signIn } = useMutation({
-    mutationFn: postData,
+  const {
+    mutateAsync: signIn,
+    isPending,
+    data: signInResponse,
+    error: signInError
+  } = useMutation({
+    mutationFn: postData
   });
 
   const onSubmit = async data => {
@@ -39,7 +47,7 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto max-w-screen-2xl p-6  md:p-10 md:px-20 2xl:p-10">
+    <div className="mx-auto max-w-screen-2xl p-6  md:p-10 md:px-20 2xl:p-10 relative">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -180,6 +188,18 @@ const SignIn: React.FC = () => {
           </div>
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+            {signInError && (
+              <AlertError
+                text="Login Failed!"
+                description="Unable to connect to the server."
+              />
+            )}
+            {signInResponse && signInResponse.status == 500 && (
+              <AlertError
+                text="Login Failed!"
+                description={signInResponse.message}
+              />
+            )}
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
@@ -216,18 +236,28 @@ const SignIn: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {signInResponse && signInResponse.status == 404 && (
+                      <p className="text-red-600 text-sm">
+                        {signInResponse.message}
+                      </p>
+                    )}
+                    {errors.username && (
+                      <p className="text-red-600 text-sm">
+                        {errors.username.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Re-type Password
+                    Password
                   </label>
                   <div className="relative">
                     <input
                       {...register("password")}
                       type="password"
-                      placeholder="6+ Characters, 1 Capital letter"
+                      placeholder="Enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -252,13 +282,24 @@ const SignIn: React.FC = () => {
                         </g>
                       </svg>
                     </span>
+                    {signInResponse && signInResponse.status == 409 && (
+                      <p className="text-red-600 text-sm">
+                        {signInResponse.message}
+                      </p>
+                    )}
+                    {errors.password && (
+                      <p className="text-red-600 text-sm">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="mb-5">
                   <input
+                    disabled={isPending}
                     type="submit"
-                    value="Sign In"
+                    value={isPending ? "Signing In..." : "Sign In"}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
                 </div>
