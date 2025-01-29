@@ -12,7 +12,10 @@ const schema = Joi.object({
   name: Joi.string().max(20).label("Name").required(),
   username: Joi.string().max(15).label("Username").required(),
   password: Joi.string().min(6).label("Password").required(),
-  confirmPassword: Joi.string().label("Confirm Password").required()
+  confirmPassword: Joi.string()
+    .label("Confirm Password")
+    .required()
+    .messages({ "any.only": "Password did not match" })
 });
 
 const SignUp: React.FC = () => {
@@ -369,7 +372,7 @@ const SignUp: React.FC = () => {
 
                 <div className="mb-5">
                   <input
-                  disabled={isPending}
+                    disabled={isPending}
                     type="submit"
                     value={isPending ? "Creating account..." : "Create account"}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"

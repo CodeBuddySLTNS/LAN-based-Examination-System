@@ -1,6 +1,6 @@
-// import { create } from "zustand";
+import { create } from "zustand";
 
-// export const useMainStore = create(set => ({
-//   count: 0,
-//   increment: () => set(state => ({ count: state + 1 }))
-// }));
+export const useMainStore = create(set => ({
+  user: { name: "user" },
+  setUser: payload => set({user: payload})
+}));
