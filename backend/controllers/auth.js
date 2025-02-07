@@ -15,7 +15,6 @@ const expiration = 12 * 60 * 60;
 
 const login = async (req, res) => {
   const { error, value } = validateLogin(req.body);
-
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }
@@ -32,7 +31,7 @@ const login = async (req, res) => {
 
     throw new CustomError("Incorrect Password", CONFLICT);
   }
-  return res.status(NOT_FOUND).send("doesn't exist");
+  throw new CustomError("User doesn't exist", NOT_FOUND);
 };
 
 const signup = async (req, res) => {
@@ -46,7 +45,7 @@ const signup = async (req, res) => {
   value.password = await bcrypt.hash(value.password, saltRounds);
 
   const result = await User.createUser(value);
-  res.status(CREATED).send(result);
+  res.status(CREATED).json({result});
 };
 
 module.exports = { login, signup };

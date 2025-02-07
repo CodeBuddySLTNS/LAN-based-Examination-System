@@ -1,6 +1,10 @@
+const Joi = require("joi");
 const QuestionModel = require("../database/models/question");
+const { validateQuestion } = require("../utils/validator");
+const { CREATED, BAD_REQUEST } = require("../constants/statusCodes");
+const CustomError = require("../utils/customError");
+
 const Question = new QuestionModel();
-const { CREATED } = require("../constants/statusCodes");
 
 const questions = async (req, res) => {
   const result = await Question.getAll();
@@ -8,13 +12,16 @@ const questions = async (req, res) => {
 };
 
 const addQuestion = async (req, res) => {
-  const q = "Who is Renz?";
-  const correct = JSON.stringify(["He is a dev."]);
-  const incorrect = JSON.stringify([
-    "He is idiot.",
-    "He is noob.",
-    "He is broke."
-  ]);
+  const { error, value } = validateQuestion(req.body);
+
+  if (error) {
+    throw new CustomError(error.message, BAD_REQUEST);
+  }
+
+  const q = value.question;
+  const correct = JSON.stringify([value.correctAnswer]);
+  const incorrect = JSON.stringify([value.incorrectAnswer]);
+
   const result = await Question.add(1, q, correct, incorrect);
   res.status(CREATED).send(result);
 };

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const SelectGroupOne: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<string>('');
+const SelectGroupOne: React.FC = props => {
+  const [selectedOption, setSelectedOption] = useState<string>("");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
   const changeTextColor = () => {
@@ -10,20 +10,18 @@ const SelectGroupOne: React.FC = () => {
 
   return (
     <div className="mb-4.5">
-      <label className="mb-2.5 block text-black dark:text-white">
-        {' '}
-        Subject{' '}
-      </label>
+      <label className="mb-2.5 block text-black dark:text-white"> Subject </label>
 
       <div className="relative z-20 bg-transparent dark:bg-form-input">
         <select
+          {...props.register("subject")}
           value={selectedOption}
-          onChange={(e) => {
+          onChange={e => {
             setSelectedOption(e.target.value);
             changeTextColor();
           }}
           className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
-            isOptionSelected ? 'text-black dark:text-white' : ''
+            isOptionSelected ? "text-black dark:text-white" : ""
           }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
@@ -41,14 +39,7 @@ const SelectGroupOne: React.FC = () => {
         </select>
 
         <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg className="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g opacity="0.8">
               <path
                 fillRule="evenodd"
@@ -60,6 +51,7 @@ const SelectGroupOne: React.FC = () => {
           </svg>
         </span>
       </div>
+      {props.error && <p className="text-red-600 text-sm">{props.error}</p>}
     </div>
   );
 };

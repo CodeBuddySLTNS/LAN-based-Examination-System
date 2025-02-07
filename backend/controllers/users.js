@@ -8,6 +8,7 @@ const users = async (req, res) => {
 };
 
 const userInfo = async (req, res) => {
+  return res.json({ name: "renz", username: "renz05", password: "1234" });
   const username = req.params.username;
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
   const result = await sqlQuery(query, [username]);

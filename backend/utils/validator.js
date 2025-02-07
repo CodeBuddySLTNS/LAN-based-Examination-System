@@ -23,11 +23,24 @@ const signupSchema = Joi.object({
     "any.required": "Password is required"
   })
 });
+const addQuestionSchema = Joi.object({
+  subject: Joi.string().label("Subject").required().messages({
+    "any.required": "Subject is required"
+  }),
+  question: Joi.string().max(255).label("Question").required().messages({
+    "any.required": "Question is required"
+  }),
+  correctAnswer: Joi.string().label("Correct Answer").required().messages({
+    "any.required": "Correct Answer is required"
+  }),
+  incorrectAnswer: Joi.string().label("Incorrect Answer").required().messages({
+    "any.required": "Correct Answer is required"
+  })
+});
 
 // Validator functions
 // login validation
-module.exports.validateLogin = payload =>
-  loginSchema.validate(payload, { abortEarly: false });
+module.exports.validateLogin = payload => loginSchema.validate(payload, { abortEarly: false });
 // signup valudation
-module.exports.validateSignup = payload =>
-  signupSchema.validate(payload, { abortEarly: false });
+module.exports.validateSignup = payload => signupSchema.validate(payload, { abortEarly: false });
+module.exports.validateQuestion = payload => addQuestionSchema.validate(payload, { abortEarly: false });

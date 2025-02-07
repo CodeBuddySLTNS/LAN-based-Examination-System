@@ -26,7 +26,7 @@ app.use(require("./middlewares/authenticate"));
 
 // routes
 app.get("/", (req, res) => {
-  res.send("Online.");
+  res.json({ status: "online" });
 });
 app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
