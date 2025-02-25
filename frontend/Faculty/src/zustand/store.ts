@@ -1,6 +1,9 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { MainStore } from '../types/store';
 
-export const useMainStore = create(set => ({
-  user: { name: "user" },
-  setUser: payload => set({user: payload})
-}));
+export const useMainStore = create(
+  (set): MainStore => ({
+    user: null,
+    setUser: (user): void => set({ user }),
+  }),
+);
