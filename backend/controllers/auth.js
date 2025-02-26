@@ -7,14 +7,16 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   CREATED,
-  CONFLICT
+  CONFLICT,
 } = require("../constants/statusCodes");
 
 const User = new UserModel();
 const expiration = 12 * 60 * 60;
 
 const login = async (req, res) => {
+  // Validate the request body
   const { error, value } = validateLogin(req.body);
+
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }
@@ -35,6 +37,7 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
+  // Validate the request body
   const { error, value } = validateSignup(req.body);
 
   if (error) {
@@ -45,7 +48,7 @@ const signup = async (req, res) => {
   value.password = await bcrypt.hash(value.password, saltRounds);
 
   const result = await User.createUser(value);
-  res.status(CREATED).json({result});
+  res.status(CREATED).json({ result });
 };
 
 module.exports = { login, signup };

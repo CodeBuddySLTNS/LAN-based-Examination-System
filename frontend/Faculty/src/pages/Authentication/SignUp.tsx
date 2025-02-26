@@ -1,31 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import LogoDark from "../../images/logo/logo-dark.svg";
-import Logo from "../../images/logo/logo.svg";
-import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import Joi from "joi";
-import { AlertError } from "../../components/Alerts/Alerts";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import LogoDark from '../../images/logo/logo-dark.svg';
+import Logo from '../../images/logo/logo.svg';
+import { useMutation } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
+import { AlertError } from '../../components/Alerts/Alerts';
+import SelectGroupTwo from '../../components/Forms/SelectGroup/SelectGroupTwo';
 
 const schema = Joi.object({
-  name: Joi.string().max(20).label("Name").required(),
-  username: Joi.string().max(15).label("Username").required(),
-  password: Joi.string().min(6).label("Password").required(),
+  name: Joi.string().max(20).label('Name').required(),
+  username: Joi.string().max(15).label('Username').required(),
+  password: Joi.string().min(6).label('Password').required(),
   confirmPassword: Joi.string()
-    .label("Confirm Password")
+    .label('Confirm Password')
     .required()
-    .messages({ "any.only": "Password did not match" })
+    .messages({ 'any.only': 'Password did not match' }),
 });
 
 const SignUp: React.FC = () => {
-  const postData = async payload => {
-    const response = await fetch("http://localhost:5000/auth/signup", {
-      method: "POST",
+  const postData = async (payload) => {
+    const response = await fetch('http://localhost:5000/auth/signup', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.json();
   };
@@ -34,16 +35,16 @@ const SignUp: React.FC = () => {
     mutateAsync: signup,
     isPending,
     data: signupResponse,
-    error: signupError
+    error: signupError,
   } = useMutation({ mutationFn: postData });
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({ resolver: joiResolver(schema) });
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     delete data.confirmPassword;
     signup(data);
   };
@@ -216,7 +217,7 @@ const SignUp: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
-                      {...register("name")}
+                      {...register('name')}
                       type="text"
                       placeholder="Enter your full name"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -257,7 +258,7 @@ const SignUp: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
-                      {...register("username")}
+                      {...register('username')}
                       type="text"
                       placeholder="Enter your username"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -288,13 +289,15 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
+                <SelectGroupTwo />
+
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Password
                   </label>
                   <div className="relative">
                     <input
-                      {...register("password")}
+                      {...register('password')}
                       type="password"
                       placeholder="Enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -335,7 +338,7 @@ const SignUp: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
-                      {...register("confirmPassword")}
+                      {...register('confirmPassword')}
                       type="password"
                       placeholder="Re-enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -374,7 +377,7 @@ const SignUp: React.FC = () => {
                   <input
                     disabled={isPending}
                     type="submit"
-                    value={isPending ? "Creating account..." : "Create account"}
+                    value={isPending ? 'Creating account...' : 'Create account'}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
                 </div>
@@ -418,7 +421,7 @@ const SignUp: React.FC = () => {
 
                 <div className="mt-6 text-center">
                   <p>
-                    Already have an account?{" "}
+                    Already have an account?{' '}
                     <Link to="/auth/signin" className="text-primary">
                       Sign in
                     </Link>
