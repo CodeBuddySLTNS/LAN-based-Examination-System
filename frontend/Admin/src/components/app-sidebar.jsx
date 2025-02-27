@@ -30,15 +30,15 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "Juan Tamad",
-    email: "juantamad@gmail.com",
+    name: "CodeBuddy Solutions",
+    email: "codebuddysltns@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: "LAN-Based Exam System",
+      name: "CodeBuddy State College",
       logo: School,
-      plan: "CodeBuddy Solutions",
+      plan: "LAN-Based Examination System",
     },
     {
       name: "Acme Corp.",
@@ -59,15 +59,11 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "March 23, 2025",
           url: "#",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
+          title: "March 12, 2025",
           url: "#",
         },
       ],
@@ -76,18 +72,18 @@ const data = {
       title: "Exam History",
       url: "#",
       icon: FileClock,
-      isActive: true,
+      isActive: false,
       items: [
         {
-          title: "History",
+          title: "S.Y. 2024 - 2025 2nd Semester",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "S.Y. 2024 - 2025 1st Semester",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "S.Y. 2023 - 2024 2nd Semester",
           url: "#",
         },
       ],
@@ -126,10 +122,6 @@ const data = {
         },
         {
           title: "Edit Account",
-          url: "#",
-        },
-        {
-          title: "Changelog",
           url: "#",
         },
       ],
