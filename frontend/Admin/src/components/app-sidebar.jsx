@@ -1,14 +1,15 @@
 import * as React from "react";
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
+  School,
+  ClipboardList,
   Command,
   Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
+  MonitorCog,
   ContactRound,
   FileQuestion,
   FileClock,
@@ -36,7 +37,7 @@ const data = {
   teams: [
     {
       name: "LAN-Based Exam System",
-      logo: GalleryVerticalEnd,
+      logo: School,
       plan: "CodeBuddy Solutions",
     },
     {
@@ -51,6 +52,26 @@ const data = {
     },
   ],
   navMain: [
+    {
+      title: "Exam Schedules",
+      url: "#",
+      icon: ClipboardList,
+      isActive: true,
+      items: [
+        {
+          title: "History",
+          url: "#",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+        },
+      ],
+    },
     {
       title: "Exam History",
       url: "#",
@@ -114,24 +135,12 @@ const data = {
       ],
     },
     {
-      title: "Settings",
+      title: "System",
       url: "#",
-      icon: Settings2,
+      icon: MonitorCog,
       items: [
         {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Logs",
           url: "#",
         },
       ],
