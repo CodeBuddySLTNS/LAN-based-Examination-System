@@ -9,7 +9,7 @@ function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
   const setIsLoggedIn = useMainStore((state) => state.setIsLoggedIn);
 
-  return <>{isLoggedIn ? <Page /> : <Login />}</>;
+  return <div>{isLoggedIn ? <Page /> : <Login />}</div>;
 }
 
 export default App;

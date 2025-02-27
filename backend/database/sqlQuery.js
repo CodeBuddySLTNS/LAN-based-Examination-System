@@ -2,7 +2,7 @@ const CustomError = require("../utils/customError");
 const { pool } = require("../database/sqlConnection");
 const { BAD_REQUEST, CONFLICT } = require("../constants/statusCodes");
 
-// reusable function to query database
+// function to query database
 const sqlQuery = async (query, params) => {
   let dbconn;
   let error;

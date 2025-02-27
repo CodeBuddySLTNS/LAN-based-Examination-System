@@ -9,7 +9,9 @@ import {
   Map,
   PieChart,
   Settings2,
-  SquareTerminal,
+  ContactRound,
+  FileQuestion,
+  FileClock,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -27,8 +29,8 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Juan Tamad",
+    email: "juantamad@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
@@ -50,9 +52,9 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Exam History",
       url: "#",
-      icon: SquareTerminal,
+      icon: FileClock,
       isActive: true,
       items: [
         {
@@ -70,39 +72,39 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Questions Bank",
       url: "#",
-      icon: Bot,
+      icon: FileQuestion,
       items: [
         {
-          title: "Genesis",
+          title: "All Questions",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Add Question",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Edit Question",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Manage Accounts",
       url: "#",
-      icon: BookOpen,
+      icon: ContactRound,
       items: [
         {
-          title: "Introduction",
+          title: "All Accounts",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Add Account",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "Edit Account",
           url: "#",
         },
         {
@@ -162,7 +164,7 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
