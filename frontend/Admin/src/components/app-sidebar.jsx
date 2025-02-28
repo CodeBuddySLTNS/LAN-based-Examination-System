@@ -59,11 +59,11 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "March 23, 2025",
+          title: "March 04, 2025 - Semi-Finals",
           url: "#",
         },
         {
-          title: "March 12, 2025",
+          title: "February 04, 2025 - Midterm",
           url: "#",
         },
       ],
