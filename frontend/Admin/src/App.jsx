@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMainStore } from "./states/store";
 
 import Layout from "./app/layout/page";
-import Login from "./app/authentication/login";
+import Login from "./app/authentication/page";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";

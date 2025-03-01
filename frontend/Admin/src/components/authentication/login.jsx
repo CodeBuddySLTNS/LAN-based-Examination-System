@@ -10,31 +10,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function Page({ className, ...props }) {
+export default function Page({ setForm }) {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-center text-2xl">
                 Welcome Back!
               </CardTitle>
               <CardDescription>
-                Enter your email below to login to your account
+                Enter your username below to login to your account
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
+                    <Label htmlFor="email">Username</Label>
+                    <Input id="email" type="text" required />
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
@@ -56,9 +51,12 @@ export default function Page({ className, ...props }) {
                 </div>
                 <div className="mt-4 text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
+                  <p
+                    className="underline underline-offset-4"
+                    onClick={() => setForm((prev) => !prev)}
+                  >
                     Sign up
-                  </a>
+                  </p>
                 </div>
               </form>
             </CardContent>
