@@ -34,11 +34,34 @@ import {
 
 const data = [
   {
-    id: "m5gr84i9",
-    name: "renz",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
+    id: 1,
+    name: "Tamad, Juan M.",
+    username: "juantamad",
+    password: "123",
+    department: "BSCS",
+    year: 2,
+    role: "admin",
+    isVerified: false,
+  },
+  {
+    id: 2,
+    name: "Dela Cruz, Juan M.",
+    username: "delajuan",
+    password: "123",
+    department: "BSIT",
+    year: 2,
+    role: "admin",
+    isVerified: true,
+  },
+  {
+    id: 3,
+    name: "Macapagal, Juan M.",
+    username: "macjuan",
+    password: "123",
+    department: "BSCS",
+    year: 2,
+    role: "admin",
+    isVerified: false,
   },
 ];
 
@@ -67,38 +90,92 @@ export const columns = [
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Name
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+    accessorKey: "username",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Username
+          <ArrowUpDown />
+        </Button>
+      );
     },
+    cell: ({ row }) => (
+      <div className="lowercase text-center">{row.getValue("username")}</div>
+    ),
+  },
+  {
+    accessorKey: "department",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Department
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("department")}</div>
+    ),
+  },
+  {
+    accessorKey: "year",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Year
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("year")}</div>
+    ),
+  },
+  {
+    accessorKey: "isVerified",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue("isVerified") ? "verified" : "unverified"}
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -156,20 +233,14 @@ export default function Page() {
     },
   });
 
-  React.useEffect(() => {
-    const rows = table.getFilteredSelectedRowModel().rows;
-    rows.map((row) => console.log(row.original));
-    console.log(rows);
-  }, [rowSelection]);
-
   return (
-    <div className="w-full px-8">
+    <div className=" box-border px-8">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
+          placeholder="Filter departments..."
+          value={table.getColumn("department")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("department")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
