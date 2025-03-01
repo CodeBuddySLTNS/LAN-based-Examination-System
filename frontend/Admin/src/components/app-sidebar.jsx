@@ -56,7 +56,7 @@ const data = {
       title: "Exam Schedules",
       url: "#",
       icon: ClipboardList,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "March 04, 2025 - Semi-Finals",
