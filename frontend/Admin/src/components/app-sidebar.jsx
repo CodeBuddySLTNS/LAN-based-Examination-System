@@ -114,7 +114,7 @@ const data = {
       items: [
         {
           title: "All Accounts",
-          url: "#",
+          url: "/accounts",
         },
         {
           title: "Add Account",
