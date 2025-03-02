@@ -9,6 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+} from "../ui/select";
 
 export default function Page({ setForm }) {
   return (
@@ -18,23 +26,53 @@ export default function Page({ setForm }) {
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-center text-2xl">
-                Register your new account!
+                Create Account
               </CardTitle>
               <CardDescription>
-                Enter your email below to login to your account
+                Fill out the fields below to create your account
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form>
                 <div className="flex flex-col gap-6">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="grid gap-3">
+                      <Label htmlFor="lastname">Last Name</Label>
+                      <Input id="lastname" type="text" required />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="firstname">First Name</Label>
+                      <Input id="firstname" type="text" required />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="middlename">Middle Name</Label>
+                      <Input id="middlename" type="text" required />
+                    </div>
+                  </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" type="text" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="grid gap-3">
+                      <Label htmlFor="department">Department</Label>
+                      <Select id="department" className="w-full">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="BSCS">BSCS</SelectItem>
+                            <SelectItem value="BSIT">BSIT</SelectItem>
+                            <SelectItem value="BSSW">BSSW</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="year">Year</Label>
+                      <Input id="year" type="number" min="1" max="4" required />
+                    </div>
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">

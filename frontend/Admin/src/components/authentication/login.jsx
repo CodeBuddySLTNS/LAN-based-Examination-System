@@ -21,7 +21,7 @@ export default function Page({ setForm }) {
                 Welcome Back!
               </CardTitle>
               <CardDescription>
-                Enter your username below to login to your account
+                Enter your credentials below to login to your account
               </CardDescription>
             </CardHeader>
             <CardContent>
