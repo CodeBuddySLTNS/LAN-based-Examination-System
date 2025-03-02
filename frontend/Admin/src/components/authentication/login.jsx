@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +8,45 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Axios } from "@/lib/utils";
+import { useMainStore } from "@/states/store";
+import { useMutation } from "@tanstack/react-query";
+import { AlertCircle } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
 
 export default function Page({ setForm }) {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = async (data) => {
+    try {
+      await login(data);
+    } catch (error) {}
+  };
+
+  const postRequest = async (credentials) => {
+    const response = await Axios.post("/auth/login", credentials);
+    return response.data;
+  };
+
+  const {
+    mutateAsync: login,
+    data,
+    error,
+    isPending,
+  } = useMutation({
+    mutationFn: postRequest,
+    onError: (error) => {
+      // console.log(error);
+    },
+  });
+
+  React.useEffect(() => {
+    if (data) {
+      useMainStore.getState().setIsLoggedIn(true);
+    }
+  }, [data]);
+
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -25,11 +61,21 @@ export default function Page({ setForm }) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
-                    <Label htmlFor="email">Username</Label>
-                    <Input id="email" type="text" required />
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      {...register("username")}
+                      id="username"
+                      type="text"
+                      required
+                    />
+                    {error?.response?.data?.body?.username && (
+                      <p className="text-sm font-normal text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-[17px]" /> User not found
+                      </p>
+                    )}
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
@@ -41,11 +87,25 @@ export default function Page({ setForm }) {
                         Forgot your password?
                       </a>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input
+                      {...register("password")}
+                      id="password"
+                      type="password"
+                      required
+                    />
+                    {error?.response?.data?.body?.passwprd && (
+                      <p className="text-sm font-normal text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-[17px]" /> Incorrect password
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-3">
-                    <Button type="submit" className="w-full">
-                      Login
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isPending}
+                    >
+                      {isPending ? "Logging in..." : "Login"}
                     </Button>
                   </div>
                 </div>
