@@ -10,7 +10,6 @@ import Accounts from "./app/accounts/page";
 function App() {
   const [count, setCount] = useState(0);
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
-  const setIsLoggedIn = useMainStore((state) => state.setIsLoggedIn);
 
   return (
     <div>
