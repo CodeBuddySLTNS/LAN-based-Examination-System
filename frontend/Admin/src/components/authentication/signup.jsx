@@ -48,11 +48,7 @@ export default function Page({ setForm }) {
                       <Label htmlFor="middlename">Middle Name</Label>
                       <Input id="middlename" type="text" required />
                     </div>
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" type="text" required />
-                  </div>
+                  </div>{" "}
                   <div className="grid grid-cols-2 gap-2">
                     <div className="grid gap-3">
                       <Label htmlFor="department">Department</Label>
@@ -63,8 +59,8 @@ export default function Page({ setForm }) {
                         <SelectContent>
                           <SelectGroup>
                             <SelectItem value="BSCS">BSCS</SelectItem>
-                            <SelectItem value="BSIT">BSIT</SelectItem>
                             <SelectItem value="BSSW">BSSW</SelectItem>
+                            <SelectItem value="BSIT">BSIT</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
@@ -75,30 +71,28 @@ export default function Page({ setForm }) {
                     </div>
                   </div>
                   <div className="grid gap-3">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" type="text" required />
+                  </div>
+                  <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
                     </div>
                     <Input id="password" type="password" required />
                   </div>
                   <div className="flex flex-col gap-3">
                     <Button type="submit" className="w-full">
-                      Login
+                      Signup
                     </Button>
                   </div>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{" "}
+                  Already have an account?
                   <p
                     className="underline underline-offset-4"
                     onClick={() => setForm((prev) => !prev)}
                   >
-                    Sign up
+                    Login
                   </p>
                 </div>
               </form>
