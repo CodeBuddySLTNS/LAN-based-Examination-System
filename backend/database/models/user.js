@@ -44,8 +44,8 @@ class UserModel {
       payload.name,
       payload.username,
       payload.password,
-      payload.department || "BSIT",
-      payload.year || 2,
+      payload.department,
+      payload.year,
     ]);
     return result;
   }

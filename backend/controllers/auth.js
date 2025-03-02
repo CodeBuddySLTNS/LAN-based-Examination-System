@@ -16,7 +16,7 @@ const expiration = 12 * 60 * 60;
 const login = async (req, res) => {
   // Validate the request body
   const { error, value } = validateLogin(req.body);
-  console.log(req.body);
+
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }
@@ -31,9 +31,13 @@ const login = async (req, res) => {
       return res.json({ id, token });
     }
 
-    throw new CustomError("Incorrect Password", CONFLICT);
+    throw new CustomError("Incorrect Password", CONFLICT, {
+      password: "Incorrect password",
+    });
   }
-  throw new CustomError("User doesn't exist", NOT_FOUND);
+  throw new CustomError("User doesn't exist", NOT_FOUND, {
+    username: "User doesn't exist",
+  });
 };
 
 const signup = async (req, res) => {
