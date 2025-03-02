@@ -7,16 +7,17 @@ class UserModel {
       id INT PRIMARY KEY AUTO_INCREMENT,
       name VARCHAR(255) NOT NULL,
       username VARCHAR(15) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL
+      password VARCHAR(255) NOT NULL,
       department VARCHAR(255) NOT NULL,
       year INT NOT NULL,
-      role VARCHAR(15) NOT NULL DEFAULT 'user',
+      role VARCHAR(15) NOT NULL DEFAULT 'user'
     )`;
     await sqlQuery(usersTableQuery);
   }
 
   // check if a user exists in users table
   async checkUser(username) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
     if (result) {
@@ -30,6 +31,7 @@ class UserModel {
 
   // insert new user to users table
   async createUser(payload) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `INSERT INTO users (
     name,
     username,

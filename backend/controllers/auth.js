@@ -16,7 +16,7 @@ const expiration = 12 * 60 * 60;
 const login = async (req, res) => {
   // Validate the request body
   const { error, value } = validateLogin(req.body);
-
+  console.log(req.body);
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }

@@ -15,7 +15,7 @@ const sqlQuery = async (query, params) => {
   } finally {
     if (dbconn) dbconn.release();
     if (error) {
-      console.log(error.code);
+      console.log("dbError:", error);
       switch (error.code) {
         case "ER_TABLE_EXISTS_ERROR":
           throw new CustomError(error.message, BAD_REQUEST);
