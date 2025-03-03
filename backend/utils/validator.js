@@ -26,7 +26,7 @@ const signupSchema = Joi.object({
     "number.max": "Year should be between 1 and 4",
     "any.required": "Year is required",
   }),
-  password: Joi.string().min(6).required().messages({
+  password: Joi.string().min(3).required().messages({
     "string.min": "Password must be at least {#limit} characters long",
     "any.required": "Password is required",
   }),
