@@ -93,7 +93,7 @@ export default function Page({ setForm }) {
                       type="password"
                       required
                     />
-                    {error?.response?.data?.body?.passwprd && (
+                    {error?.response?.data?.body?.password && (
                       <p className="text-sm font-normal text-red-600 flex items-center gap-1">
                         <AlertCircle className="w-[17px]" /> Incorrect password
                       </p>
