@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useMainStore } from "./states/store";
 
 import Layout from "./app/layout/page";
@@ -6,10 +5,21 @@ import Login from "./app/authentication/page";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";
+import { useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
+  const isLoading = useMainStore((state) => state.isLoading);
+
+  useEffect(() => {
+    setTimeout(() => {
+      useMainStore.getState().setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  if (isLoading) {
+    return <h1 className="text-center">Loading...</h1>;
+  }
 
   return (
     <div>
