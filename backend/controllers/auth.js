@@ -11,7 +11,6 @@ const {
 } = require("../constants/statusCodes");
 
 const User = new UserModel();
-const expiration = 12 * 60 * 60;
 
 const login = async (req, res) => {
   // Validate the request body

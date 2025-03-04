@@ -8,16 +8,17 @@ const users = async (req, res) => {
 };
 
 const userInfo = async (req, res) => {
-  return res.json({ name: "renz", username: "renz05", password: "1234" });
-  const username = req.params.username;
-  const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
-  const result = await sqlQuery(query, [username]);
-  const user = result[0];
-  delete user.password;
-  res.json(user);
+  const { id } = req.params;
+  const query = `SELECT * FROM users WHERE id = ${id} LIMIT 1`;
+  const result = await sqlQuery(query);
+  if (result.length === 0) {
+    throw new CustomError("User not found", 404);
+  }
+  console.log(result[0]);
+  res.json({ user: result[0] });
 };
 
 module.exports = {
   users,
-  userInfo
+  userInfo,
 };
