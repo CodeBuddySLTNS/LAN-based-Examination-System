@@ -6,16 +6,40 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Axios } from "./lib/utils";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
   const isLoading = useMainStore((state) => state.isLoading);
 
+  const fetchUser = async () => {
+    const token = localStorage.getItem("token");
+    const response = await Axios.get("/users/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
+
   useEffect(() => {
     setTimeout(() => {
       useMainStore.getState().setIsLoading(false);
     }, 1000);
-  }, []);
+  }, [loading]);
+
+  useEffect(() => {
+    if (data) {
+      useMainStore.getState().setUser(data.users[0]);
+      useMainStore.getState().setIsLoggedIn(true);
+    }
+  }, [data]);
 
   if (isLoading) {
     return (
