@@ -44,6 +44,10 @@ export default function Page({ setForm }) {
   React.useEffect(() => {
     if (data) {
       useMainStore.getState().setIsLoggedIn(true);
+      useMainStore.getState().setIsLoading(true);
+      setTimeout(() => {
+        useMainStore.getState().setIsLoading(false);
+      }, 1000);
     }
   }, [data]);
 
@@ -107,6 +111,18 @@ export default function Page({ setForm }) {
                     >
                       {isPending ? "Logging in..." : "Login"}
                     </Button>
+                    {error?.code === "ERR_NETWORK" && (
+                      <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
+                        <AlertCircle className="w-[17px]" /> Unable to connect
+                        to the server
+                      </p>
+                    )}
+                    {error?.response?.data?.status === 500 && (
+                      <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
+                        <AlertCircle className="w-[17px]" /> Internal server
+                        error
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="mt-4 text-center text-sm">
