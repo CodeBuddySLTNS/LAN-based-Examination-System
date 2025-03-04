@@ -18,7 +18,11 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <h1 className="text-center">Loading...</h1>;
+    return (
+      <div className="w-full h-[100vh] flex items-center justify-center">
+        <div className="loader"></div>
+      </div>
+    );
   }
 
   return (
