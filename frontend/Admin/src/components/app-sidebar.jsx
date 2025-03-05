@@ -26,14 +26,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useMainStore } from "@/states/store";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "CodeBuddy Solutions",
-    email: "codebuddysltns@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "CodeBuddy State College",
@@ -158,6 +154,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
+  const user = useMainStore((state) => state.user);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -168,7 +166,7 @@ export function AppSidebar({ ...props }) {
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

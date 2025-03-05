@@ -7,5 +7,5 @@ export const useMainStore = create((set) => ({
 
   setIsLoading: (status) => set({ isLoading: status }),
   setIsLoggedIn: (status) => set({ isLoggedIn: status }),
-  setUser: (user) => set({ isLoggedIn: user }),
+  setUser: (user) => set({ user }),
 }));

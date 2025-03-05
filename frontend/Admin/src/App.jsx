@@ -15,7 +15,7 @@ function App() {
 
   const fetchUser = async () => {
     const token = localStorage.getItem("token");
-    const response = await Axios.get("/users/", {
+    const response = await Axios.get(`/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
     if (data) {
-      useMainStore.getState().setUser(data.users[0]);
+      useMainStore.getState().setUser(data.user);
       useMainStore.getState().setIsLoggedIn(true);
     }
   }, [data]);

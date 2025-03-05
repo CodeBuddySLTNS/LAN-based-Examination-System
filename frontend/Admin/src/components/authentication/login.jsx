@@ -43,6 +43,7 @@ export default function Page({ setForm }) {
 
   React.useEffect(() => {
     if (data) {
+      localStorage.setItem("token", data.token);
       useMainStore.getState().setIsLoggedIn(true);
       useMainStore.getState().setIsLoading(true);
       setTimeout(() => {
