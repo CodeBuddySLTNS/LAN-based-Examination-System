@@ -33,7 +33,38 @@ class UserModel {
       payload.department,
       payload.year,
     ]);
+
     return result;
+  }
+
+  // deletes a user from users table
+  async deleteUser(username) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `DELETE FROM users WHERE username = ? LIMIT 1`;
+    const result = await sqlQuery(query, [username]);
+
+    if (result) {
+      if (result?.affectedRows > 0) {
+        return result;
+      }
+      return null;
+    }
+    return null;
+  }
+
+  async getUserInfo(userId) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `SELECT id, name, username, department, year, role
+    FROM users WHERE id = ? LIMIT 1`;
+    const result = await sqlQuery(query, [userId]);
+
+    if (result) {
+      if (result.length > 0) {
+        return result[0];
+      }
+      return null;
+    }
+    return null;
   }
 
   // check if a user exists in users table
