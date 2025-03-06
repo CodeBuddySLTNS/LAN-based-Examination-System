@@ -5,6 +5,7 @@ const controller = require("../controllers/users");
 const router = Router();
 
 router.get("/", tryCatch(controller.users));
-router.get("/:username", tryCatch(controller.userInfo));
+router.get("/user/:username", tryCatch(controller.userInfo));
+router.delete("/user/:username", tryCatch(controller.userInfo));
 
 module.exports = router;
