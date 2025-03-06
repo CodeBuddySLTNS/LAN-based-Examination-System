@@ -6,6 +6,6 @@ const router = Router();
 
 router.get("/", tryCatch(controller.users));
 router.get("/user/:username", tryCatch(controller.userInfo));
-router.delete("/user/:username", tryCatch(controller.userInfo));
+router.delete("/user/:username", tryCatch(controller.deleteAccount));
 
 module.exports = router;
