@@ -1,6 +1,7 @@
 const CustomError = require("../utils/customError");
 const sqlQuery = require("../database/sqlQuery");
 const UserModel = require("../database/models/user");
+const { CONFLICT, NOT_FOUND } = require("../constants/statusCodes");
 
 const User = new UserModel();
 
@@ -12,22 +13,27 @@ const users = async (req, res) => {
 
 const userInfo = async (req, res) => {
   const userId = res.locals.userId;
-  const user = User.getUserInfo(userId);
+  const user = await User.getUserInfo(userId);
 
-  res.json({ user });
+  if (user) {
+    return res.json({ user });
+  }
+
+  throw new CustomError("User not found", NOT_FOUND);
 };
 
 const deleteAccount = async (req, res) => {
-  console.log(req.params);
-  const userId = "";
-  const query = `DELETE FROM users WHERE id = ? LIMIT 1`;
-  const result = await sqlQuery(query, [userId]);
+  const username = req.params.username;
+  const deleted = await User.deleteUser(username);
 
-  if (result.length === 0) {
-    throw new CustomError("User not found", 404);
+  if (deleted) {
+    return res.json({ deleted: true, username });
   }
 
-  res.json({ user: result[0] });
+  throw new CustomError(
+    `Unable to delete ${username}, it maybe because it is not found or internal server error.`,
+    CONFLICT
+  );
 };
 
 module.exports = {
