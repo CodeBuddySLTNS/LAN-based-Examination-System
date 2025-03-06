@@ -39,6 +39,7 @@ export default function Page({ className, ...props }) {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <ModeToggle />
         </header>
         <div className={className} {...props} />
       </SidebarInset>

@@ -2,7 +2,12 @@ import { useMainStore } from "./states/store";
 
 import Layout from "./app/layout/page";
 import Login from "./app/authentication/page";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";
 import { useEffect } from "react";
@@ -15,7 +20,7 @@ function App() {
 
   const fetchUser = async () => {
     const token = localStorage.getItem("token");
-    const response = await Axios.get(`/users/me`, {
+    const response = await Axios.get(`/users/user/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

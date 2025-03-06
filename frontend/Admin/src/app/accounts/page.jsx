@@ -9,7 +9,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  Check,
+  CheckCheckIcon,
+  ChevronDown,
+  Delete,
+  DeleteIcon,
+  Edit,
+  LucideDelete,
+  MoreHorizontal,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -173,7 +183,11 @@ export const columns = [
     },
     cell: ({ row }) => (
       <div className="text-center">
-        {row.getValue("isVerified") ? "verified" : "unverified"}
+        {row.getValue("isVerified") ? (
+          <span className="text-green-500">verified</span>
+        ) : (
+          <span className="text-red-500">unverified</span>
+        )}
       </div>
     ),
   },
@@ -181,7 +195,7 @@ export const columns = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const id = row.original.id;
 
       return (
         <DropdownMenu>
@@ -193,14 +207,18 @@ export const columns = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
+            <DropdownMenuItem onClick={() => console.log(id)}>
+              <Check /> Verify Account
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Edit className="text-green-600" />
+              Edit Account
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <LucideDelete className="text-red-500" />
+              Delete Account
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

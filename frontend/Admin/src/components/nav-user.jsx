@@ -25,9 +25,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useMainStore } from "@/states/store";
 
 export function NavUser({ user }) {
   const { isMobile } = useSidebar();
+
+  const handleLogout = () => {
+    useMainStore.getState().setUser({});
+    useMainStore.getState().setIsLoggedIn(false);
+    localStorage.removeItem("token");
+  };
 
   return (
     <SidebarMenu>
@@ -90,7 +97,7 @@ export function NavUser({ user }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
