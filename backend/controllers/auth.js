@@ -26,8 +26,18 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(value.password, userExist.password);
     if (isMatch) {
       const id = userExist.id;
-      const token = generateToken({ id });
-      return res.json({ id, token });
+      const expiresIn = 3 * 60 * 60; // 3 hours
+      const token = generateToken({ id }, expiresIn);
+      const user = {
+        id: userExist.id,
+        name: userExist.name,
+        username: userExist.username,
+        department: userExist.department,
+        year: userExist.year,
+        role: userExist.role,
+      };
+
+      return res.json({ id, token, user });
     }
 
     throw new CustomError("Incorrect Password", CONFLICT, {
