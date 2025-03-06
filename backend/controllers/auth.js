@@ -11,6 +11,7 @@ const {
 } = require("../constants/statusCodes");
 
 const User = new UserModel();
+const expiresIn = 3 * 60 * 60; // 3 hours
 
 const login = async (req, res) => {
   // Validate the request body
@@ -26,7 +27,6 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(value.password, userExist.password);
     if (isMatch) {
       const id = userExist.id;
-      const expiresIn = 3 * 60 * 60; // 3 hours
       const token = generateToken({ id }, expiresIn);
       const user = {
         id: userExist.id,
@@ -61,7 +61,18 @@ const signup = async (req, res) => {
   value.password = await bcrypt.hash(value.password, saltRounds);
 
   const result = await User.createUser(value);
-  res.status(CREATED).json({ result });
+  const userExist = await User.checkUser(value.username);
+  const token = generateToken({ id: userExist.id }, expiresIn);
+  const user = {
+    id: userExist.id,
+    name: userExist.name,
+    username: userExist.username,
+    department: userExist.department,
+    year: userExist.year,
+    role: userExist.role,
+  };
+
+  res.status(CREATED).json({ result, user, token });
 };
 
 module.exports = { login, signup };
