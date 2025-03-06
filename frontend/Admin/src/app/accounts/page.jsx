@@ -41,190 +41,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const data = [
-  {
-    id: 1,
-    name: "Tamad, Juan M.",
-    username: "juantamad",
-    password: "123",
-    department: "BSCS",
-    year: 2,
-    role: "admin",
-    isVerified: false,
-  },
-  {
-    id: 2,
-    name: "Dela Cruz, Juan M.",
-    username: "delajuan",
-    password: "123",
-    department: "BSIT",
-    year: 2,
-    role: "admin",
-    isVerified: true,
-  },
-  {
-    id: 3,
-    name: "Macapagal, Juan M.",
-    username: "macjuan",
-    password: "123",
-    department: "BSCS",
-    year: 2,
-    role: "admin",
-    isVerified: false,
-  },
-];
-
-export const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "username",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="w-full"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Username
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase text-center">{row.getValue("username")}</div>
-    ),
-  },
-  {
-    accessorKey: "department",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="w-full"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Department
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue("department")}</div>
-    ),
-  },
-  {
-    accessorKey: "year",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="w-full"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Year
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue("year")}</div>
-    ),
-  },
-  {
-    accessorKey: "isVerified",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="w-full"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-center">
-        {row.getValue("isVerified") ? (
-          <span className="text-green-500">verified</span>
-        ) : (
-          <span className="text-red-500">unverified</span>
-        )}
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log(id)}>
-              <Check /> Verify Account
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Edit className="text-green-600" />
-              Edit Account
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LucideDelete className="text-red-500" />
-              Delete Account
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Axios } from "@/lib/utils";
 
 export default function Page() {
   const [sorting, setSorting] = React.useState([]);
@@ -232,8 +50,233 @@ export default function Page() {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const fetchUsers = async () => {
+    const token = localStorage.getItem("token");
+    const response = await Axios.get(`/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const verifyUser = async () => {
+    return console.log("verify");
+    const token = localStorage.getItem("token");
+    const response = await Axios.get(`/users/user/${data.username}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const deleteUser = async () => {
+    return console.log("delete");
+    const token = localStorage.getItem("token");
+    const response = await Axios.delete(`/users/user/${data.username}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const editUser = async () => {
+    return console.log("edit");
+    const token = localStorage.getItem("token");
+    const response = await Axios.patch(`/users/user/${data.username}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const handleAction = async (data) => {
+    switch (data?.action) {
+      case "verify":
+        return await verifyUser();
+
+      case "edit":
+        return await editUser();
+
+      case "delete":
+        return await deleteUser();
+    }
+  };
+
+  const { data } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
+
+  const { mutateAsync: action } = useMutation({
+    mutationFn: handleAction,
+  });
+
+  const columns = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Name
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "username",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Username
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase text-center">{row.getValue("username")}</div>
+      ),
+    },
+    {
+      accessorKey: "department",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Department
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("department")}</div>
+      ),
+    },
+    {
+      accessorKey: "year",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Year
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("year")}</div>
+      ),
+    },
+    {
+      accessorKey: "isVerified",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Status
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">
+          {row.getValue("isVerified") ? (
+            <span className="text-green-500">verified</span>
+          ) : (
+            <span className="text-red-500">unverified</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        const username = row.original.username;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => action({ username, action: "verify" })}
+              >
+                <Check /> Verify Account
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => action({ username, action: "edit" })}
+              >
+                <Edit className="text-green-600" />
+                Edit Account
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => action({ username, action: "delete" })}
+              >
+                <LucideDelete className="text-red-500" />
+                Delete Account
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const table = useReactTable({
-    data,
+    data: data?.users || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
