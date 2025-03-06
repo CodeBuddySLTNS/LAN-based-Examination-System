@@ -222,13 +222,13 @@ export default function Page({ setForm }) {
                     {error?.code === "ERR_NETWORK" && (
                       <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
                         <AlertCircle className="w-[17px]" /> Unable to connect
-                        to the server
+                        to the server.
                       </p>
                     )}
                     {error?.response?.data?.status === 500 && (
                       <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
-                        <AlertCircle className="w-[17px]" /> Internal server
-                        error
+                        <AlertCircle className="w-[17px]" /> Internal Server
+                        Error
                       </p>
                     )}
                   </div>
