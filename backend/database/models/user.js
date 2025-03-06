@@ -10,7 +10,8 @@ class UserModel {
       password VARCHAR(255) NOT NULL,
       department VARCHAR(255) NOT NULL,
       year INT NOT NULL,
-      role VARCHAR(15) NOT NULL DEFAULT 'user'
+      role VARCHAR(15) NOT NULL DEFAULT 'user',
+      isVerified BOOL DEFAULT false
     )`;
     await sqlQuery(usersTableQuery);
   }
@@ -41,6 +42,23 @@ class UserModel {
   async deleteUser(username) {
     await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `DELETE FROM users WHERE username = ? LIMIT 1`;
+    const result = await sqlQuery(query, [username]);
+
+    if (result) {
+      if (result?.affectedRows > 0) {
+        return result;
+      }
+      return null;
+    }
+    return null;
+  }
+
+  // verif or unverify a user
+  async verifyUser(username, toVerify) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `UPDATE users SET isVerified = ${
+      toVerify ? 1 : 0
+    } WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
 
     if (result) {

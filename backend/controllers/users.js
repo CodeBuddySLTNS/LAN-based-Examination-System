@@ -22,12 +22,27 @@ const userInfo = async (req, res) => {
   throw new CustomError("User not found", NOT_FOUND);
 };
 
+const verifyAccount = async (req, res) => {
+  const { username, toVerify } = req.body;
+  console.log(req.body);
+  const result = await User.verifyUser(username, toVerify);
+
+  if (result) {
+    return res.json({ deleted: true, username, result });
+  }
+
+  throw new CustomError(
+    `Unable to delete ${username}, it maybe because it is not found or internal server error.`,
+    CONFLICT
+  );
+};
+
 const deleteAccount = async (req, res) => {
   const username = req.params.username;
-  const deleted = await User.deleteUser(username);
+  const result = await User.deleteUser(username);
 
-  if (deleted) {
-    return res.json({ deleted: true, username });
+  if (result) {
+    return res.json({ deleted: true, username, result });
   }
 
   throw new CustomError(
@@ -40,4 +55,5 @@ module.exports = {
   users,
   userInfo,
   deleteAccount,
+  verifyAccount,
 };

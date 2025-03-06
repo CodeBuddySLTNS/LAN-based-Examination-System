@@ -60,10 +60,10 @@ export default function Page() {
     return response.data;
   };
 
-  const verifyUser = async () => {
-    return console.log("verify");
+  const verifyUser = async (data) => {
+    console.log("verify", data);
     const token = localStorage.getItem("token");
-    const response = await Axios.get(`/users/user/${data.username}`, {
+    const response = await Axios.patch(`/users/user`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,7 +71,7 @@ export default function Page() {
     return response.data;
   };
 
-  const deleteUser = async () => {
+  const deleteUser = async (data) => {
     return console.log("delete");
     const token = localStorage.getItem("token");
     const response = await Axios.delete(`/users/user/${data.username}`, {
@@ -82,7 +82,7 @@ export default function Page() {
     return response.data;
   };
 
-  const editUser = async () => {
+  const editUser = async (data) => {
     return console.log("edit");
     const token = localStorage.getItem("token");
     const response = await Axios.patch(`/users/user/${data.username}`, {
@@ -96,13 +96,15 @@ export default function Page() {
   const handleAction = async (data) => {
     switch (data?.action) {
       case "verify":
-        return await verifyUser();
+        delete data.action;
+        return await verifyUser(data);
 
       case "edit":
-        return await editUser();
+        delete data.action;
+        return await editUser(data);
 
       case "delete":
-        return await deleteUser();
+        return await deleteUser(data);
     }
   };
 
@@ -237,7 +239,6 @@ export default function Page() {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const id = row.original.id;
         const username = row.original.username;
 
         return (
@@ -251,7 +252,13 @@ export default function Page() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => action({ username, action: "verify" })}
+                onClick={() =>
+                  action({
+                    username,
+                    toVerify: !row.getValue("isVerified"),
+                    action: "verify",
+                  })
+                }
               >
                 <Check /> Verify Account
               </DropdownMenuItem>
