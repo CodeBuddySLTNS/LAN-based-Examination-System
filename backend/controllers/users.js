@@ -8,7 +8,7 @@ const User = new UserModel();
 const users = async (req, res) => {
   const query = `SELECT * FROM users`;
   const result = await sqlQuery(query);
-  res.json({ users: "result" });
+  res.json({ users: result });
 };
 
 const userInfo = async (req, res) => {
