@@ -14,8 +14,27 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function Page({ className, ...props }) {
+  const [path, setPath] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location) {
+      switch (location.pathname) {
+        case "/accounts":
+          setPath("Manage Accounts");
+          break;
+
+        default:
+          setPath(null);
+          break;
+      }
+    }
+  }, [location]);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -32,10 +51,14 @@ export default function Page({ className, ...props }) {
                 <BreadcrumbItem className="">
                   <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
-                {/* <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem> */}
+                {path && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbLink href="#">{path}</BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
