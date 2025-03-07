@@ -33,6 +33,10 @@ export function NavUser({ user }) {
   const handleLogout = () => {
     useMainStore.getState().setUser({});
     useMainStore.getState().setIsLoggedIn(false);
+    useMainStore.getState().setIsLoading(true);
+    setTimeout(() => {
+      useMainStore.getState().setIsLoading(false);
+    }, 1000);
     localStorage.removeItem("token");
   };
 
