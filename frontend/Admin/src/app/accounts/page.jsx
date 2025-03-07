@@ -12,10 +12,7 @@ import {
 import {
   ArrowUpDown,
   Check,
-  CheckCheckIcon,
   ChevronDown,
-  Delete,
-  DeleteIcon,
   Edit,
   LucideDelete,
   MoreHorizontal,
@@ -42,6 +39,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios } from "@/lib/utils";
 
@@ -50,6 +58,7 @@ export default function Page() {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [deleteDialog, setDeleteDialog] = React.useState({ status: false });
 
   const queryClient = useQueryClient();
 
@@ -74,12 +83,13 @@ export default function Page() {
   };
 
   const deleteUser = async (data) => {
-    return console.log("delete");
+    console.log("delete");
     const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/users/user/${data.username}`, {
+    const response = await Axios.delete(`/users/user`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      data,
     });
     return response.data;
   };
@@ -96,18 +106,24 @@ export default function Page() {
   };
 
   const handleAction = async (data) => {
+    let response;
     switch (data?.action) {
       case "verify":
         delete data.action;
-        await verifyUser(data);
+        response = await verifyUser(data);
         queryClient.invalidateQueries(["users"]);
+        return response;
 
       case "edit":
         delete data.action;
-        return await editUser(data);
+        response = await editUser(data);
+        queryClient.invalidateQueries(["users"]);
+        return response;
 
       case "delete":
-        return await deleteUser(data);
+        response = await deleteUser(data);
+        queryClient.invalidateQueries(["users"]);
+        return response;
     }
   };
 
@@ -281,7 +297,7 @@ export default function Page() {
                 Edit Account
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => action({ username, action: "delete" })}
+                onClick={() => setDeleteDialog({ status: true, username })}
               >
                 <LucideDelete className="text-red-500" />
                 Delete Account
@@ -424,6 +440,28 @@ export default function Page() {
           </Button>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialog.status} onOpenChange={setDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              account and remove the data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                action({ username: deleteDialog.username, action: "delete" })
+              }
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
