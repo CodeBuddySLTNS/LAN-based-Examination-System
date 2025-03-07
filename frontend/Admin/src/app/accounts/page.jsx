@@ -19,6 +19,7 @@ import {
   Edit,
   LucideDelete,
   MoreHorizontal,
+  XIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios } from "@/lib/utils";
 
 export default function Page() {
@@ -49,6 +50,8 @@ export default function Page() {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const queryClient = useQueryClient();
 
   const fetchUsers = async () => {
     const token = localStorage.getItem("token");
@@ -61,7 +64,6 @@ export default function Page() {
   };
 
   const verifyUser = async (data) => {
-    console.log("verify", data);
     const token = localStorage.getItem("token");
     const response = await Axios.patch(`/users/user`, data, {
       headers: {
@@ -97,7 +99,8 @@ export default function Page() {
     switch (data?.action) {
       case "verify":
         delete data.action;
-        return await verifyUser(data);
+        await verifyUser(data);
+        queryClient.invalidateQueries(["users"]);
 
       case "edit":
         delete data.action;
@@ -260,7 +263,15 @@ export default function Page() {
                   })
                 }
               >
-                <Check /> Verify Account
+                {row.getValue("isVerified") ? (
+                  <>
+                    <XIcon /> Unverify Account
+                  </>
+                ) : (
+                  <>
+                    <Check /> Verify Account
+                  </>
+                )}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
