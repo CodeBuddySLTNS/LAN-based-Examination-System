@@ -23,8 +23,8 @@ const userInfo = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
+  console.log("verifyAccount");
   const { username, toVerify } = req.body;
-  console.log(req.body);
   const result = await User.verifyUser(username, toVerify);
 
   if (result) {
@@ -38,9 +38,9 @@ const verifyAccount = async (req, res) => {
 };
 
 const deleteAccount = async (req, res) => {
-  const username = req.params.username;
+  const { username } = req.body;
   const result = await User.deleteUser(username);
-
+  console.log("deleteAccount");
   if (result) {
     return res.json({ deleted: true, username, result });
   }
@@ -54,6 +54,6 @@ const deleteAccount = async (req, res) => {
 module.exports = {
   users,
   userInfo,
-  deleteAccount,
   verifyAccount,
+  deleteAccount,
 };
