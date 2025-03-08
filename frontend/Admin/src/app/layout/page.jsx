@@ -15,11 +15,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Page({ className, ...props }) {
   const [path, setPath] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (location) {
@@ -49,7 +50,9 @@ export default function Page({ className, ...props }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="">
-                  <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink onClick={() => navigate("/")}>
+                    Dashboard
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 {path && (
                   <>
