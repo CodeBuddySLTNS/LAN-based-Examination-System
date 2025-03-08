@@ -38,6 +38,21 @@ class UserModel {
     return result;
   }
 
+  // edit a user from users table
+  async editUser(username) {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `UPDATE users SET name = "Garcia, Andres D." WHERE username = ? LIMIT 1`;
+    const result = await sqlQuery(query, [username]);
+    console.log(result);
+    if (result) {
+      if (result?.affectedRows > 0) {
+        return result;
+      }
+      return null;
+    }
+    return null;
+  }
+
   // deletes a user from users table
   async deleteUser(username) {
     await this.createUsersTable(); // creates users table if it doesn't exist
