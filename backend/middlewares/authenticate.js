@@ -16,12 +16,10 @@ const authenticate = async (req, res, next) => {
       if (token) {
         jwt.verify(token, secretKey, (err, verifiedToken) => {
           if (err) {
-            console.log("not logged in:", token);
             return res.status(FORBIDDEN).json({ message: "Invalid token" });
           }
           res.locals.userId = verifiedToken.id;
           next();
-          console.log("logged in");
         });
       } else {
         return res.status(FORBIDDEN).json({ message: "Invalid token" });
