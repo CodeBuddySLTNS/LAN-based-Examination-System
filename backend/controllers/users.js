@@ -23,7 +23,6 @@ const userInfo = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
-  console.log("verifyAccount");
   const { username, toVerify } = req.body;
   const result = await User.verifyUser(username, toVerify);
 
@@ -37,10 +36,24 @@ const verifyAccount = async (req, res) => {
   );
 };
 
+const editAccount = async (req, res) => {
+  const { username } = req.body;
+  const result = await User.editUser(username);
+  console.log(result);
+  if (result) {
+    return res.json({ modified: true, username, result });
+  }
+
+  throw new CustomError(
+    `Unable to edit ${username}, it maybe because it was not found or server error.`,
+    CONFLICT
+  );
+};
+
 const deleteAccount = async (req, res) => {
   const { username } = req.body;
   const result = await User.deleteUser(username);
-  console.log("deleteAccount");
+
   if (result) {
     return res.json({ deleted: true, username, result });
   }
@@ -55,5 +68,6 @@ module.exports = {
   users,
   userInfo,
   verifyAccount,
+  editAccount,
   deleteAccount,
 };
