@@ -43,7 +43,7 @@ class UserModel {
     await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `UPDATE users SET name = "Garcia, Andres D." WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
-    console.log(result);
+
     if (result) {
       if (result?.affectedRows > 0) {
         return result;
@@ -68,7 +68,7 @@ class UserModel {
     return null;
   }
 
-  // verif or unverify a user
+  // verify or unverify a user
   async verifyUser(username, toVerify) {
     await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `UPDATE users SET isVerified = ${
