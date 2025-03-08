@@ -31,7 +31,7 @@ const verifyAccount = async (req, res) => {
   }
 
   throw new CustomError(
-    `Unable to delete ${username}, it maybe because it is not found or internal server error.`,
+    `Unable to delete ${username}, it maybe because it is not found or server error.`,
     CONFLICT
   );
 };
@@ -39,7 +39,7 @@ const verifyAccount = async (req, res) => {
 const editAccount = async (req, res) => {
   const { username } = req.body;
   const result = await User.editUser(username);
-  console.log(result);
+
   if (result) {
     return res.json({ modified: true, username, result });
   }
