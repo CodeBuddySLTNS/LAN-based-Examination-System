@@ -74,7 +74,7 @@ export default function Page() {
 
   const verifyUser = async (data) => {
     const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/users/user`, data, {
+    const response = await Axios.patch(`/users/user/verify`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -85,7 +85,7 @@ export default function Page() {
   const deleteUser = async (data) => {
     console.log("delete");
     const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/users/user`, {
+    const response = await Axios.delete(`/users/user/delete`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -446,8 +446,9 @@ export default function Page() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              account and remove the data from our servers.
+              This action cannot be undone. This will permanently delete
+              <span className="text-red-500"> @{deleteDialog.username}</span>'s
+              account and remove his/her data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
