@@ -5,8 +5,9 @@ const controller = require("../controllers/users");
 const router = Router();
 
 router.get("/", tryCatch(controller.users));
-router.patch("/user", tryCatch(controller.verifyAccount));
-router.delete("/user", tryCatch(controller.deleteAccount));
 router.get("/user/:username", tryCatch(controller.userInfo));
+router.patch("/user/edit", tryCatch(controller.editAccount));
+router.delete("/user/delete", tryCatch(controller.deleteAccount));
+router.patch("/user/verify", tryCatch(controller.verifyAccount));
 
 module.exports = router;
