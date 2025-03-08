@@ -83,7 +83,6 @@ export default function Page() {
   };
 
   const deleteUser = async (data) => {
-    console.log("delete");
     const token = localStorage.getItem("token");
     const response = await Axios.delete(`/users/user/delete`, {
       headers: {
@@ -95,9 +94,8 @@ export default function Page() {
   };
 
   const editUser = async (data) => {
-    return console.log("edit");
     const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/users/user/${data.username}`, {
+    const response = await Axios.patch(`/users/user/edit`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -124,6 +122,9 @@ export default function Page() {
         response = await deleteUser(data);
         queryClient.invalidateQueries(["users"]);
         return response;
+
+      default:
+        throw new Error("Invalid action.");
     }
   };
 
@@ -441,6 +442,7 @@ export default function Page() {
         </div>
       </div>
 
+      {/* Alert Dialog for delete action */}
       <AlertDialog open={deleteDialog.status} onOpenChange={setDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

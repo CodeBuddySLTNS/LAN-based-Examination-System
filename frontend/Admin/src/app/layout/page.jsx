@@ -58,7 +58,7 @@ export default function Page({ className, ...props }) {
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink href="#">{path}</BreadcrumbLink>
+                      <BreadcrumbLink>{path}</BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
