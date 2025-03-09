@@ -29,6 +29,10 @@ export default function Page({ className, ...props }) {
           setPath("Manage Accounts");
           break;
 
+        case "/accounts/add":
+          setPath("Manage Accounts");
+          break;
+
         default:
           setPath(null);
           break;
