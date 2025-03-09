@@ -480,9 +480,6 @@ export default function Page() {
 
       {/* Dialog for edit account action */}
       <Dialog open={editDialog.status} onOpenChange={setEditDialog}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
