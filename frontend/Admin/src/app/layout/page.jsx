@@ -58,11 +58,27 @@ export default function Page({ className, ...props }) {
                     Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                {path && (
+                {path.split("/")[0] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path}</BreadcrumbLink>
+                      <BreadcrumbLink>{path.split("/")[0]}</BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
+                {path.split("/")[1] && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbLink>{path.split("/")[1]}</BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
+                {path.split("/")[2] && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbLink>{path.split("/")[2]}</BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
