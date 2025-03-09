@@ -157,12 +157,17 @@ export default function Page() {
     mutationFn: handleAction,
   });
 
-  const { register, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = async (data) => {
     const username = editDialog.user.username;
     const updateBody = {
-      name: data.name,
+      name: `${data.lastname}, ${data.firstname} ${data.middlename[0]}.`,
       username: data.username,
       department: data.department,
       year: data.year,
@@ -489,15 +494,61 @@ export default function Page() {
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
+              <Label htmlFor="lastname" className="text-right">
+                Last Name
               </Label>
               <Input
-                {...register("name")}
-                id="name"
-                defaultValue={editDialog.user?.name}
+                {...register("lastname")}
+                id="lastname"
+                type="text"
+                defaultValue={editDialog.user?.name?.split(",")[0]}
                 className="col-span-3"
+                required
               />
+              {errors?.lastname && (
+                <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
+                  {errors?.lastname?.message}
+                </p>
+              )}
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="firstname" className="text-right">
+                First Name
+              </Label>
+              <Input
+                {...register("firstname")}
+                id="firstname"
+                type="text"
+                defaultValue={editDialog.user?.name
+                  ?.split(",")[1]
+                  ?.slice(0, -2)
+                  ?.trim()}
+                className="col-span-3"
+                required
+              />
+              {errors?.firstname && (
+                <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
+                  {errors?.firstname?.message}
+                </p>
+              )}
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="middlename" className="text-right">
+                Middle Name
+              </Label>
+              <Input
+                {...register("middlename")}
+                id="middlename"
+                type="text"
+                defaultValue={editDialog.user?.name?.split(",")[1]?.slice(-2)}
+                className="col-span-3"
+                required
+              />
+              {errors?.middlename && (
+                <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
+                  {errors?.middlename?.message}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right">
@@ -508,6 +559,7 @@ export default function Page() {
                 id="username"
                 defaultValue={editDialog.user?.username}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
