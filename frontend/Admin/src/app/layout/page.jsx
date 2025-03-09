@@ -30,7 +30,7 @@ export default function Page({ className, ...props }) {
           break;
 
         case "/accounts/add":
-          setPath("Manage Accounts");
+          setPath("Manage Accounts/Add Account");
           break;
 
         default:
@@ -58,27 +58,29 @@ export default function Page({ className, ...props }) {
                     Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                {path.split("/")[0] && (
+                {path?.split("/")[0] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path.split("/")[0]}</BreadcrumbLink>
+                      <BreadcrumbLink onClick={() => navigate("/accounts")}>
+                        {path?.split("/")[0]}
+                      </BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
-                {path.split("/")[1] && (
+                {path?.split("/")[1] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path.split("/")[1]}</BreadcrumbLink>
+                      <BreadcrumbLink>{path?.split("/")[1]}</BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
-                {path.split("/")[2] && (
+                {path?.split("/")[2] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path.split("/")[2]}</BreadcrumbLink>
+                      <BreadcrumbLink>{path?.split("/")[2]}</BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
