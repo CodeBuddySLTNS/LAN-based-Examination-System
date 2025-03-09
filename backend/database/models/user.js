@@ -39,9 +39,9 @@ class UserModel {
   }
 
   // edit a user from users table
-  async editUser(username) {
+  async editUser(username, updateString) {
     await this.createUsersTable(); // creates users table if it doesn't exist
-    const query = `UPDATE users SET name = "Garcia, Andres D." WHERE username = ? LIMIT 1`;
+    const query = `UPDATE users SET ${updateString} WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
 
     if (result) {
