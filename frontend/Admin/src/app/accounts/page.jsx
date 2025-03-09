@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -39,6 +40,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,12 +62,22 @@ import {
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useForm } from "react-hook-form";
 
 export default function Page() {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [editDialog, setEditDialog] = React.useState({ status: false });
   const [deleteDialog, setDeleteDialog] = React.useState({ status: false });
 
   const queryClient = useQueryClient();
@@ -136,6 +156,21 @@ export default function Page() {
   const { mutateAsync: action } = useMutation({
     mutationFn: handleAction,
   });
+
+  const { register, handleSubmit, setValue } = useForm();
+
+  const onSubmit = async (data) => {
+    const username = editDialog.user.username;
+    const updateBody = {
+      name: data.name,
+      username: data.username,
+      department: data.department,
+      year: data.year,
+    };
+
+    await action({ username, updateBody, action: "edit" });
+    setEditDialog({ status: false });
+  };
 
   const columns = [
     {
@@ -259,6 +294,7 @@ export default function Page() {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
+        const user = row.original;
         const username = row.original.username;
 
         return (
@@ -292,7 +328,7 @@ export default function Page() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => action({ username, action: "edit" })}
+                onClick={() => setEditDialog({ status: true, user })}
               >
                 <Edit className="text-green-600" />
                 Edit Account
@@ -442,7 +478,83 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Alert Dialog for delete action */}
+      {/* Dialog for edit account action */}
+      <Dialog open={editDialog.status} onOpenChange={setEditDialog}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                {...register("name")}
+                id="name"
+                defaultValue={editDialog.user?.name}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Username
+              </Label>
+              <Input
+                {...register("username")}
+                id="username"
+                defaultValue={editDialog.user?.username}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <p className="text-right">Department</p>
+              <div className="col-span-3">
+                <Select
+                  defaultValue={editDialog.user?.department}
+                  onValueChange={(value) => setValue("department", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="BSCS">BSCS</SelectItem>
+                      <SelectItem value="BSSW">BSSW</SelectItem>
+                      <SelectItem value="BSIT">BSIT</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="year" className="text-right">
+                Year
+              </Label>
+              <Input
+                {...register("year")}
+                id="year"
+                type="number"
+                className="col-span-3"
+                min="1"
+                max="4"
+                defaultValue={editDialog.user?.year}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Alert Dialog for delete account action */}
       <AlertDialog open={deleteDialog.status} onOpenChange={setDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
