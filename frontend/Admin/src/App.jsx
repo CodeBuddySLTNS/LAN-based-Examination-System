@@ -13,6 +13,7 @@ import Accounts from "./app/accounts/page";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Axios } from "./lib/utils";
+import AddAccount from "./app/accounts/add-account";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -72,6 +73,14 @@ function App() {
               element={
                 <Layout>
                   <Accounts />
+                </Layout>
+              }
+            />
+            <Route
+              path="/accounts/add"
+              element={
+                <Layout>
+                  <AddAccount />
                 </Layout>
               }
             />
