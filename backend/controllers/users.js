@@ -37,8 +37,18 @@ const verifyAccount = async (req, res) => {
 };
 
 const editAccount = async (req, res) => {
-  const { username } = req.body;
-  const result = await User.editUser(username);
+  const { username, updateBody } = req.body;
+  const updateArray = [];
+
+  if (typeof updateBody === "object") {
+    Object.entries(updateBody).map((f) => {
+      updateArray.push(
+        `${f[0]} = ${typeof f[1] === "number" ? f[1] : `"${f[1]}"`}`
+      );
+    });
+  }
+
+  const result = await User.editUser(username, updateArray.join(", "));
 
   if (result) {
     return res.json({ modified: true, username, result });
