@@ -114,11 +114,7 @@ const data = {
         },
         {
           title: "Add Account",
-          url: "#",
-        },
-        {
-          title: "Edit Account",
-          url: "#",
+          url: "/accounts/add",
         },
       ],
     },
