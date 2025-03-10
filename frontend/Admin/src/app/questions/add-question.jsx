@@ -19,15 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Axios } from "@/lib/utils";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
-const schema = Joi.object({
-  lastname: Joi.string().label("Last Name").required(),
-  firstname: Joi.string().label("First Name").required(),
-  middlename: Joi.string().label("Middle Name").required(),
-  department: Joi.string().label("Department").required(),
-  year: Joi.number().label("Year").required(),
-  username: Joi.string().max(15).label("Username").required(),
-  password: Joi.string().min(3).label("Password").required(),
-});
+const schema = Joi.object({});
 
 export const AddQuestion = () => {
   const postRequest = async (user) => {
@@ -82,147 +74,11 @@ export const AddQuestion = () => {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add Account</CardTitle>
+          <CardTitle>Add Question</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="grid gap-3">
-                  <Label htmlFor="lastname">Last Name</Label>
-                  <Input
-                    {...register("lastname")}
-                    id="lastname"
-                    type="text"
-                    required
-                  />
-                  {errors?.lastname && (
-                    <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                      {errors?.lastname?.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="firstname">First Name</Label>
-                  <Input
-                    {...register("firstname")}
-                    id="firstname"
-                    type="text"
-                    required
-                  />
-                  {errors?.firstname && (
-                    <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                      {errors?.firstname?.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="middlename">Middle Name</Label>
-                  <Input
-                    {...register("middlename")}
-                    id="middlename"
-                    type="text"
-                    required
-                  />
-                  {errors?.middlename && (
-                    <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                      {errors?.middlename?.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="grid gap-3">
-                  <Label>Department</Label>
-                  <Select
-                    onValueChange={(value) => setValue("department", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="BSCS">BSCS</SelectItem>
-                        <SelectItem value="BSSW">BSSW</SelectItem>
-                        <SelectItem value="BSIT">BSIT</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  {errors?.department && (
-                    <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                      {errors?.department?.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="year">Year</Label>
-                  <Input
-                    {...register("year")}
-                    id="year"
-                    type="number"
-                    min="1"
-                    max="4"
-                    required
-                  />
-                  {errors?.year && (
-                    <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                      {errors?.year?.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  {...register("username")}
-                  id="username"
-                  type="text"
-                  required
-                />
-                {errors?.username && (
-                  <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                    {errors?.username?.message}
-                  </p>
-                )}
-              </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                  required
-                />
-                {errors?.password && (
-                  <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
-                    {errors?.password?.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
-                  {isPending ? "Processing..." : "Add Account"}
-                </Button>
-                {error?.code === "ERR_NETWORK" && (
-                  <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
-                    <AlertCircle className="w-[17px]" /> Unable to connect to
-                    the server.
-                  </p>
-                )}
-                {error?.response?.data?.status === 500 && (
-                  <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
-                    <AlertCircle className="w-[17px]" /> Internal Server Error
-                  </p>
-                )}
-                {data && (
-                  <p className="text-sm font-normal text-green-600 flex justify-center items-center gap-1">
-                    <CheckCircle className="w-[17px]" /> Added Successfully
-                  </p>
-                )}
-              </div>
-            </div>
+            <div className="flex flex-col gap-6"></div>
           </form>
         </CardContent>
       </Card>
