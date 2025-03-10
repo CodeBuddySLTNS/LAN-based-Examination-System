@@ -77,8 +77,9 @@ export default function Page() {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [editDialog, setEditDialog] = React.useState({ status: false });
-  const [deleteDialog, setDeleteDialog] = React.useState({ status: false });
+  const [actionData, setActionData] = React.useState(null);
+  const [isEditDialog, setIsEditDialog] = React.useState(false);
+  const [deleteDialog, setDeleteDialog] = React.useState(false);
 
   const queryClient = useQueryClient();
 
@@ -165,7 +166,7 @@ export default function Page() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const username = editDialog.user.username;
+    const username = actionData?.username;
     const updateBody = {
       name: `${data.lastname}, ${data.firstname} ${data.middlename[0]}.`,
       username: data.username,
@@ -174,7 +175,7 @@ export default function Page() {
     };
 
     await action({ username, updateBody, action: "edit" });
-    setEditDialog({ status: false });
+    setIsEditDialog(false);
   };
 
   const columns = [
@@ -333,13 +334,19 @@ export default function Page() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => setEditDialog({ status: true, user })}
+                onClick={() => {
+                  setIsEditDialog(true);
+                  setActionData(user);
+                }}
               >
                 <Edit className="text-green-600" />
                 Edit Account
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setDeleteDialog({ status: true, username })}
+                onClick={() => {
+                  setDeleteDialog(true);
+                  setActionData(user);
+                }}
               >
                 <LucideDelete className="text-red-500" />
                 Delete Account
@@ -484,7 +491,7 @@ export default function Page() {
       </div>
 
       {/* Dialog for edit account action */}
-      <Dialog open={editDialog.status} onOpenChange={setEditDialog}>
+      <Dialog open={isEditDialog} onOpenChange={setIsEditDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
@@ -501,7 +508,7 @@ export default function Page() {
                 {...register("lastname")}
                 id="lastname"
                 type="text"
-                defaultValue={editDialog.user?.name?.split(",")[0]}
+                defaultValue={actionData?.name?.split(",")[0]}
                 className="col-span-3"
                 required
               />
@@ -519,7 +526,7 @@ export default function Page() {
                 {...register("firstname")}
                 id="firstname"
                 type="text"
-                defaultValue={editDialog.user?.name
+                defaultValue={actionData?.name
                   ?.split(",")[1]
                   ?.slice(0, -2)
                   ?.trim()}
@@ -540,7 +547,7 @@ export default function Page() {
                 {...register("middlename")}
                 id="middlename"
                 type="text"
-                defaultValue={editDialog.user?.name?.split(",")[1]?.slice(-2)}
+                defaultValue={actionData?.name?.split(",")[1]?.slice(-2)}
                 className="col-span-3"
                 required
               />
@@ -557,7 +564,7 @@ export default function Page() {
               <Input
                 {...register("username")}
                 id="username"
-                defaultValue={editDialog.user?.username}
+                defaultValue={actionData?.username}
                 className="col-span-3"
                 required
               />
@@ -566,7 +573,7 @@ export default function Page() {
               <p className="text-right">Department</p>
               <div className="col-span-3">
                 <Select
-                  defaultValue={editDialog.user?.department}
+                  defaultValue={actionData?.department}
                   onValueChange={(value) => setValue("department", value)}
                 >
                   <SelectTrigger>
@@ -593,7 +600,7 @@ export default function Page() {
                 className="col-span-3"
                 min="1"
                 max="4"
-                defaultValue={editDialog.user?.year}
+                defaultValue={actionData?.year}
               />
             </div>
             <DialogFooter>
@@ -604,13 +611,13 @@ export default function Page() {
       </Dialog>
 
       {/* Alert Dialog for delete account action */}
-      <AlertDialog open={deleteDialog.status} onOpenChange={setDeleteDialog}>
+      <AlertDialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete
-              <span className="text-red-500"> @{deleteDialog.username}</span>'s
+              <span className="text-red-500"> @{actionData?.username}</span>'s
               account and remove his/her data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -618,7 +625,7 @@ export default function Page() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
-                action({ username: deleteDialog.username, action: "delete" })
+                action({ username: actionData?.username, action: "delete" })
               }
             >
               Continue
