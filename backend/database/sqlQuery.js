@@ -33,13 +33,4 @@ const sqlQuery = async (query, params) => {
   }
 };
 
-const questionsTableQuery = `CREATE TABLE IF NOT EXISTS questions (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  user_id INT NOT NULL,
-  question VARCHAR(255) NOT NULL,
-  correct_answer JSON NOT NULL,
-  incorrect_answer JSON NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-)`;
-
 module.exports = sqlQuery;
