@@ -14,6 +14,8 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Axios } from "./lib/utils";
 import AddAccount from "./app/accounts/add-account";
+import Questions from "./app/questions/page";
+import AddQuestion from "./app/questions/add-question";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -37,7 +39,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       useMainStore.getState().setIsLoading(false);
-    }, 1000);
+    }, 800);
   }, [loading]);
 
   useEffect(() => {
@@ -65,6 +67,22 @@ function App() {
               element={
                 <Layout>
                   <Dashboard />
+                </Layout>
+              }
+            />
+            <Route
+              path="/questions"
+              element={
+                <Layout>
+                  <Questions />
+                </Layout>
+              }
+            />
+            <Route
+              path="/questions/add"
+              element={
+                <Layout>
+                  <AddQuestion />
                 </Layout>
               }
             />
