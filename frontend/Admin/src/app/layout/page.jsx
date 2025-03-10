@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Page({ className, ...props }) {
-  const [path, setPath] = useState(null);
+  const [path, setPath] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -26,15 +26,29 @@ export default function Page({ className, ...props }) {
     if (location) {
       switch (location.pathname) {
         case "/accounts":
-          setPath("Manage Accounts");
+          setPath({ name: "Manage Accounts", url: "/accounts" });
           break;
 
         case "/accounts/add":
-          setPath("Manage Accounts/Add Account");
+          setPath({
+            name: "Manage Accounts/Add Account",
+            url: "/accounts/add",
+          });
+          break;
+
+        case "/questions":
+          setPath({ name: "Question Bank", url: "/questions" });
+          break;
+
+        case "/questions/add":
+          setPath({
+            name: "Question Bank/Add Question",
+            url: "/questions/add",
+          });
           break;
 
         default:
-          setPath(null);
+          setPath({});
           break;
       }
     }
@@ -58,29 +72,35 @@ export default function Page({ className, ...props }) {
                     Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                {path?.split("/")[0] && (
+                {path.name?.split("/")[0] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink onClick={() => navigate("/accounts")}>
-                        {path?.split("/")[0]}
+                      <BreadcrumbLink
+                        onClick={() => navigate("/" + path.url?.split("/")[1])}
+                      >
+                        {path.name?.split("/")[0]}
                       </BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
-                {path?.split("/")[1] && (
+                {path.name?.split("/")[1] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path?.split("/")[1]}</BreadcrumbLink>
+                      <BreadcrumbLink onClick={() => navigate(path.url)}>
+                        {path.name?.split("/")[1]}
+                      </BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
-                {path?.split("/")[2] && (
+                {path.name?.split("/")[2] && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink>{path?.split("/")[2]}</BreadcrumbLink>
+                      <BreadcrumbLink onClick={() => navigate(path.url)}>
+                        {path.name?.split("/")[2]}
+                      </BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
