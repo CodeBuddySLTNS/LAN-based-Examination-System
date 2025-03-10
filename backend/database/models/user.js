@@ -1,18 +1,9 @@
 const sqlQuery = require("../sqlQuery");
+const { usersTableQuery } = require("../tableQueries");
 
 class UserModel {
   // creates users table if it doesn't exist
   async createUsersTable() {
-    const usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
-      id INT PRIMARY KEY AUTO_INCREMENT,
-      name VARCHAR(255) NOT NULL,
-      username VARCHAR(15) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL,
-      department VARCHAR(255) NOT NULL,
-      year INT NOT NULL,
-      role VARCHAR(15) NOT NULL DEFAULT 'user',
-      isVerified BOOL DEFAULT false
-    )`;
     await sqlQuery(usersTableQuery);
   }
 
@@ -112,6 +103,14 @@ class UserModel {
       return null;
     }
     return null;
+  }
+
+  // get all users from users table
+  async getUsers() {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `SELECT id, name, username, department, year, role, isVerified FROM users`;
+    const users = await sqlQuery(query);
+    return users;
   }
 
   // check if a user exists in users table
