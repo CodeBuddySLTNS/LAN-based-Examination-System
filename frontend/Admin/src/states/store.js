@@ -73,11 +73,11 @@ export const useSidebarStore = create((set) => ({
       items: [
         {
           title: "Questions",
-          url: "#",
+          url: "/questions",
         },
         {
           title: "Add Question",
-          url: "#",
+          url: "/questions/add",
         },
       ],
     },
