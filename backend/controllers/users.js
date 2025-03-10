@@ -6,9 +6,8 @@ const { CONFLICT, NOT_FOUND } = require("../constants/statusCodes");
 const User = new UserModel();
 
 const users = async (req, res) => {
-  const query = `SELECT * FROM users`;
-  const result = await sqlQuery(query);
-  res.json({ users: result });
+  const users = await User.getUsers();
+  res.json({ users });
 };
 
 const userInfo = async (req, res) => {
