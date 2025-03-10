@@ -273,6 +273,24 @@ export default function Page() {
       ),
     },
     {
+      accessorKey: "role",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Role
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("role")}</div>
+      ),
+    },
+    {
       accessorKey: "isVerified",
       header: ({ column }) => {
         return (
