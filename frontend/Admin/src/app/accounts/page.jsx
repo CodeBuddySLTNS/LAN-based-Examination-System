@@ -377,6 +377,20 @@ export default function Page() {
     },
   });
 
+  React.useEffect(() => {
+    if (actionData) {
+      setValue("lastname", actionData?.name?.split(",")[0]);
+      setValue(
+        "firstname",
+        actionData?.name?.split(",")[1]?.slice(0, -2)?.trim()
+      );
+      setValue("middlename", actionData?.name?.split(",")[1]?.slice(-2));
+      setValue("username", actionData?.username);
+      setValue("department", actionData?.department);
+      setValue("year", actionData?.year);
+    }
+  }, [actionData, setValue]);
+
   return (
     <div className=" box-border px-8">
       <div className="flex items-center py-4">
@@ -499,7 +513,7 @@ export default function Page() {
               Make changes to your profile here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="lastname" className="text-right">
                 Last Name
@@ -601,6 +615,7 @@ export default function Page() {
                 min="1"
                 max="4"
                 defaultValue={actionData?.year}
+                required
               />
             </div>
             <DialogFooter>
