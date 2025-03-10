@@ -12,14 +12,11 @@ import {
 import React from "react";
 
 import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import Joi from "joi";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Axios } from "@/lib/utils";
 import { AlertCircle, CheckCircle } from "lucide-react";
-
-const schema = Joi.object({});
+import { Textarea } from "@/components/ui/textarea";
 
 export const AddQuestion = () => {
   const postRequest = async (user) => {
@@ -33,7 +30,7 @@ export const AddQuestion = () => {
   };
 
   const {
-    mutateAsync: signup,
+    mutateAsync: addQuestion,
     data,
     isPending,
     error,
@@ -50,20 +47,14 @@ export const AddQuestion = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm({ resolver: joiResolver(schema) });
+  } = useForm();
 
   const onSubmit = async (data) => {
-    const user = {
-      name: `${data.lastname}, ${data.firstname} ${data.middlename[0]}.`,
-      username: data.username,
-      password: data.password,
-      department: data.department,
-      year: data.year,
-    };
+    console.log(data);
 
-    try {
-      await signup(user);
-    } catch (error) {}
+    // try {
+    //   await addQuestion(user);
+    // } catch (error) {}
   };
 
   React.useEffect(() => {
@@ -74,11 +65,58 @@ export const AddQuestion = () => {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add Question</CardTitle>
+          <CardTitle>Add New Question</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-6"></div>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="question">Question</Label>
+                <Textarea
+                  {...register("question")}
+                  placeholder="Type your question here."
+                  id="question"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label>Question Type</Label>
+                <Select
+                  onValueChange={(value) => setValue("questionType", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select question type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="multiple_choice">
+                        Multiple Choice
+                      </SelectItem>
+                      <SelectItem value="identification">
+                        Identification
+                      </SelectItem>
+                      <SelectItem value="enumeration">Enumeration</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="question">Choices</Label>
+                <Textarea
+                  {...register("question")}
+                  placeholder="Type your question here."
+                  id="question"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="correctAnswer">Correct Answer</Label>
+                <Input {...register("correctAnswer")} id="correctAnswer" />
+              </div>
+            </div>
+            <Button type="submit" className="w-full mt-5">
+              Add Question
+            </Button>
           </form>
         </CardContent>
       </Card>
