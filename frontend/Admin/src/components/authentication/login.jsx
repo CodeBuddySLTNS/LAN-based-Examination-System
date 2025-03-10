@@ -49,7 +49,7 @@ export default function Page({ setForm }) {
       useMainStore.getState().setIsLoading(true);
       setTimeout(() => {
         useMainStore.getState().setIsLoading(false);
-      }, 1000);
+      }, 800);
     }
   }, [data]);
 
