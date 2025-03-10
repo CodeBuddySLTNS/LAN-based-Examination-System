@@ -133,7 +133,7 @@ export const AddAccount = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="grid gap-3">
-                  <p>Department</p>
+                  <Label>Department</Label>
                   <Select
                     onValueChange={(value) => setValue("department", value)}
                   >
