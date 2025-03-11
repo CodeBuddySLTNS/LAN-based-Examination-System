@@ -23,8 +23,8 @@ module.exports.questionBankTableQuery = `CREATE TABLE question_bank (
     id INT PRIMARY KEY AUTO_INCREMENT,
     question_text TEXT NOT NULL,
     question_type ENUM('multiple_choice', 'identification', 'enumeration') NOT NULL,
-    choices JSON NULL,  -- Stores multiple-choice options as JSON
-    correct_answer TEXT,  -- Stores correct answer for identification/enumeration
+    choices JSON NULL,
+    correct_answer JSON,
     created_by INT NOT NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );`;
