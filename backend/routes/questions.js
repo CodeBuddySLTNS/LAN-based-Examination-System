@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", tryCatch(controller.questions));
 router.post("/add", tryCatch(controller.addQuestion));
+router.patch("/edit", tryCatch(controller.editQuestion));
 router.delete("/delete", tryCatch(controller.deleteQuestion));
-router.patch("/update", tryCatch(controller.editQuestion));
 
 module.exports = router;
