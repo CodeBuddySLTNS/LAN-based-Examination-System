@@ -29,12 +29,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { Switch } from "@/components/ui/switch";
 
 const schema = Joi.object({
+  subject: Joi.string().label("Subject").required(),
   question: Joi.string().label("Question").required(),
   questionType: Joi.string().label("Question Type").required(),
-  choices: Joi.array()
-    .items(Joi.string().allow(""))
-    .label("Choices")
-    .required(),
+  choices: Joi.array().items(Joi.string().allow("")).label("Choices"),
   correctAnswer: Joi.array()
     .items(Joi.string().allow(""))
     .label("Correct Answer")
@@ -76,7 +74,7 @@ export const AddQuestion = () => {
     reset,
     formState: { errors },
   } = useForm({ resolver: joiResolver(schema) });
-
+  console.log(errors);
   const onSubmit = async (data) => {
     console.log(data);
 
@@ -98,6 +96,29 @@ export const AddQuestion = () => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <Label>Subject</Label>
+                <Select onValueChange={(value) => setValue("subject", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="GPRH">Philippine History</SelectItem>
+                      <SelectItem value="SDP104">
+                        Skills Development Program
+                      </SelectItem>
+                      <SelectItem value="PATHFit4">Team Sports</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {errors?.subject && (
+                  <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
+                    {errors?.subject?.message}
+                  </p>
+                )}
+              </div>
+
               <div className="flex flex-col gap-3">
                 <Label htmlFor="question">Question</Label>
                 <Textarea
