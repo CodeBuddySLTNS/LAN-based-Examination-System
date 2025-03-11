@@ -18,10 +18,10 @@ const signupSchema = Joi.object({
     "string.max": "Username should not exceed {#limit} characters",
     "any.required": "Username is required",
   }),
-  department: Joi.string().messages({
+  department: Joi.string().required().messages({
     "any.required": "Department is required",
   }),
-  year: Joi.number().min(1).max(4).messages({
+  year: Joi.number().min(1).max(4).required().messages({
     "number.min": "Year should be between 1 and 4",
     "number.max": "Year should be between 1 and 4",
     "any.required": "Year is required",
@@ -35,15 +35,26 @@ const addQuestionSchema = Joi.object({
   subject: Joi.string().label("Subject").required().messages({
     "any.required": "Subject is required",
   }),
-  question: Joi.string().max(255).label("Question").required().messages({
+  question: Joi.string().label("Question").required().messages({
     "any.required": "Question is required",
   }),
-  correctAnswer: Joi.string().label("Correct Answer").required().messages({
-    "any.required": "Correct Answer is required",
+  questionType: Joi.string().label("Question Type").required().messages({
+    "any.required": "Question type is required",
   }),
-  incorrectAnswer: Joi.string().label("Incorrect Answer").required().messages({
-    "any.required": "Correct Answer is required",
-  }),
+  choices: Joi.array()
+    .items(Joi.string().allow(""))
+    .label("Question Type")
+    .required()
+    .messages({
+      "any.required": "Choices is required",
+    }),
+  correctAnswer: Joi.array()
+    .items(Joi.string())
+    .label("Correct Answer")
+    .required()
+    .messages({
+      "any.required": "Correct Answer is required",
+    }),
 });
 
 // Validator functions
