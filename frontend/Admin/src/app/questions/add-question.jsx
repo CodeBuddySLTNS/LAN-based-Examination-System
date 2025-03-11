@@ -15,10 +15,38 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Axios } from "@/lib/utils";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Plus,
+  PlusIcon,
+  PlusSquareIcon,
+  XSquareIcon,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import Joi from "joi";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { Switch } from "@/components/ui/switch";
+
+const schema = Joi.object({
+  question: Joi.string().label("Question").required(),
+  questionType: Joi.string().label("Question Type").required(),
+  choices: Joi.array()
+    .items(Joi.string().allow(""))
+    .label("Choices")
+    .required(),
+  correctAnswer: Joi.array()
+    .items(Joi.string().allow(""))
+    .label("Correct Answer")
+    .required(),
+});
 
 export const AddQuestion = () => {
+  const [questionType, setQuestionType] = React.useState(null);
+  const [choicesCount, setChoicesCount] = React.useState(4);
+  const [answersCount, setAnswersCount] = React.useState(1);
+  const [isMultipleAnswer, setIsMultipleAnswer] = React.useState(false);
+
   const postRequest = async (user) => {
     const token = localStorage.getItem("token");
     const response = await Axios.post("/auth/signup", user, {
@@ -47,7 +75,7 @@ export const AddQuestion = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({ resolver: joiResolver(schema) });
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -79,10 +107,14 @@ export const AddQuestion = () => {
                   required
                 />
               </div>
+
               <div className="flex flex-col gap-3">
                 <Label>Question Type</Label>
                 <Select
-                  onValueChange={(value) => setValue("questionType", value)}
+                  onValueChange={(value) => {
+                    setValue("questionType", value);
+                    setQuestionType(value);
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select question type" />
@@ -99,19 +131,102 @@ export const AddQuestion = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                {errors?.questionType && (
+                  <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
+                    {errors?.questionType?.message}
+                  </p>
+                )}
               </div>
+
+              {questionType === "multiple_choice" && (
+                <div className="flex flex-col gap-3">
+                  <Label>Choices</Label>
+                  <Card className="p-4.5 gap-3">
+                    {Array.from({ length: choicesCount }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <p className="text-nowrap">Option {i + 1}</p>
+                        <Input {...register(`choices[${i}]`)} required />
+                      </div>
+                    ))}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => setChoicesCount((prev) => prev + 1)}
+                      >
+                        <PlusSquareIcon className="text-green-600" />
+                        Add 1 option
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() =>
+                          setChoicesCount((prev) =>
+                            prev > 1 ? prev - 1 : prev
+                          )
+                        }
+                      >
+                        <XSquareIcon className="text-red-600" />
+                        Remove 1 option
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
+              )}
+
               <div className="flex flex-col gap-3">
-                <Label htmlFor="question">Choices</Label>
-                <Textarea
-                  {...register("question")}
-                  placeholder="Type your question here."
-                  id="question"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="correctAnswer">Correct Answer</Label>
-                <Input {...register("correctAnswer")} id="correctAnswer" />
+                <Label
+                  htmlFor="correctAnswer"
+                  className="flex items-center gap-3 justify-between"
+                >
+                  Correct Answer(s)
+                  <div className="flex items-center gap-3">
+                    <p>Multiple</p>
+                    <Switch
+                      checked={isMultipleAnswer}
+                      onCheckedChange={setIsMultipleAnswer}
+                    />
+                  </div>
+                </Label>
+                {isMultipleAnswer ? (
+                  <Card className="p-4.5 gap-3">
+                    {Array.from({ length: answersCount }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <p className="text-nowrap">Answer {i + 1}</p>
+                        <Input {...register(`correctAnswer[${i}]`)} required />
+                      </div>
+                    ))}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => setAnswersCount((prev) => prev + 1)}
+                      >
+                        <PlusSquareIcon className="text-green-600" />
+                        Add 1 answer
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() =>
+                          setAnswersCount((prev) =>
+                            prev > 1 ? prev - 1 : prev
+                          )
+                        }
+                      >
+                        <XSquareIcon className="text-red-600" />
+                        Remove 1 answer
+                      </Button>
+                    </div>
+                  </Card>
+                ) : (
+                  <Input
+                    {...register("correctAnswer[0]")}
+                    placeholder="Type the correct answer here."
+                    id="correctAnswer"
+                    required
+                  />
+                )}
               </div>
             </div>
             <Button type="submit" className="w-full mt-5">
