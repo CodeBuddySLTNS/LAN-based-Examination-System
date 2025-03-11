@@ -13,16 +13,13 @@ const questions = async (req, res) => {
 
 const addQuestion = async (req, res) => {
   const { error, value } = validateQuestion(req.body);
+  const userId = res.locals.userId;
 
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST);
   }
 
-  const q = value.question;
-  const correct = JSON.stringify([value.correctAnswer]);
-  const incorrect = JSON.stringify([value.incorrectAnswer]);
-
-  const result = await Question.add(1, q, correct, incorrect);
+  const result = await Question.addQuestion({ userId, ...value });
   res.status(CREATED).send(result);
 };
 
@@ -38,5 +35,5 @@ module.exports = {
   questions,
   addQuestion,
   deleteQuestion,
-  editQuestion
+  editQuestion,
 };
