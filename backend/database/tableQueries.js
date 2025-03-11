@@ -9,7 +9,7 @@ module.exports.usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
     isVerified BOOL DEFAULT false
 );`;
 
-module.exports.examsTableQuery = `CREATE TABLE exams (
+module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -19,8 +19,9 @@ module.exports.examsTableQuery = `CREATE TABLE exams (
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
-module.exports.questionBankTableQuery = `CREATE TABLE question_bank (
+module.exports.questionBankTableQuery = `CREATE TABLE IF NOT EXISTS question_bank (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    subject VARCHAR(255) NOT NULL,
     question_text TEXT NOT NULL,
     question_type ENUM('multiple_choice', 'identification', 'enumeration') NOT NULL,
     choices JSON NULL,
@@ -29,14 +30,14 @@ module.exports.questionBankTableQuery = `CREATE TABLE question_bank (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
-module.exports.examQuestionsTableQuery = `CREATE TABLE exam_questions (
+module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     exam_id INT NOT NULL,
     question_data JSON NOT NULL, -- Stores selected questions and exam-specific settings
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );`;
 
-module.exports.responsesTableQuery = `CREATE TABLE responses (
+module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS responses (
     id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     exam_id INT NOT NULL,
