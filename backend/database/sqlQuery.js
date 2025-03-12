@@ -26,7 +26,7 @@ const sqlQuery = async (query, params) => {
           throw new Error("Database connection error.");
 
         default:
-          throw new Error(error);
+          throw new CustomError(error.message, CONFLICT, error);
       }
     }
   }
