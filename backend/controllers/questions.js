@@ -24,11 +24,13 @@ const addQuestion = async (req, res) => {
 };
 
 const deleteQuestion = async (req, res) => {
-  res.send("deleteQuestion");
+  const result = await Question.deleteQuestion(req.body.questionId);
+  res.status(CREATED).send(result);
 };
 
 const editQuestion = async (req, res) => {
-  res.send("editQuestion");
+  const result = await Question.editQuestion(req.body.questionId);
+  res.status(CREATED).send(result);
 };
 
 module.exports = {

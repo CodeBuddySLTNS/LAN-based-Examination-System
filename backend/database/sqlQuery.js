@@ -15,13 +15,12 @@ const sqlQuery = async (query, params) => {
   } finally {
     if (dbconn) dbconn.release();
     if (error) {
-      console.log("dbError:", error);
       switch (error.code) {
         case "ER_TABLE_EXISTS_ERROR":
-          throw new CustomError(error.message, BAD_REQUEST);
+          throw new CustomError(error.message, BAD_REQUEST, error);
 
         case "ER_DUP_ENTRY":
-          throw new CustomError(error.message, CONFLICT);
+          throw new CustomError(error.message, CONFLICT, error);
 
         case "ECONNREFUSED":
           throw new Error("Database connection error.");

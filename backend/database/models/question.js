@@ -64,7 +64,7 @@ class QuestionModel {
 
   async deleteQuestion(question_id) {
     const query = `DELETE FROM question_bank WHERE id = ? LIMIT 1`;
-    const params = [question, correct_ans, incorrect_ans];
+    const params = [question_id];
     const result = await sqlQuery(query, params);
     return result;
   }
