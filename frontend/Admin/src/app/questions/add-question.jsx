@@ -12,14 +12,12 @@ import {
 import React from "react";
 
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios } from "@/lib/utils";
+import { Axios, cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  CheckCircle,
-  Plus,
-  PlusIcon,
+  Check,
+  ChevronsUpDown,
   PlusSquareIcon,
   XSquareIcon,
 } from "lucide-react";
@@ -28,6 +26,19 @@ import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const schema = Joi.object({
   subject: Joi.string().label("Subject").required(),
@@ -41,6 +52,8 @@ const schema = Joi.object({
 });
 
 export const AddQuestion = () => {
+  const [isSubjectOptions, setIsSubjectOptions] = React.useState(false);
+  const [subjectOptionValue, setSubjectOptionValue] = React.useState("");
   const [questionType, setQuestionType] = React.useState(null);
   const [choicesCount, setChoicesCount] = React.useState(4);
   const [answersCount, setAnswersCount] = React.useState(1);
@@ -48,7 +61,6 @@ export const AddQuestion = () => {
   const [isValidCorrectAnswer, setIsValidCorrectAnswer] = React.useState(true);
 
   const postRequest = async (questionData) => {
-    console.log("Requesting...");
     const token = localStorage.getItem("token");
     const response = await Axios.post("/questions/add", questionData, {
       headers: {
@@ -58,15 +70,21 @@ export const AddQuestion = () => {
     return response.data;
   };
 
-  const {
-    mutateAsync: addQuestion,
-    data,
-    isPending,
-    error,
-  } = useMutation({
+  const fetchSubjects = async () => {
+    const token = localStorage.getItem("token");
+    const response = await Axios.get("/subjects", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
+  const { mutateAsync: addQuestion, isPending } = useMutation({
     mutationFn: postRequest,
     onSuccess: (data) => {
       toast.success("Question added succesfully.");
+      reset();
     },
     onError: (error) => {
       if (error?.response?.data?.body?.code === "ER_DUP_ENTRY") {
@@ -74,6 +92,11 @@ export const AddQuestion = () => {
       }
       toast.error("Unable to add this question.");
     },
+  });
+
+  const { data: subjectOptions } = useQuery({
+    queryKey: ["subjectOptions"],
+    queryFn: fetchSubjects,
   });
 
   const {
@@ -102,9 +125,7 @@ export const AddQuestion = () => {
       try {
         console.log("Processing...");
         await addQuestion(data);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
 
       setIsValidCorrectAnswer(true);
     } else {
@@ -123,20 +144,62 @@ export const AddQuestion = () => {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-3">
                 <Label>Subject</Label>
-                <Select onValueChange={(value) => setValue("subject", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select subject" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="GPRH">Philippine History</SelectItem>
-                      <SelectItem value="SDP104">
-                        Skills Development Program
-                      </SelectItem>
-                      <SelectItem value="PATHFit4">Team Sports</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <Popover
+                  open={isSubjectOptions}
+                  onOpenChange={setIsSubjectOptions}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-full justify-between"
+                    >
+                      {subjectOptionValue
+                        ? subjectOptions?.find(
+                            (subject) =>
+                              subject.course_code === subjectOptionValue
+                          )?.name
+                        : "Select subject..."}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[auto] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search subject..." />
+                      <CommandList>
+                        <CommandEmpty>No subject found.</CommandEmpty>
+                        <CommandGroup>
+                          {subjectOptions?.map((subject) => (
+                            <CommandItem
+                              key={subject.course_code}
+                              value={subject.course_code}
+                              onSelect={(currentValue) => {
+                                setSubjectOptionValue(
+                                  currentValue === subjectOptionValue
+                                    ? ""
+                                    : currentValue
+                                );
+                                setValue("subject", currentValue);
+                                setIsSubjectOptions(false);
+                              }}
+                            >
+                              {subject.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  subjectOptionValue === subject.course_code
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 {errors?.subject && (
                   <p className="text-[0.8rem] font-normal text-red-600 flex items-center gap-1">
                     {errors?.subject?.message}
@@ -282,7 +345,7 @@ export const AddQuestion = () => {
                 )}
               </div>
             </div>
-            <Button type="submit" className="w-full mt-5">
+            <Button disabled={isPending} type="submit" className="w-full mt-5">
               Add Question
             </Button>
           </form>
