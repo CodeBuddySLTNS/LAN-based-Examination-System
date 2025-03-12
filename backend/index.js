@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
+app.use("/subjects", require("./routes/subjects"));
 app.use("/questions", require("./routes/questions"));
 
 // handle errors
