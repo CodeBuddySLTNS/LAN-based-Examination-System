@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={client}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <App />
-        <Toaster richColors position="top-right" expand={true} />
+        <Toaster richColors expand={true} />
       </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
