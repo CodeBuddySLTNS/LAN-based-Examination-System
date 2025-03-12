@@ -27,6 +27,7 @@ module.exports.questionBankTableQuery = `CREATE TABLE IF NOT EXISTS question_ban
     choices JSON NULL,
     correct_answer JSON,
     created_by INT NOT NULL,
+    FOREIGN KEY (subject) REFERENCES subjects(course_code) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
