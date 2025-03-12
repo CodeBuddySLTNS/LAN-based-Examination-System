@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 
 const schema = Joi.object({
   subject: Joi.string().label("Subject").required(),
@@ -44,10 +45,12 @@ export const AddQuestion = () => {
   const [choicesCount, setChoicesCount] = React.useState(4);
   const [answersCount, setAnswersCount] = React.useState(1);
   const [isMultipleAnswer, setIsMultipleAnswer] = React.useState(false);
+  const [isValidCorrectAnswer, setIsValidCorrectAnswer] = React.useState(true);
 
-  const postRequest = async (user) => {
+  const postRequest = async (questionData) => {
+    console.log("Requesting...");
     const token = localStorage.getItem("token");
-    const response = await Axios.post("/auth/signup", user, {
+    const response = await Axios.post("/questions/add", questionData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -62,8 +65,14 @@ export const AddQuestion = () => {
     error,
   } = useMutation({
     mutationFn: postRequest,
+    onSuccess: (data) => {
+      toast.success("Question added succesfully.");
+    },
     onError: (error) => {
-      console.log(error);
+      if (error?.response?.data?.body?.code === "ER_DUP_ENTRY") {
+        return toast.error("This question already exists.");
+      }
+      toast.error("Unable to add this question.");
     },
   });
 
@@ -74,18 +83,34 @@ export const AddQuestion = () => {
     reset,
     formState: { errors },
   } = useForm({ resolver: joiResolver(schema) });
-  console.log(errors);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    data.choices = data.choices || [];
+    let valid = false;
 
-    // try {
-    //   await addQuestion(user);
-    // } catch (error) {}
+    if (data.questionType === "multiple_choice") {
+      for (let i = 0; i < data.choices.length; i++) {
+        for (let x = 0; x < data.correctAnswer.length; x++) {
+          if (data.choices[i] === data.correctAnswer[x]) {
+            valid = true;
+          }
+        }
+      }
+    }
+
+    if (valid || data.questionType !== "multiple_choice") {
+      try {
+        console.log("Processing...");
+        await addQuestion(data);
+      } catch (error) {
+        console.log(error);
+      }
+
+      setIsValidCorrectAnswer(true);
+    } else {
+      setIsValidCorrectAnswer(false);
+    }
   };
-
-  React.useEffect(() => {
-    if (data) reset();
-  }, [data]);
 
   return (
     <div className="p-6">
@@ -202,7 +227,7 @@ export const AddQuestion = () => {
                 >
                   Correct Answer(s)
                   <div className="flex items-center gap-3">
-                    <p>Multiple</p>
+                    <p>Multiple Answers</p>
                     <Switch
                       checked={isMultipleAnswer}
                       onCheckedChange={setIsMultipleAnswer}
@@ -243,10 +268,17 @@ export const AddQuestion = () => {
                 ) : (
                   <Input
                     {...register("correctAnswer[0]")}
+                    onChange={() => setIsValidCorrectAnswer(true)}
                     placeholder="Type the correct answer here."
                     id="correctAnswer"
                     required
                   />
+                )}
+                {!isValidCorrectAnswer && (
+                  <p className="text-sm text-red-600">
+                    The correct answer(s) you provided doesn't match any of the
+                    given choices.
+                  </p>
                 )}
               </div>
             </div>
