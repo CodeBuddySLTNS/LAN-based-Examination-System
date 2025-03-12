@@ -22,7 +22,7 @@ module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
 module.exports.questionBankTableQuery = `CREATE TABLE IF NOT EXISTS question_bank (
     id INT PRIMARY KEY AUTO_INCREMENT,
     subject VARCHAR(255) NOT NULL,
-    question_text TEXT NOT NULL,
+    question_text TEXT NOT NULL UNIQUE,
     question_type ENUM('multiple_choice', 'identification', 'enumeration') NOT NULL,
     choices JSON NULL,
     correct_answer JSON,
@@ -35,6 +35,14 @@ module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questi
     exam_id INT NOT NULL,
     question_data JSON NOT NULL, -- Stores selected questions and exam-specific settings
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+);`;
+
+module.exports.subjectsTableQuery = `CREATE TABLE IF NOT EXISTS subjects (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_code VARCHAR(15) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    created_by INT NOT NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
 module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS responses (
