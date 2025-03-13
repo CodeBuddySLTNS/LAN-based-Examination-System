@@ -8,7 +8,8 @@ class QuestionModel {
 
   async getAll() {
     await this.createQuestionsTable();
-    const query = `SELECT * FROM question_bank`;
+    const query = `SELECT qb.*, u.name as created_by FROM question_bank qb
+      JOIN users u ON qb.created_by = u.id`;
     const result = await sqlQuery(query);
     return result;
   }
