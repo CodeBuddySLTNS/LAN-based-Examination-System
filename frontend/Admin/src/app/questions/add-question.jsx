@@ -134,7 +134,7 @@ export const AddQuestion = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 pt-3">
       <Card>
         <CardHeader>
           <CardTitle>Add New Question</CardTitle>
