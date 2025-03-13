@@ -1,3 +1,5 @@
+const { UNAUTHORIZED } = require("../../constants/statusCodes");
+const CustomError = require("../../utils/customError");
 const sqlQuery = require("../sqlQuery");
 const { questionBankTableQuery } = require("../tableQueries");
 
@@ -12,6 +14,13 @@ class QuestionModel {
       JOIN users u ON qb.created_by = u.id`;
     const result = await sqlQuery(query);
     return result;
+  }
+
+  async getQuestionInfo(question_id) {
+    await this.createQuestionsTable();
+    const query = `SELECT *  FROM question_bank WHERE id = ${question_id}`;
+    const result = await sqlQuery(query);
+    return result[0];
   }
 
   async addQuestion(qdata) {
@@ -63,9 +72,19 @@ class QuestionModel {
     return result;
   }
 
-  async deleteQuestion(question_id) {
-    const query = `DELETE FROM question_bank WHERE id = ? LIMIT 1`;
-    const params = [question_id];
+  async deleteQuestion(question_id, user_id) {
+    const qInfo = await this.getQuestionInfo(question_id);
+
+    if (qInfo?.created_by !== user_id) {
+      throw new CustomError(
+        "You are not authorized to do this action.",
+        UNAUTHORIZED,
+        { action: "delete" }
+      );
+    }
+
+    const query = `DELETE FROM question_bank WHERE id = ? AND created_by = ? LIMIT 1`;
+    const params = [question_id, user_id];
     const result = await sqlQuery(query, params);
     return result;
   }

@@ -5,6 +5,7 @@ const controller = require("../controllers/questions");
 const router = Router();
 
 router.get("/", tryCatch(controller.questions));
+router.get("/info", tryCatch(controller.questionInfo));
 router.post("/add", tryCatch(controller.addQuestion));
 router.patch("/edit", tryCatch(controller.editQuestion));
 router.delete("/delete", tryCatch(controller.deleteQuestion));

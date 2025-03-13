@@ -11,6 +11,13 @@ const questions = async (req, res) => {
   res.json({ questions });
 };
 
+const questionInfo = async (req, res) => {
+  const { qId } = req.query;
+  console.log(req.query);
+  const info = await Question.getQuestionInfo(qId);
+  res.json({ info });
+};
+
 const addQuestion = async (req, res) => {
   const { error, value } = validateQuestion(req.body);
   const userId = res.locals.userId;
@@ -24,17 +31,29 @@ const addQuestion = async (req, res) => {
 };
 
 const deleteQuestion = async (req, res) => {
-  const result = await Question.deleteQuestion(req.body.questionId);
-  res.status(CREATED).send(result);
+  const { questionId } = req.body;
+  const { userId } = res.locals;
+  console.log(req.body);
+  if (!questionId || !userId) {
+    throw new CustomError("Invalid request", BAD_REQUEST);
+  }
+
+  const result = await Question.deleteQuestion(questionId, userId);
+  res.status(CREATED).send({
+    action: "delete",
+    message: `Question with id "${questionId}" successfully deleted.`,
+    result,
+  });
 };
 
 const editQuestion = async (req, res) => {
   const result = await Question.editQuestion(req.body.questionId);
-  res.status(CREATED).send(result);
+  res.status(CREATED).send({ action: "edit", result });
 };
 
 module.exports = {
   questions,
+  questionInfo,
   addQuestion,
   deleteQuestion,
   editQuestion,
