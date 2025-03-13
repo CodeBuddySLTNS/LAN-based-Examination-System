@@ -7,8 +7,8 @@ const CustomError = require("../utils/customError");
 const Question = new QuestionModel();
 
 const questions = async (req, res) => {
-  const result = await Question.getAll();
-  res.json({ result });
+  const questions = await Question.getAll();
+  res.json({ questions });
 };
 
 const addQuestion = async (req, res) => {
