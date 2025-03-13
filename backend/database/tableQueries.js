@@ -5,7 +5,7 @@ module.exports.usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     department VARCHAR(255) NOT NULL,
     year INT NOT NULL,
-    role VARCHAR(15) NOT NULL DEFAULT 'user',
+    role VARCHAR(15) NOT NULL DEFAULT 'student',
     isVerified BOOL DEFAULT false
 );`;
 
