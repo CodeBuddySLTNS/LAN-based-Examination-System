@@ -77,6 +77,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 export default function Page() {
   const [sorting, setSorting] = React.useState([]);
@@ -99,7 +100,7 @@ export default function Page() {
     return response.data;
   };
 
-  const deleteUser = async (data) => {
+  const deleteQuestion = async (data) => {
     const token = localStorage.getItem("token");
     const response = await Axios.delete(`/questions/delete`, {
       headers: {
@@ -110,7 +111,7 @@ export default function Page() {
     return response.data;
   };
 
-  const editUser = async (data) => {
+  const editQuestion = async (data) => {
     const token = localStorage.getItem("token");
     const response = await Axios.patch(`/questions/edit`, data, {
       headers: {
@@ -125,13 +126,14 @@ export default function Page() {
     switch (data?.action) {
       case "edit":
         delete data.action;
-        response = await editUser(data);
-        queryClient.invalidateQueries(["users"]);
+        response = await editQuestion(data);
+        queryClient.invalidateQueries(["questions"]);
         return response;
 
       case "delete":
-        response = await deleteUser(data);
-        queryClient.invalidateQueries(["users"]);
+        delete data.action;
+        response = await deleteQuestion(data);
+        queryClient.invalidateQueries(["questions"]);
         return response;
 
       default:
@@ -140,11 +142,15 @@ export default function Page() {
   };
 
   const { data } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["questions"],
     queryFn: fetchQuestions,
   });
 
-  const { mutateAsync: action } = useMutation({
+  const {
+    mutateAsync: action,
+    data: actionResponse,
+    error,
+  } = useMutation({
     mutationFn: handleAction,
   });
 
@@ -156,10 +162,9 @@ export default function Page() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const username = actionData?.username;
     const updateBody = {};
 
-    await action({ username, updateBody, action: "edit" });
+    await action({ updateBody, action: "edit" });
     setIsEditDialog(false);
   };
 
@@ -267,7 +272,7 @@ export default function Page() {
             </TooltipProvider>
           </div>
         ) : (
-          <div className="text-center">None</div>
+          <div className="text-center">N/A</div>
         ),
     },
     {
@@ -284,23 +289,18 @@ export default function Page() {
           </Button>
         );
       },
-      cell: ({ row }) =>
-        JSON.parse(row.getValue("correct_answer"))?.length > 2 ? (
-          <div className="text-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>View</TooltipTrigger>
-                <TooltipContent>
-                  {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        ) : (
-          <div className="text-center">
-            {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
-          </div>
-        ),
+      cell: ({ row }) => (
+        <div className="text-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>View</TooltipTrigger>
+              <TooltipContent>
+                {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
     },
     {
       accessorKey: "created_by",
@@ -381,18 +381,18 @@ export default function Page() {
   });
 
   React.useEffect(() => {
-    if (actionData) {
-      setValue("lastname", actionData?.name?.split(",")[0]);
-      setValue(
-        "firstname",
-        actionData?.name?.split(",")[1]?.slice(0, -2)?.trim()
-      );
-      setValue("middlename", actionData?.name?.split(",")[1]?.slice(-2));
-      setValue("username", actionData?.username);
-      setValue("department", actionData?.department);
-      setValue("year", actionData?.year);
+    if (actionResponse) {
+      toast.success(actionResponse.message);
     }
-  }, [actionData, setValue]);
+
+    if (error) {
+      if (error.response?.data?.message) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error(error.message);
+      }
+    }
+  }, [actionResponse, error]);
 
   return (
     <div className=" box-border px-8">
@@ -634,17 +634,18 @@ export default function Page() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete
-              <span className="text-red-500"> @{actionData?.username}</span>'s
-              account and remove his/her data from our servers.
+              This action cannot be undone. This will permanently delete this
+              question and remove the data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() =>
-                action({ username: actionData?.username, action: "delete" })
-              }
+              onClick={() => {
+                try {
+                  action({ questionId: actionData?.id, action: "delete" });
+                } catch (error) {}
+              }}
             >
               Continue
             </AlertDialogAction>

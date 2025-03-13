@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function Page({ setForm }) {
   const { register, handleSubmit } = useForm();
@@ -37,7 +38,11 @@ export default function Page({ setForm }) {
   } = useMutation({
     mutationFn: postRequest,
     onError: (error) => {
-      // console.log(error);
+      if (error?.code === "ERR_NETWORK") {
+        toast.error("Unable to connect to the server.");
+      } else {
+        toast.error("Internal Server Error.");
+      }
     },
   });
 
@@ -113,18 +118,6 @@ export default function Page({ setForm }) {
                     >
                       {isPending ? "Logging in..." : "Login"}
                     </Button>
-                    {error?.code === "ERR_NETWORK" && (
-                      <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
-                        <AlertCircle className="w-[17px]" /> Unable to connect
-                        to the server.
-                      </p>
-                    )}
-                    {error?.response?.data?.status === 500 && (
-                      <p className="text-sm font-normal text-red-600 flex justify-center items-center gap-1">
-                        <AlertCircle className="w-[17px]" /> Internal Server
-                        Error
-                      </p>
-                    )}
                   </div>
                 </div>
                 <div className="mt-4 text-center text-sm">
