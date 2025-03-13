@@ -8,4 +8,5 @@ module.exports.pool = mysql.createPool({
   database: process.env.DB_DBNAME,
   waitForConnections: true,
   connectionLimit: 10,
+  connectTimeout: 10000,
 });
