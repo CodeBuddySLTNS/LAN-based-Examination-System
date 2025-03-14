@@ -13,9 +13,9 @@ module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    examiner_id INT NOT NULL,
     start_time DATETIME,
     end_time DATETIME,
+    examiner_id INT NOT NULL,
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
