@@ -141,7 +141,7 @@ export default function Page() {
     }
   };
 
-  const { data } = useQuery({
+  const { data: questions } = useQuery({
     queryKey: ["questions"],
     queryFn: fetchQuestions,
   });
@@ -362,7 +362,7 @@ export default function Page() {
   ];
 
   const table = useReactTable({
-    data: data?.questions || [],
+    data: questions || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
