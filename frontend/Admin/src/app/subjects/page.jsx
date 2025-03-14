@@ -233,7 +233,7 @@ export default function Page() {
             className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Author
+            Added by
             <ArrowUpDown />
           </Button>
         );
