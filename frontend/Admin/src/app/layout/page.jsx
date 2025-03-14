@@ -25,6 +25,24 @@ export default function Page({ className, ...props }) {
   useEffect(() => {
     if (location) {
       switch (location.pathname) {
+        case "/exams":
+          setPath({ name: "Exam Schedules", url: "/exams" });
+          break;
+
+        case "/exams/add":
+          setPath({
+            name: "Exam Schedules/Add Exam Schedule",
+            url: "/exams/add",
+          });
+          break;
+
+        case "/exams/history":
+          setPath({
+            name: "Exam Schedules/History",
+            url: "/exams/history",
+          });
+          break;
+
         case "/accounts":
           setPath({ name: "Manage Accounts", url: "/accounts" });
           break;
