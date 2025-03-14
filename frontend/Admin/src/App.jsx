@@ -18,7 +18,9 @@ import Questions from "./app/questions/page";
 import AddQuestion from "./app/questions/add-question";
 import Subjects from "./app/subjects/page";
 import AddSubject from "./app/subjects/add-subject";
-import AddExamPage from "./app/exams/page";
+import Exams from "./app/exams/page";
+import AddExam from "./app/exams/add-exam";
+import ExamHistory from "./app/exams/exam-history";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -125,7 +127,23 @@ function App() {
               path="/exams"
               element={
                 <Layout>
-                  <AddExamPage />
+                  <Exams />
+                </Layout>
+              }
+            />
+            <Route
+              path="/exams/add"
+              element={
+                <Layout>
+                  <AddExam />
+                </Layout>
+              }
+            />
+            <Route
+              path="/exams/history"
+              element={
+                <Layout>
+                  <ExamHistory />
                 </Layout>
               }
             />
