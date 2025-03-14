@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ChevronsUpDown } from "lucide-react";
 import React from "react";
 
 const AddExam = () => {
@@ -57,6 +63,19 @@ const AddExam = () => {
             </div>
             <div className="flex flex-col gap-3">
               <Label>Exam Questions</Label>
+              <Card className="p-3">
+                <CardContent className="p-0">
+                  <Collapsible>
+                    <CollapsibleTrigger className="w-full">
+                      <div className="flex justify-between">
+                        1. Question
+                        <ChevronsUpDown className="w-4.5" />
+                      </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>heyy</CollapsibleContent>
+                  </Collapsible>
+                </CardContent>
+              </Card>
             </div>
             <div className="w-full mt-3">
               <Button type="submit" className="w-full">
