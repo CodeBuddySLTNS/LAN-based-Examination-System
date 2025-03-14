@@ -84,7 +84,7 @@ export const AddQuestion = () => {
     mutationFn: postRequest,
     onSuccess: (data) => {
       toast.success("Question added succesfully.");
-      reset();
+      resetForm();
     },
     onError: (error) => {
       if (error?.response?.data?.body?.code === "ER_DUP_ENTRY") {
@@ -110,6 +110,7 @@ export const AddQuestion = () => {
   const onSubmit = async (data) => {
     data.choices = data.choices || [];
     let valid = false;
+    console.log(data);
 
     if (data.questionType === "multiple_choice") {
       for (let i = 0; i < data.choices.length; i++) {
@@ -123,7 +124,6 @@ export const AddQuestion = () => {
 
     if (valid || data.questionType !== "multiple_choice") {
       try {
-        console.log("Processing...");
         await addQuestion(data);
       } catch (error) {}
 
@@ -131,6 +131,16 @@ export const AddQuestion = () => {
     } else {
       setIsValidCorrectAnswer(false);
     }
+  };
+
+  const resetForm = () => {
+    reset();
+    setSubjectOptionValue("");
+    setQuestionType(null);
+    setChoicesCount(4);
+    setAnswersCount(1);
+    setIsMultipleAnswer(false);
+    setIsValidCorrectAnswer(true);
   };
 
   return (
@@ -331,7 +341,10 @@ export const AddQuestion = () => {
                 ) : (
                   <Input
                     {...register("correctAnswer[0]")}
-                    onChange={() => setIsValidCorrectAnswer(true)}
+                    onChange={(e) => {
+                      setValue("correctAnswer[0]", e.target.value);
+                      setIsValidCorrectAnswer(true);
+                    }}
                     placeholder="Type the correct answer here."
                     id="correctAnswer"
                     required
