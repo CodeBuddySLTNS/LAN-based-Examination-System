@@ -18,6 +18,7 @@ import Questions from "./app/questions/page";
 import AddQuestion from "./app/questions/add-question";
 import Subjects from "./app/subjects/page";
 import AddSubject from "./app/subjects/add-subject";
+import AddExamPage from "./app/exams/page";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -117,6 +118,14 @@ function App() {
               element={
                 <Layout>
                   <AddSubject />
+                </Layout>
+              }
+            />
+            <Route
+              path="/exams"
+              element={
+                <Layout>
+                  <AddExamPage />
                 </Layout>
               }
             />
