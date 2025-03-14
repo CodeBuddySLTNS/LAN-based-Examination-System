@@ -16,6 +16,8 @@ import { Axios } from "./lib/utils";
 import AddAccount from "./app/accounts/add-account";
 import Questions from "./app/questions/page";
 import AddQuestion from "./app/questions/add-question";
+import Subjects from "./app/subjects/page";
+import AddSubject from "./app/subjects/add-subject";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -99,6 +101,30 @@ function App() {
               element={
                 <Layout>
                   <AddAccount />
+                </Layout>
+              }
+            />
+            <Route
+              path="/subjects"
+              element={
+                <Layout>
+                  <Subjects />
+                </Layout>
+              }
+            />
+            <Route
+              path="/subjects/add"
+              element={
+                <Layout>
+                  <AddSubject />
+                </Layout>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <Layout>
+                  <div className="w-full h-full p-6">404 Page</div>
                 </Layout>
               }
             />

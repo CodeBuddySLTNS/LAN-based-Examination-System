@@ -47,6 +47,17 @@ export default function Page({ className, ...props }) {
           });
           break;
 
+        case "/subjects":
+          setPath({ name: "Manage Subjects", url: "/subjects" });
+          break;
+
+        case "/subjects/add":
+          setPath({
+            name: "Manage Subjects/Add Subject",
+            url: "/subjects/add",
+          });
+          break;
+
         default:
           setPath({});
           break;

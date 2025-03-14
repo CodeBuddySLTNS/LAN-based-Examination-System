@@ -90,9 +90,9 @@ export default function Page() {
 
   const queryClient = useQueryClient();
 
-  const fetchQuestions = async () => {
+  const fetchSubjects = async () => {
     const token = localStorage.getItem("token");
-    const response = await Axios.get(`/questions`, {
+    const response = await Axios.get(`/subjects`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -102,7 +102,7 @@ export default function Page() {
 
   const deleteQuestion = async (data) => {
     const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/questions/delete`, {
+    const response = await Axios.delete(`/subjects/delete`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -113,7 +113,7 @@ export default function Page() {
 
   const editQuestion = async (data) => {
     const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/questions/edit`, data, {
+    const response = await Axios.patch(`/subjects/edit`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -127,13 +127,13 @@ export default function Page() {
       case "edit":
         delete data.action;
         response = await editQuestion(data);
-        queryClient.invalidateQueries(["questions"]);
+        queryClient.invalidateQueries(["subjects"]);
         return response;
 
       case "delete":
         delete data.action;
         response = await deleteQuestion(data);
-        queryClient.invalidateQueries(["questions"]);
+        queryClient.invalidateQueries(["subjects"]);
         return response;
 
       default:
@@ -142,8 +142,8 @@ export default function Page() {
   };
 
   const { data } = useQuery({
-    queryKey: ["questions"],
-    queryFn: fetchQuestions,
+    queryKey: ["subjects"],
+    queryFn: fetchSubjects,
   });
 
   const {
@@ -192,12 +192,11 @@ export default function Page() {
       enableHiding: false,
     },
     {
-      accessorKey: "subject",
+      accessorKey: "name",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Subject
@@ -205,12 +204,10 @@ export default function Page() {
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("subject")}</div>
-      ),
+      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
     },
     {
-      accessorKey: "question_text",
+      accessorKey: "course_code",
       header: ({ column }) => {
         return (
           <Button
@@ -218,88 +215,13 @@ export default function Page() {
             className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Question
+            Course Code
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => (
-        <div className="">{row.getValue("question_text")}</div>
-      ),
-    },
-    {
-      accessorKey: "question_type",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Question Type
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("question_type")}</div>
-      ),
-    },
-    {
-      accessorKey: "choices",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Choices
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) =>
-        JSON.parse(row.getValue("choices"))?.length > 0 ? (
-          <div className="text-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>View</TooltipTrigger>
-                <TooltipContent>
-                  {JSON.parse(row.getValue("choices"))?.join(", ")}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        ) : (
-          <div className="text-center">N/A</div>
-        ),
-    },
-    {
-      accessorKey: "correct_answer",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Correct Answer
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="text-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>View</TooltipTrigger>
-              <TooltipContent>
-                {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        <div className="text-center">{row.getValue("course_code")}</div>
       ),
     },
     {
@@ -352,7 +274,7 @@ export default function Page() {
                 }}
               >
                 <LucideDelete className="text-red-500" />
-                Delete Question
+                Delete Subject
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -362,7 +284,7 @@ export default function Page() {
   ];
 
   const table = useReactTable({
-    data: data?.questions || [],
+    data: data || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -398,10 +320,10 @@ export default function Page() {
     <div className=" box-border px-8">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter subject (course code)..."
-          value={table.getColumn("subject")?.getFilterValue() ?? ""}
+          placeholder="Filter subject..."
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("subject")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
