@@ -41,7 +41,7 @@ const deleteQuestion = async (req, res) => {
   const result = await Question.deleteQuestion(questionId, userId);
   res.status(CREATED).send({
     action: "delete",
-    message: `Question with id "${questionId}" successfully deleted.`,
+    message: `Question deleted successfully.`,
     result,
   });
 };
