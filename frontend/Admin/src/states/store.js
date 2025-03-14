@@ -55,15 +55,15 @@ export const useSidebarStore = create((set) => ({
       items: [
         {
           title: "Exam Schedules",
-          url: "#",
+          url: "/exams",
         },
         {
           title: "Add Exam Schedule",
-          url: "#",
+          url: "/exams/add",
         },
         {
           title: "Exam History",
-          url: "#",
+          url: "/exams/history",
         },
       ],
     },
