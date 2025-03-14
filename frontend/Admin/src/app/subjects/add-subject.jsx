@@ -106,7 +106,7 @@ export const AddSubject = () => {
               </div>
             </div>
             <Button disabled={isPending} type="submit" className="w-full mt-5">
-              Add Question
+              {isPending ? "Processing.." : "Add Subject"}
             </Button>
           </form>
         </CardContent>
