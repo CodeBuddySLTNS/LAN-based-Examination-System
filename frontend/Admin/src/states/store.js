@@ -36,6 +36,7 @@ export const useSidebarStore = create((set) => ({
     {
       title: "Questions Bank",
       url: "#",
+      isActive: true,
       icon: FileQuestion,
       items: [
         {
@@ -51,6 +52,7 @@ export const useSidebarStore = create((set) => ({
     {
       title: "Manage Exams",
       url: "#",
+      isActive: true,
       icon: FolderArchiveIcon,
       items: [
         {
