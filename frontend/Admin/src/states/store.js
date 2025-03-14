@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import {
+  Book,
   ClipboardList,
   ContactRound,
   FileClock,
   FileQuestion,
+  FolderArchiveIcon,
+  Folders,
   Frame,
   Map,
   MonitorCog,
@@ -31,42 +34,6 @@ export const useSidebarStore = create((set) => ({
   ],
   navMain: [
     {
-      title: "Exam Schedules",
-      url: "#",
-      icon: ClipboardList,
-      isActive: false,
-      items: [
-        {
-          title: "March 04, 2025 - Semi-Finals",
-          url: "#",
-        },
-        {
-          title: "February 04, 2025 - Midterm",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Exam History",
-      url: "#",
-      icon: FileClock,
-      isActive: false,
-      items: [
-        {
-          title: "S.Y. 2024 - 2025 2nd Semester",
-          url: "#",
-        },
-        {
-          title: "S.Y. 2024 - 2025 1st Semester",
-          url: "#",
-        },
-        {
-          title: "S.Y. 2023 - 2024 2nd Semester",
-          url: "#",
-        },
-      ],
-    },
-    {
       title: "Questions Bank",
       url: "#",
       icon: FileQuestion,
@@ -78,6 +45,40 @@ export const useSidebarStore = create((set) => ({
         {
           title: "Add Question",
           url: "/questions/add",
+        },
+      ],
+    },
+    {
+      title: "Manage Exams",
+      url: "#",
+      icon: FolderArchiveIcon,
+      items: [
+        {
+          title: "Exam Schedules",
+          url: "#",
+        },
+        {
+          title: "Add Exam Schedule",
+          url: "#",
+        },
+        {
+          title: "Exam History",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Manage Subjects",
+      url: "#",
+      icon: Book,
+      items: [
+        {
+          title: "Subjects",
+          url: "/subjects",
+        },
+        {
+          title: "Add Subject",
+          url: "/subjects/add",
         },
       ],
     },
