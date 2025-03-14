@@ -8,7 +8,7 @@ const Question = new QuestionModel();
 
 const questions = async (req, res) => {
   const questions = await Question.getAll();
-  res.json({ questions });
+  res.send(questions);
 };
 
 const questionInfo = async (req, res) => {
