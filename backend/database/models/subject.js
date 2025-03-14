@@ -8,9 +8,16 @@ class SubjectModel {
 
   async getAll() {
     await this.createSubjectsTable();
-    const query = `SELECT * FROM subjects`;
+    const query = `SELECT s.*, u.name as created_by FROM subjects s JOIN users u ON u.id = s.created_by`;
     const result = await sqlQuery(query);
     return result;
+  }
+
+  async getSubjectInfo(question_id) {
+    await this.createQuestionsTable();
+    const query = `SELECT *  FROM subjects WHERE id = ${question_id}`;
+    const result = await sqlQuery(query);
+    return result[0];
   }
 
   async addSubject(userId, course_code, name) {
@@ -22,25 +29,25 @@ class SubjectModel {
     return result;
   }
 
-  async editQuestion(qdata) {
-    const query = `INSERT INTO question_bank(
-      subject, question_text, question_type, choices, correct_answer
-      ) VALUES (?, ?, ?, ?, ?)`;
-    const params = [
-      qdata.subject,
-      qdata.question,
-      qdata.questionType,
-      JSON.stringify(qdata.choices),
-      JSON.stringify(qdata.correctAnswer),
-    ];
-
+  async editSubject(subject) {
+    const query = `INSERT INTO subjects( course_code, name ) VALUES (?, ?)`;
+    const params = [subject.courseCode, subject.subjectName];
     const result = await sqlQuery(query, params);
     return result;
   }
 
-  async deleteQuestion(question_id) {
-    const query = `DELETE FROM question_bank WHERE id = ? LIMIT 1`;
-    const params = [question_id];
+  async deleteSubject(subject_id, user_id) {
+    const subjectInfo = await this.getSubjectInfo(subject_id);
+
+    if (subjectInfo?.created_by !== user_id) {
+      throw new CustomError(
+        "You are not authorized to do this action.",
+        UNAUTHORIZED
+      );
+    }
+
+    const query = `DELETE FROM subjects WHERE id = ? LIMIT 1`;
+    const params = [subject_id];
     const result = await sqlQuery(query, params);
     return result;
   }

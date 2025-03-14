@@ -10,11 +10,11 @@ const subjects = async (req, res) => {
 };
 
 const addSubject = async (req, res) => {
-  const { courseCode, name } = req.body;
+  const { courseCode, subjectName } = req.body;
   const { userId } = res.locals;
 
-  if (courseCode && name) {
-    const result = await Subject.addSubject(userId, courseCode, name);
+  if (courseCode && subjectName) {
+    const result = await Subject.addSubject(userId, courseCode, subjectName);
     return res.json({ result });
   }
 
@@ -25,12 +25,23 @@ const addSubject = async (req, res) => {
 };
 
 const editSubject = async (req, res) => {
-  const result = await Subject.addSubject();
+  const { courseCode, subjectName } = req.body;
+
+  if (!courseCode && !subjectName) {
+    throw new CustomError(
+      "Course code and subject name is required.",
+      BAD_REQUEST
+    );
+  }
+
+  const result = await Subject.editSubject();
   res.json({ result });
 };
 
 const deleteSubject = async (req, res) => {
-  const result = await Subject.addSubject();
+  const { subjectId } = req.body;
+  const { userId } = res.locals;
+  const result = await Subject.deleteSubject(subjectId, userId);
   res.json({ result });
 };
 
