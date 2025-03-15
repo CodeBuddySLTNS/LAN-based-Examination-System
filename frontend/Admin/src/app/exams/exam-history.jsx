@@ -1,7 +1,7 @@
 import React from "react";
 
 const ExamHistory = () => {
-  return <div>ExamHistory</div>;
+  return <div className="p-6 pt-3">Coming Soon...</div>;
 };
 
 export default ExamHistory;

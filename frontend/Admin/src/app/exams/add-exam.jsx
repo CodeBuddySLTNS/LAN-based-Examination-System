@@ -7,12 +7,28 @@ import {
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Axios } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronsUpDown, InfoIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const AddExam = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -49,15 +65,26 @@ const AddExam = () => {
     reset();
   };
 
-  const handleQuestionSelect = (question) => {
-    setSelectedQuestions((prev) => {
-      if (prev.includes(question)) {
-        return prev.filter((q) => q !== question);
-      } else {
-        return [...prev, question];
-      }
-    });
-  };
+  const columns = [
+    {
+      accessorKey: "question_text",
+      header: "Question",
+    },
+    {
+      accessorKey: "question_type",
+      header: "Question Type",
+    },
+    {
+      accessorKey: "correct_answer",
+      header: "Correct Answer",
+    },
+  ];
+
+  const table = useReactTable({
+    data: questions,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <div className="p-6 pt-3">
@@ -90,7 +117,7 @@ const AddExam = () => {
                   type="number"
                   min="1"
                   max="8"
-                  placeholder="Enter hours(s)"
+                  placeholder="Enter hour(s)"
                   {...register("duration_hours")}
                   required
                 />
@@ -99,7 +126,7 @@ const AddExam = () => {
                   type="number"
                   min="1"
                   max="59"
-                  placeholder="Enter minutes(s)"
+                  placeholder="Enter minute(s)"
                   {...register("duration_minutes")}
                   required
                 />
@@ -121,30 +148,58 @@ const AddExam = () => {
               <Label>Exam Questions</Label>
               <Card className="p-3">
                 <CardContent className="p-0">
-                  {questions?.map((question) => (
-                    <Collapsible key={question.id}>
-                      <CollapsibleTrigger className="w-full">
-                        <div className="flex justify-between">
-                          {question.question_text}
-                          <ChevronsUpDown className="w-4.5" />
-                        </div>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedQuestions.includes(question)}
-                            onChange={() => handleQuestionSelect(question)}
-                          />
-                          <span>{question.question_text}</span>
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ))}
+                  <Table>
+                    <TableHeader>
+                      {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                          {headerGroup.headers.map((header) => {
+                            return (
+                              <TableHead key={header.id}>
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                    )}
+                              </TableHead>
+                            );
+                          })}
+                        </TableRow>
+                      ))}
+                    </TableHeader>
+                    <TableBody>
+                      {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan={columns.length}
+                            className="h-24 text-center"
+                          >
+                            No results.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
             </div>
-            <div className="flex items-center gap-2 text-green-600 text-sm">
+            <div className="flex items-center gap-2 text-green-700 text-sm">
               <InfoIcon className="w-[1.15rem]" /> Note that you can still add
               and remove questions after you save this exam.
             </div>
