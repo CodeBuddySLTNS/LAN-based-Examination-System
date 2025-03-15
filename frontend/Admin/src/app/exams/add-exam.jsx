@@ -11,7 +11,13 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Axios } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, InfoIcon } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronsUpDown,
+  InfoIcon,
+  LucideDelete,
+  MoreHorizontal,
+} from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -29,6 +35,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import DataTable from "@/components/data-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const AddExam = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -67,24 +88,157 @@ const AddExam = () => {
 
   const columns = [
     {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "subject",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Subject
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("subject")}</div>
+      ),
+    },
+    {
       accessorKey: "question_text",
-      header: "Question",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Question
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="">{row.getValue("question_text")}</div>
+      ),
     },
     {
       accessorKey: "question_type",
-      header: "Question Type",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Question Type
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("question_type")}</div>
+      ),
+    },
+    {
+      accessorKey: "choices",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Choices
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) =>
+        JSON.parse(row.getValue("choices"))?.length > 0 ? (
+          <div className="text-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>View</TooltipTrigger>
+                <TooltipContent>
+                  {JSON.parse(row.getValue("choices"))?.join(", ")}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        ) : (
+          <div className="text-center">N/A</div>
+        ),
     },
     {
       accessorKey: "correct_answer",
-      header: "Correct Answer",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Correct Answer
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>View</TooltipTrigger>
+              <TooltipContent>
+                {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "created_by",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Author
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("created_by")}</div>
+      ),
     },
   ];
-
-  const table = useReactTable({
-    data: questions,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
 
   return (
     <div className="p-6 pt-3">
@@ -146,58 +300,18 @@ const AddExam = () => {
             </div>
             <div className="flex flex-col gap-3">
               <Label>Exam Questions</Label>
-              <Card className="p-3">
+              <div className="p-0">
                 <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                          {headerGroup.headers.map((header) => {
-                            return (
-                              <TableHead key={header.id}>
-                                {header.isPlaceholder
-                                  ? null
-                                  : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                              </TableHead>
-                            );
-                          })}
-                        </TableRow>
-                      ))}
-                    </TableHeader>
-                    <TableBody>
-                      {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                          <TableRow
-                            key={row.id}
-                            data-state={row.getIsSelected() && "selected"}
-                          >
-                            {row.getVisibleCells().map((cell) => (
-                              <TableCell key={cell.id}>
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
-                                )}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))
-                      ) : (
-                        <TableRow>
-                          <TableCell
-                            colSpan={columns.length}
-                            className="h-24 text-center"
-                          >
-                            No results.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
+                  <DataTable
+                    data={questions}
+                    columns={columns}
+                    filter={{
+                      column: "subject",
+                      placeholder: "subject (course code)",
+                    }}
+                  />
                 </CardContent>
-              </Card>
+              </div>
             </div>
             <div className="flex items-center gap-2 text-green-700 text-sm">
               <InfoIcon className="w-[1.15rem]" /> Note that you can still add
