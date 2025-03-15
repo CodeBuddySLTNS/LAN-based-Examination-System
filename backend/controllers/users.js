@@ -7,7 +7,7 @@ const User = new UserModel();
 
 const users = async (req, res) => {
   const users = await User.getUsers();
-  res.json({ users });
+  res.send(users);
 };
 
 const userInfo = async (req, res) => {
