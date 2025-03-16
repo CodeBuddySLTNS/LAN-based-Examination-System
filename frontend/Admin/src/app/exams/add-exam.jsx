@@ -1,40 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Axios } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowUpDown,
-  ChevronsUpDown,
-  InfoIcon,
-  LucideDelete,
-  MoreHorizontal,
-} from "lucide-react";
-import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ArrowUpDown, InfoIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import DataTable from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -43,13 +16,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const AddExam = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -65,25 +31,36 @@ const AddExam = () => {
     return response.data;
   };
 
+  const posRequest = async () => {
+    const token = localStorage.getItem("token");
+    const response = await Axios.get(`/questions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+
   const { data: questions } = useQuery({
     queryKey: ["questions"],
     queryFn: fetchQuestions,
   });
 
+  const { mutateAsync: addexam } = useMutation({
+    mutationFn: posRequest,
+  });
+
   const onSubmit = async (data) => {
     const examData = {
-      ...data,
+      title: data.title,
+      description: data.description,
+      duration_hours: Number(data.duration_hours),
+      duration_minutes: Number(data.duration_minutes) || 0,
+      schedule_date: data.schedule_date,
+      schedule_time: data.schedule_time,
       questions: selectedQuestions,
     };
-
-    const token = localStorage.getItem("token");
-    await Axios.post(`/exams`, examData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    reset();
+    console.log(examData);
   };
 
   const columns = [
@@ -95,14 +72,28 @@ const AddExam = () => {
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value);
+            value
+              ? setSelectedQuestions(
+                  table.getFilteredRowModel().rows.map((r) => r.original)
+                )
+              : setSelectedQuestions([]);
+          }}
           aria-label="Select all"
         />
       ),
-      cell: ({ row }) => (
+      cell: ({ row, table }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+            value
+              ? setSelectedQuestions((prev) => [...prev, row.original])
+              : setSelectedQuestions((prev) =>
+                  prev.filter((q) => q.id !== row.original.id)
+                );
+          }}
           aria-label="Select row"
         />
       ),
@@ -278,11 +269,10 @@ const AddExam = () => {
                 <Input
                   id="duration_minutes"
                   type="number"
-                  min="1"
+                  min="0"
                   max="59"
-                  placeholder="Enter minute(s)"
+                  placeholder="Enter minutes (default 0 minutes)"
                   {...register("duration_minutes")}
-                  required
                 />
               </div>
             </div>
@@ -290,11 +280,21 @@ const AddExam = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-3">
                   <Label>Date Schedule</Label>
-                  <Input id="date" type="date" {...register("date")} required />
+                  <Input
+                    id="date"
+                    type="date"
+                    {...register("schedule_date")}
+                    required
+                  />
                 </div>
                 <div className="flex flex-col gap-3">
                   <Label>Time Schedule (e.g. 8:00 AM)</Label>
-                  <Input id="time" type="time" {...register("time")} required />
+                  <Input
+                    id="time"
+                    type="time"
+                    {...register("schedule_time")}
+                    required
+                  />
                 </div>
               </div>
             </div>
