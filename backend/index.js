@@ -32,6 +32,7 @@ app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 app.use("/subjects", require("./routes/subjects"));
 app.use("/questions", require("./routes/questions"));
+app.use("/exams", require("./routes/exams"));
 
 // handle errors
 app.use(require("./middlewares/errorHandler"));
