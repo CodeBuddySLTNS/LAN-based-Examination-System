@@ -57,6 +57,9 @@ const addQuestionSchema = Joi.object({
     }),
 });
 const addExamSchema = Joi.object({
+  subject: Joi.string().label("Subject").required().messages({
+    "any.required": "Subject is required",
+  }),
   title: Joi.string().label("Title").required().messages({
     "any.required": "Title is required",
   }),
