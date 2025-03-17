@@ -1,3 +1,4 @@
+const { use } = require("../../routes/exams");
 const sqlQuery = require("../sqlQuery");
 const { examsTableQuery } = require("../tableQueries");
 
@@ -12,8 +13,56 @@ class ExamModel {
     return result;
   }
 
-  async addExam() {
+  async getExamById(examId) {
     await this.createExamTable();
+    const query = `SELECT * FROM exams WHERE id = ? LIMIT 1`;
+    const params = [examId];
+    const result = await sqlQuery(query, params);
+    return result;
+  }
+
+  async addExam(userId, examData) {
+    await this.createExamTable();
+    const query = `INSERT INTO exams (title, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const params = [
+      examData.title,
+      examData.description,
+      examData.durationHours,
+      examData.durationMinutes,
+      examData.startTime,
+      userId,
+    ];
+    const result = await sqlQuery(query, params);
+    return result;
+  }
+
+  async editExam(userId, examData) {
+    await this.createExamTable();
+    const query = `UPDATE exams SET title = ?, description = ?, duration_hours = ?, duration_minutes = ?, start_time = ? WHERE id = ?`;
+    const params = [
+      examData.title,
+      examData.description,
+      examData.durationHours,
+      examData.durationMinutes,
+      examData.startTime,
+      userId,
+    ];
+    const result = await sqlQuery(query, params);
+    return result;
+  }
+
+  async deleteExam(userId, examId) {
+    await this.createExamTable();
+    const exam = await this.getExamById(examId);
+
+    if (exam[0].examiner_id !== userId) {
+      throw new Error("You are not authorized to delete this exam");
+    }
+
+    const query = `DELETE FROM exams WHERE id = ? AND examiner_id = ?`;
+    const params = [examId, userId];
+    const result = await sqlQuery(query, params);
+    return result;
   }
 }
 
