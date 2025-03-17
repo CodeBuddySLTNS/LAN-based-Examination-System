@@ -54,10 +54,9 @@ const AddExam = () => {
     const examData = {
       title: data.title,
       description: data.description,
-      duration_hours: Number(data.duration_hours),
-      duration_minutes: Number(data.duration_minutes) || 0,
-      schedule_date: data.schedule_date,
-      schedule_time: data.schedule_time,
+      durationHours: Number(data.durationHours),
+      durationMinutes: Number(data.durationMinutes) || 0,
+      startDate: `${data.startDate} ${data.startTime}`,
       questions: selectedQuestions,
     };
     console.log(examData);
@@ -263,11 +262,11 @@ const AddExam = () => {
                   min="1"
                   max="8"
                   placeholder="Enter hour(s)"
-                  {...register("duration_hours")}
+                  {...register("durationHours")}
                   required
                 />
                 <Input
-                  id="duration_minutes"
+                  id="durationMinutes"
                   type="number"
                   min="0"
                   max="59"
@@ -283,7 +282,7 @@ const AddExam = () => {
                   <Input
                     id="date"
                     type="date"
-                    {...register("schedule_date")}
+                    {...register("startDate")}
                     required
                   />
                 </div>
@@ -292,7 +291,7 @@ const AddExam = () => {
                   <Input
                     id="time"
                     type="time"
-                    {...register("schedule_time")}
+                    {...register("startTime")}
                     required
                   />
                 </div>
