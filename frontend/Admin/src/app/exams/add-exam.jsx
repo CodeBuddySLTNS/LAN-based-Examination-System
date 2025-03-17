@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 const AddExam = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -31,9 +32,9 @@ const AddExam = () => {
     return response.data;
   };
 
-  const posRequest = async () => {
+  const postRequest = async (data) => {
     const token = localStorage.getItem("token");
-    const response = await Axios.get(`/questions`, {
+    const response = await Axios.post(`/exams/add`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,7 +48,18 @@ const AddExam = () => {
   });
 
   const { mutateAsync: addexam } = useMutation({
-    mutationFn: posRequest,
+    mutationFn: postRequest,
+    onError: (e) => {
+      if (e?.response?.data?.body?.code === "ER_DUP_ENTRY")
+        return toast.error("This exam already exists.");
+      if (e?.response?.data?.message)
+        return toast.error(e.response.data.message);
+      toast.error("Unable to connect to the server.");
+    },
+
+    onSuccess: (d) => {
+      toast.success("Exam successfully created.");
+    },
   });
 
   const onSubmit = async (data) => {
@@ -60,6 +72,9 @@ const AddExam = () => {
       questions: selectedQuestions,
     };
     console.log(examData);
+    try {
+      await addexam(examData);
+    } catch (e) {}
   };
 
   const columns = [
