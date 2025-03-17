@@ -11,12 +11,11 @@ module.exports.usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
 
 module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL UNIQUE,
     description TEXT,
     duration_hours INT NOT NULL,
     duration_minutes INT NOT NULL,
     start_time DATETIME,
-    end_time DATETIME,
     examiner_id INT NOT NULL,
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
