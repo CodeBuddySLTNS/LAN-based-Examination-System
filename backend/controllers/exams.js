@@ -1,9 +1,11 @@
-const { BAD_REQUEST } = require("../constants/statusCodes");
 const ExamModel = require("../database/models/exam");
+const ExamQuestionModel = require("../database/models/exam_question");
 const CustomError = require("../utils/customError");
 const { validateExam } = require("../utils/validator");
+const { BAD_REQUEST } = require("../constants/statusCodes");
 
 const Exam = new ExamModel();
+const ExamQuestion = new ExamQuestionModel();
 
 const exams = async (req, res) => {
   const exams = await Exam.getAll();

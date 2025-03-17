@@ -38,7 +38,7 @@ class ExamModel {
 
   async editExam(userId, examData) {
     await this.createExamTable();
-    const query = `UPDATE exams SET title = ?, description = ?, duration_hours = ?, duration_minutes = ?, start_time = ? WHERE id = ?`;
+    const query = `UPDATE exams SET title = ?, description = ?, duration_hours = ?, duration_minutes = ?, start_time = ? WHERE id = ? LIMIT 1`;
     const params = [
       examData.title,
       examData.description,
@@ -59,7 +59,7 @@ class ExamModel {
       throw new Error("You are not authorized to delete this exam");
     }
 
-    const query = `DELETE FROM exams WHERE id = ? AND examiner_id = ?`;
+    const query = `DELETE FROM exams WHERE id = ? AND examiner_id = ? LIMIT 1`;
     const params = [examId, userId];
     const result = await sqlQuery(query, params);
     return result;
