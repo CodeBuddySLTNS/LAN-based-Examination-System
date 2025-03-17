@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Axios } from "@/lib/utils";
+import { Axios, cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowUpDown, InfoIcon } from "lucide-react";
+import { ArrowUpDown, Check, ChevronsUpDown, InfoIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import DataTable from "@/components/data-table";
@@ -17,10 +17,35 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const AddExam = () => {
-  const { register, handleSubmit, reset } = useForm();
   const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [isSubjectOptions, setIsSubjectOptions] = useState(false);
+  const [subjectOptionValue, setSubjectOptionValue] = useState("");
+  const { register, handleSubmit } = useForm();
+
+  const fetchSubjects = async () => {
+    const token = localStorage.getItem("token");
+    const response = await Axios.get("/subjects", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
 
   const fetchQuestions = async () => {
     const token = localStorage.getItem("token");
@@ -47,6 +72,11 @@ const AddExam = () => {
     queryFn: fetchQuestions,
   });
 
+  const { data: subjectOptions } = useQuery({
+    queryKey: ["subjectOptions"],
+    queryFn: fetchSubjects,
+  });
+
   const { mutateAsync: addexam } = useMutation({
     mutationFn: postRequest,
     onError: (e) => {
@@ -63,7 +93,9 @@ const AddExam = () => {
   });
 
   const onSubmit = async (data) => {
+    if (!subjectOptionValue) return toast.error("Subject is required.");
     const examData = {
+      subject: subjectOptionValue,
       title: data.title,
       description: data.description,
       durationHours: Number(data.durationHours),
@@ -71,7 +103,7 @@ const AddExam = () => {
       startDate: `${data.startDate} ${data.startTime}`,
       questions: selectedQuestions,
     };
-    console.log(examData);
+
     try {
       await addexam(examData);
     } catch (e) {}
@@ -121,6 +153,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Subject
@@ -139,6 +172,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Question
@@ -157,6 +191,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Question Type
@@ -175,6 +210,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Choices
@@ -187,7 +223,7 @@ const AddExam = () => {
           <div className="text-center">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>View</TooltipTrigger>
+                <TooltipTrigger type="button">View</TooltipTrigger>
                 <TooltipContent>
                   {JSON.parse(row.getValue("choices"))?.join(", ")}
                 </TooltipContent>
@@ -205,6 +241,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Correct Answer
@@ -216,7 +253,7 @@ const AddExam = () => {
         <div className="text-center">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>View</TooltipTrigger>
+              <TooltipTrigger type="button">View</TooltipTrigger>
               <TooltipContent>
                 {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
               </TooltipContent>
@@ -232,6 +269,7 @@ const AddExam = () => {
           <Button
             variant="ghost"
             className="w-full"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Author
@@ -257,6 +295,64 @@ const AddExam = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-3">
+              <Label>Subject</Label>
+              <Popover
+                open={isSubjectOptions}
+                onOpenChange={setIsSubjectOptions}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                  >
+                    {subjectOptionValue
+                      ? subjectOptions?.find(
+                          (subject) =>
+                            subject.course_code === subjectOptionValue
+                        )?.name
+                      : "Select subject..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[auto] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search subject..." />
+                    <CommandList>
+                      <CommandEmpty>No subject found.</CommandEmpty>
+                      <CommandGroup>
+                        {subjectOptions?.map((subject) => (
+                          <CommandItem
+                            key={subject.course_code}
+                            value={subject.course_code}
+                            onSelect={(currentValue) => {
+                              setSubjectOptionValue(
+                                currentValue === subjectOptionValue
+                                  ? ""
+                                  : currentValue
+                              );
+                              setIsSubjectOptions(false);
+                            }}
+                          >
+                            {subject.name}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                subjectOptionValue === subject.course_code
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="flex flex-col gap-3">
               <Label htmlFor="title">Exam Title</Label>
               <Input id="title" {...register("title")} required />
             </div>
@@ -265,7 +361,6 @@ const AddExam = () => {
               <Textarea
                 id="description"
                 {...register("description")}
-                required
               ></Textarea>
             </div>
             <div className="flex flex-col gap-3">
