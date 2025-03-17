@@ -1,4 +1,3 @@
-const { use } = require("../../routes/exams");
 const sqlQuery = require("../sqlQuery");
 const { examsTableQuery } = require("../tableQueries");
 
@@ -23,13 +22,14 @@ class ExamModel {
 
   async addExam(userId, examData) {
     await this.createExamTable();
-    const query = `INSERT INTO exams (title, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO exams (title, description, duration_hours, duration_minutes, start_time, questions, examiner_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       examData.title,
       examData.description,
       examData.durationHours,
       examData.durationMinutes,
       examData.startTime,
+      JSON.stringify(examData.questions),
       userId,
     ];
     const result = await sqlQuery(query, params);
