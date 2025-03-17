@@ -71,7 +71,7 @@ const addExamSchema = Joi.object({
     "any.required": "Start Date is required",
   }),
   questions: Joi.array()
-    .items(addQuestionSchema)
+    .items(Joi.object())
     .label("Questions")
     .required()
     .messages({
@@ -79,14 +79,20 @@ const addExamSchema = Joi.object({
     }),
 });
 
-// Validator functions
-// login validation
+/* Validator functions */
+
+// -> login validation
 module.exports.validateLogin = (payload) =>
   loginSchema.validate(payload, { abortEarly: false });
-// signup valudation
+
+// -> signup validation
 module.exports.validateSignup = (payload) =>
   signupSchema.validate(payload, { abortEarly: false });
+
+// -> question validation
 module.exports.validateQuestion = (payload) =>
   addQuestionSchema.validate(payload, { abortEarly: false });
+
+// -> exam validation
 module.exports.validateExam = (payload) =>
   addExamSchema.validate(payload, { abortEarly: false });
