@@ -56,6 +56,28 @@ const addQuestionSchema = Joi.object({
       "any.required": "Correct Answer is required",
     }),
 });
+const addExamSchema = Joi.object({
+  title: Joi.string().label("Title").required().messages({
+    "any.required": "Title is required",
+  }),
+  description: Joi.string().allow("").label("Description"),
+  durationHours: Joi.number().label("Duration Hours").required().messages({
+    "any.required": "Duration Hours is required",
+  }),
+  durationMinutes: Joi.number().label("Duration Minutes").required().messages({
+    "any.required": "Duration Minutes is required",
+  }),
+  startDate: Joi.date().label("Start Time").required().messages({
+    "any.required": "Start Date is required",
+  }),
+  questions: Joi.array()
+    .items(addQuestionSchema)
+    .label("Questions")
+    .required()
+    .messages({
+      "any.required": "Questions is required",
+    }),
+});
 
 // Validator functions
 // login validation
@@ -66,3 +88,5 @@ module.exports.validateSignup = (payload) =>
   signupSchema.validate(payload, { abortEarly: false });
 module.exports.validateQuestion = (payload) =>
   addQuestionSchema.validate(payload, { abortEarly: false });
+module.exports.validateExam = (payload) =>
+  addExamSchema.validate(payload, { abortEarly: false });
