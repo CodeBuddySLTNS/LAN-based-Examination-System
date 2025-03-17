@@ -21,6 +21,7 @@ const addExam = async (req, res) => {
   }
 
   const result = await Exam.addExam(userId, value);
+  await ExamQuestion.addExamQuestion(result.insertId, value.questions);
   res.send(result);
 };
 
