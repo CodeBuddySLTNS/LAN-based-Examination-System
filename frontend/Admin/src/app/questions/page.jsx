@@ -346,7 +346,7 @@ export default function Page() {
   }, [actionResponse, error]);
 
   return (
-    <div className=" box-border px-8">
+    <div className=" box-border px-8 py-4">
       <DataTable
         data={questions}
         columns={columns}
