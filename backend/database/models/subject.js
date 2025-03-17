@@ -1,3 +1,5 @@
+const { UNAUTHORIZED } = require("../../constants/statusCodes");
+const CustomError = require("../../utils/customError");
 const sqlQuery = require("../sqlQuery");
 const { subjectsTableQuery } = require("../tableQueries");
 
@@ -13,10 +15,10 @@ class SubjectModel {
     return result;
   }
 
-  async getSubjectInfo(question_id) {
-    await this.createQuestionsTable();
-    const query = `SELECT *  FROM subjects WHERE id = ${question_id}`;
-    const result = await sqlQuery(query);
+  async getSubjectById(id) {
+    await this.createSubjectsTable();
+    const query = `SELECT *  FROM subjects WHERE id = ?`;
+    const result = await sqlQuery(query, [id]);
     return result[0];
   }
 
@@ -36,10 +38,10 @@ class SubjectModel {
     return result;
   }
 
-  async deleteSubject(subject_id, user_id) {
-    const subjectInfo = await this.getSubjectInfo(subject_id);
+  async deleteSubject(subjectId, userId) {
+    const subjectInfo = await this.getSubjectById(subjectId);
 
-    if (subjectInfo?.created_by !== user_id) {
+    if (subjectInfo?.created_by !== userId) {
       throw new CustomError(
         "You are not authorized to do this action.",
         UNAUTHORIZED
@@ -47,7 +49,7 @@ class SubjectModel {
     }
 
     const query = `DELETE FROM subjects WHERE id = ? LIMIT 1`;
-    const params = [subject_id];
+    const params = [subjectId];
     const result = await sqlQuery(query, params);
     return result;
   }

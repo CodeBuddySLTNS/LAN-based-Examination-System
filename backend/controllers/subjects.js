@@ -40,9 +40,10 @@ const editSubject = async (req, res) => {
 
 const deleteSubject = async (req, res) => {
   const { subjectId } = req.body;
-  const { userId } = res.locals;
+
+  const userId = res.locals.userId;
   const result = await Subject.deleteSubject(subjectId, userId);
-  res.json({ result });
+  res.json({ message: "Deleted Successfully", result });
 };
 
 module.exports = {
