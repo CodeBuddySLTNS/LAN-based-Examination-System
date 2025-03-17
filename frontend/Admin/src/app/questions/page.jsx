@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -60,49 +60,18 @@ export default function Page() {
 
   const queryClient = useQueryClient();
 
-  const fetchQuestions = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get(`/questions`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const deleteQuestion = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/questions/delete`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data,
-    });
-    return response.data;
-  };
-
-  const editQuestion = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/questions/edit`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const handleAction = async (data) => {
     let response;
     switch (data?.action) {
       case "edit":
         delete data.action;
-        response = await editQuestion(data);
+        response = await Axios2("/questions/edit", "PATCH")(data);
         queryClient.invalidateQueries(["questions"]);
         return response;
 
       case "delete":
         delete data.action;
-        response = await deleteQuestion(data);
+        response = await Axios2("/questions/delete", "DELETE")(data);
         queryClient.invalidateQueries(["questions"]);
         return response;
 
@@ -113,7 +82,7 @@ export default function Page() {
 
   const { data: questions } = useQuery({
     queryKey: ["questions"],
-    queryFn: fetchQuestions,
+    queryFn: Axios2("/questions"),
   });
 
   const {
@@ -346,7 +315,7 @@ export default function Page() {
   }, [actionResponse, error]);
 
   return (
-    <div className=" box-border px-8 py-4">
+    <div className=" box-border px-8">
       <DataTable
         data={questions}
         columns={columns}

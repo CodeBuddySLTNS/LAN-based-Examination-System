@@ -1,9 +1,5 @@
 "use client";
-
-import * as React from "react";
-
 import { ArrowUpDown, LucideDelete, MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -38,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -50,57 +46,27 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import DataTable from "@/components/data-table";
+import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [actionData, setActionData] = React.useState(null);
-  const [isEditDialog, setIsEditDialog] = React.useState(false);
-  const [deleteDialog, setDeleteDialog] = React.useState(false);
+  const [actionData, setActionData] = useState(null);
+  const [isEditDialog, setIsEditDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
   const queryClient = useQueryClient();
-
-  const fetchSubjects = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get(`/subjects`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const deleteQuestion = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/subjects/delete`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data,
-    });
-    return response.data;
-  };
-
-  const editQuestion = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/subjects/edit`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
 
   const handleAction = async (data) => {
     let response;
     switch (data?.action) {
       case "edit":
         delete data.action;
-        response = await editQuestion(data);
+        response = await Axios2("/subjects/edit", "PATCH")(data);
         queryClient.invalidateQueries(["subjects"]);
         return response;
 
       case "delete":
         delete data.action;
-        response = await deleteQuestion(data);
+        response = await Axios2("/subjects/delete", "DELETE")(data);
         queryClient.invalidateQueries(["subjects"]);
         return response;
 
@@ -111,15 +77,21 @@ export default function Page() {
 
   const { data } = useQuery({
     queryKey: ["subjects"],
-    queryFn: fetchSubjects,
+    queryFn: Axios2("/subjects"),
   });
 
-  const {
-    mutateAsync: action,
-    data: actionResponse,
-    error,
-  } = useMutation({
+  const { mutateAsync: action } = useMutation({
     mutationFn: handleAction,
+    onError: (error) => {
+      if (error.response?.data?.message) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error(error.message);
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
   });
 
   const {
@@ -250,20 +222,6 @@ export default function Page() {
       },
     },
   ];
-
-  React.useEffect(() => {
-    if (actionResponse) {
-      toast.success(actionResponse.message);
-    }
-
-    if (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response?.data?.message);
-      } else {
-        toast.error(error.message);
-      }
-    }
-  }, [actionResponse, error]);
 
   return (
     <div className=" box-border px-8 py-4">
@@ -409,7 +367,7 @@ export default function Page() {
             <AlertDialogAction
               onClick={() => {
                 try {
-                  action({ questionId: actionData?.id, action: "delete" });
+                  action({ subjectId: actionData?.id, action: "delete" });
                 } catch (error) {}
               }}
             >

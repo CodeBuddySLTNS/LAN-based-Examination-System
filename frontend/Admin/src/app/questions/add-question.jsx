@@ -9,12 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React from "react";
 
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios, cn } from "@/lib/utils";
+import { Axios, Axios2, cn } from "@/lib/utils";
 import {
   Check,
   ChevronsUpDown,
@@ -39,6 +38,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useState } from "react";
 
 const schema = Joi.object({
   subject: Joi.string().label("Subject").required(),
@@ -52,36 +52,16 @@ const schema = Joi.object({
 });
 
 export const AddQuestion = () => {
-  const [isSubjectOptions, setIsSubjectOptions] = React.useState(false);
-  const [subjectOptionValue, setSubjectOptionValue] = React.useState("");
-  const [questionType, setQuestionType] = React.useState(null);
-  const [choicesCount, setChoicesCount] = React.useState(4);
-  const [answersCount, setAnswersCount] = React.useState(1);
-  const [isMultipleAnswer, setIsMultipleAnswer] = React.useState(false);
-  const [isValidCorrectAnswer, setIsValidCorrectAnswer] = React.useState(true);
+  const [isSubjectOptions, setIsSubjectOptions] = useState(false);
+  const [subjectOptionValue, setSubjectOptionValue] = useState("");
+  const [questionType, setQuestionType] = useState(null);
+  const [choicesCount, setChoicesCount] = useState(4);
+  const [answersCount, setAnswersCount] = useState(1);
+  const [isMultipleAnswer, setIsMultipleAnswer] = useState(false);
+  const [isValidCorrectAnswer, setIsValidCorrectAnswer] = useState(true);
 
-  const postRequest = async (questionData) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.post("/questions/add", questionData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const fetchSubjects = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get("/subjects", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const { mutateAsync: addQuestion, isPending } = useMutation({
-    mutationFn: postRequest,
+  const { mutateAsync: addquestion, isPending } = useMutation({
+    mutationFn: Axios2("/questions/add", "POST"),
     onSuccess: (data) => {
       toast.success("Question added succesfully.");
       resetForm();
@@ -96,7 +76,7 @@ export const AddQuestion = () => {
 
   const { data: subjectOptions } = useQuery({
     queryKey: ["subjectOptions"],
-    queryFn: fetchSubjects,
+    queryFn: Axios2("/subjects", "GET"),
   });
 
   const {
@@ -110,7 +90,6 @@ export const AddQuestion = () => {
   const onSubmit = async (data) => {
     data.choices = data.choices || [];
     let valid = false;
-    console.log(data);
 
     if (data.questionType === "multiple_choice") {
       for (let i = 0; i < data.choices.length; i++) {
@@ -124,7 +103,7 @@ export const AddQuestion = () => {
 
     if (valid || data.questionType !== "multiple_choice") {
       try {
-        await addQuestion(data);
+        await addquestion(data);
       } catch (error) {}
 
       setIsValidCorrectAnswer(true);

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import { useMainStore } from "@/states/store";
 import { useMutation } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
@@ -25,18 +25,13 @@ export default function Page({ setForm }) {
     } catch (error) {}
   };
 
-  const postRequest = async (credentials) => {
-    const response = await Axios.post("/auth/login", credentials);
-    return response.data;
-  };
-
   const {
     mutateAsync: login,
     data,
     error,
     isPending,
   } = useMutation({
-    mutationFn: postRequest,
+    mutationFn: Axios2("/auth/login", "POST"),
     onError: (error) => {
       if (error?.code === "ERR_NETWORK") {
         toast.error("Unable to connect to the server.");

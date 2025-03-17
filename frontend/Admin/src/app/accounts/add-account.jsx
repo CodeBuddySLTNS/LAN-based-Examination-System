@@ -16,7 +16,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
 const schema = Joi.object({
@@ -30,23 +30,13 @@ const schema = Joi.object({
 });
 
 export const AddAccount = () => {
-  const postRequest = async (user) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.post("/auth/signup", user, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const {
     mutateAsync: signup,
     data,
     isPending,
     error,
   } = useMutation({
-    mutationFn: postRequest,
+    mutationFn: Axios2("/auth/signup", "POST"),
     onError: (error) => {
       console.log(error);
     },

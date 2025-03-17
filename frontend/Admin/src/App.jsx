@@ -12,7 +12,7 @@ import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Axios } from "./lib/utils";
+import { Axios, Axios2 } from "./lib/utils";
 import AddAccount from "./app/accounts/add-account";
 import Questions from "./app/questions/page";
 import AddQuestion from "./app/questions/add-question";
@@ -26,19 +26,9 @@ function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
   const isLoading = useMainStore((state) => state.isLoading);
 
-  const fetchUser = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get(`/users/user/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const { data, isLoading: loading } = useQuery({
     queryKey: ["user"],
-    queryFn: fetchUser,
+    queryFn: Axios2("/users/user/me", "GET"),
   });
 
   useEffect(() => {

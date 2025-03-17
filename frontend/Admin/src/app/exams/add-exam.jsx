@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Axios, cn } from "@/lib/utils";
+import { Axios2, cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowUpDown, Check, ChevronsUpDown, InfoIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -37,48 +37,18 @@ const AddExam = () => {
   const [subjectOptionValue, setSubjectOptionValue] = useState("");
   const { register, handleSubmit } = useForm();
 
-  const fetchSubjects = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get("/subjects", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const fetchQuestions = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get(`/questions`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const postRequest = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.post(`/exams/add`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const { data: questions } = useQuery({
     queryKey: ["questions"],
-    queryFn: fetchQuestions,
+    queryFn: Axios2("/questions", "GET"),
   });
 
   const { data: subjectOptions } = useQuery({
     queryKey: ["subjectOptions"],
-    queryFn: fetchSubjects,
+    queryFn: Axios2("/subjects", "GET"),
   });
 
   const { mutateAsync: addexam } = useMutation({
-    mutationFn: postRequest,
+    mutationFn: Axios2("/exams/add", "POST"),
     onError: (e) => {
       if (e?.response?.data?.body?.code === "ER_DUP_ENTRY")
         return toast.error("This exam already exists.");

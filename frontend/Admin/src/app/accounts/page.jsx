@@ -45,7 +45,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -64,64 +64,23 @@ export default function Page() {
 
   const queryClient = useQueryClient();
 
-  const fetchUsers = async () => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.get(`/users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const verifyUser = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/users/user/verify`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
-  const deleteUser = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.delete(`/users/user/delete`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data,
-    });
-    return response.data;
-  };
-
-  const editUser = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.patch(`/users/user/edit`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const handleAction = async (data) => {
     let response;
     switch (data?.action) {
       case "verify":
         delete data.action;
-        response = await verifyUser(data);
+        response = await Axios2("/users/user/verify", "PATCH")(data);
         queryClient.invalidateQueries(["users"]);
         return response;
 
       case "edit":
         delete data.action;
-        response = await editUser(data);
+        response = await Axios2("/users/user/edit", "PATCH")(data);
         queryClient.invalidateQueries(["users"]);
         return response;
 
       case "delete":
-        response = await deleteUser(data);
+        response = await Axios2("/users/user/delete", "DELETE")(data);
         queryClient.invalidateQueries(["users"]);
         return response;
 
@@ -132,7 +91,7 @@ export default function Page() {
 
   const { data } = useQuery({
     queryKey: ["users"],
-    queryFn: fetchUsers,
+    queryFn: Axios2("/users", "GET"),
   });
 
   const { mutateAsync: action } = useMutation({

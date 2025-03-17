@@ -21,9 +21,9 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useMutation } from "@tanstack/react-query";
 import { useMainStore } from "@/states/store";
-import React from "react";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import { AlertCircle } from "lucide-react";
+import { useEffect } from "react";
 
 const schema = Joi.object({
   lastname: Joi.string().label("Last Name").required(),
@@ -56,24 +56,19 @@ export default function Page({ setForm }) {
     } catch (error) {}
   };
 
-  const postRequest = async (credentials) => {
-    const response = await Axios.post("/auth/signup", credentials);
-    return response.data;
-  };
-
   const {
     mutateAsync: signup,
     data,
     error,
     isPending,
   } = useMutation({
-    mutationFn: postRequest,
+    mutationFn: Axios2("/auth/signup", "POST"),
     onError: (error) => {
       console.log(error);
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       localStorage.setItem("token", data.token);
       useMainStore.getState().setUser(data.user);

@@ -6,7 +6,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios } from "@/lib/utils";
+import { Axios, Axios2 } from "@/lib/utils";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { toast } from "sonner";
@@ -17,18 +17,8 @@ const schema = Joi.object({
 });
 
 export const AddSubject = () => {
-  const postRequest = async (data) => {
-    const token = localStorage.getItem("token");
-    const response = await Axios.post("/subjects/add", data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  };
-
   const { mutateAsync: addSubject, isPending } = useMutation({
-    mutationFn: postRequest,
+    mutationFn: Axios2("/subjects/add", "POST"),
     onSuccess: () => {
       toast.success("Subject added succesfully.");
       reset();
