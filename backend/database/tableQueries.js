@@ -35,7 +35,7 @@ module.exports.questionBankTableQuery = `CREATE TABLE IF NOT EXISTS question_ban
 module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     exam_id INT NOT NULL,
-    question_data JSON NOT NULL, -- Stores selected questions and exam-specific settings
+    question_data JSON NOT NULL,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );`;
 
