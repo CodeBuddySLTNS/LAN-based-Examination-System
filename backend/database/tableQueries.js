@@ -18,6 +18,7 @@ module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     duration_minutes INT NOT NULL,
     start_time DATETIME,
     examiner_id INT NOT NULL,
+    FOREIGN KEY (subject) REFERENCES subjects(course_code) ON DELETE CASCADE,
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
