@@ -70,7 +70,7 @@ const AddExam = () => {
       description: data.description,
       durationHours: Number(data.durationHours),
       durationMinutes: Number(data.durationMinutes) || 0,
-      startDate: `${data.startDate} ${data.startTime}`,
+      startTime: `${data.startDate} ${data.startTime}`,
       questions: selectedQuestions,
     };
 

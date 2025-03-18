@@ -42,7 +42,7 @@ const Page = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "name",
+      accessorKey: "subject",
       header: ({ column }) => {
         return (
           <Button
@@ -54,10 +54,10 @@ const Page = () => {
           </Button>
         );
       },
-      cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("subject")}</div>,
     },
     {
-      accessorKey: "course_code",
+      accessorKey: "title",
       header: ({ column }) => {
         return (
           <Button
@@ -65,17 +65,17 @@ const Page = () => {
             className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Course Code
+            Title
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("course_code")}</div>
+        <div className="text-center">{row.getValue("title")}</div>
       ),
     },
     {
-      accessorKey: "created_by",
+      accessorKey: "description",
       header: ({ column }) => {
         return (
           <Button
@@ -83,53 +83,50 @@ const Page = () => {
             className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Added by
+            Description
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("created_by")}</div>
+        <div className="text-center">{row.getValue("description")}</div>
       ),
     },
     {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const question = row.original;
-
+      accessorKey: "duration",
+      header: ({ column }) => {
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem
-                onClick={() => {
-                  setIsEditDialog(true);
-                  setActionData(question);
-                }}
-              >
-                <Edit className="text-green-600" />
-                Edit Question
-              </DropdownMenuItem> */}
-              <DropdownMenuItem
-                onClick={() => {
-                  setDeleteDialog(true);
-                  setActionData(question);
-                }}
-              >
-                <LucideDelete className="text-red-500" />
-                Delete Subject
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Duration
+            <ArrowUpDown />
+          </Button>
         );
       },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("duration")}</div>
+      ),
+    },
+    {
+      accessorKey: "start_time",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Start Time
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("start_time")}</div>
+      ),
     },
   ];
 
