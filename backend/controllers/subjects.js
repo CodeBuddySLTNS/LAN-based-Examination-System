@@ -35,7 +35,7 @@ const editSubject = async (req, res) => {
   }
 
   const result = await Subject.editSubject();
-  res.json({ result });
+  res.json({ message: "Updated Successfully", result });
 };
 
 const deleteSubject = async (req, res) => {
