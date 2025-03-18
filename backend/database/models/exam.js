@@ -22,13 +22,14 @@ class ExamModel {
 
   async addExam(userId, examData) {
     await this.createExamTable();
-    const query = `INSERT INTO exams (title, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO exams (subject, title, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const params = [
+      examData.subject,
       examData.title,
       examData.description,
       examData.durationHours,
       examData.durationMinutes,
-      examData.startDate,
+      examData.startTime,
       userId,
     ];
     const result = await sqlQuery(query, params);
