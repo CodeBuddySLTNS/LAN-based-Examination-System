@@ -28,7 +28,7 @@ const addExam = async (req, res) => {
 const editExam = async (req, res) => {
   const { error, value } = validateExam(req.body);
   const userId = res.locals.userId;
-
+  console.log(value);
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST, error);
   }
