@@ -1,13 +1,6 @@
 import DataTable from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Axios, Axios2 } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpDown, LucideDelete, MoreHorizontal } from "lucide-react";
@@ -89,7 +82,27 @@ const Page = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("description")}</div>
+        <div className="text-center">
+          {row.getValue("description") ? row.getValue("description") : "None"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "questions",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Questions
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center hover:underline">View/Edit</div>
       ),
     },
     {
@@ -125,7 +138,15 @@ const Page = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("start_time")}</div>
+        <div className="text-center">
+          {new Date(row.getValue("start_time")).toLocaleString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </div>
       ),
     },
   ];
@@ -135,7 +156,7 @@ const Page = () => {
       <DataTable
         data={data}
         columns={columns}
-        filter={{ column: "course_code", placeholder: "subject (course code)" }}
+        filter={{ column: "subject", placeholder: "subject (course code)" }}
       />
     </div>
   );
