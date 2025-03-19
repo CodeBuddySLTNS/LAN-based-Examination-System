@@ -70,8 +70,8 @@ const addExamSchema = Joi.object({
   durationMinutes: Joi.number().label("Duration Minutes").required().messages({
     "any.required": "Duration Minutes is required",
   }),
-  startDate: Joi.date().label("Start Time").required().messages({
-    "any.required": "Start Date is required",
+  startTime: Joi.date().label("Start Time").required().messages({
+    "any.required": "Start Time is required",
   }),
   questions: Joi.array()
     .items(Joi.object())
