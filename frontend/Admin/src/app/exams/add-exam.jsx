@@ -35,7 +35,7 @@ const AddExam = () => {
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [isSubjectOptions, setIsSubjectOptions] = useState(false);
   const [subjectOptionValue, setSubjectOptionValue] = useState("");
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const { data: questions } = useQuery({
     queryKey: ["questions"],
@@ -59,6 +59,8 @@ const AddExam = () => {
 
     onSuccess: (d) => {
       toast.success("Exam successfully created.");
+      setSubjectOptionValue("");
+      reset();
     },
   });
 
