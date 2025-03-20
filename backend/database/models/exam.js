@@ -14,7 +14,7 @@ class ExamModel {
         e.subject, 
         e.title, 
         e.description, 
-        CONCAT(LPAD(e.duration_hours, 2, '0'), ':', LPAD(e.duration_minutes, 2, '0')) AS duration, 
+        CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
         e.start_time, 
         e.examiner_id,
         GROUP_CONCAT(eq.question_data) AS questions
