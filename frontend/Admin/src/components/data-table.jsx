@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -26,7 +26,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
-const DataTable = ({ data, columns, filter, isFilter = true }) => {
+const DataTable = ({
+  data,
+  columns,
+  filter,
+  isFilter = true,
+  initialSelectedRows = [],
+}) => {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -50,6 +56,21 @@ const DataTable = ({ data, columns, filter, isFilter = true }) => {
       rowSelection,
     },
   });
+
+  useEffect(() => {
+    const rows = table.getFilteredRowModel().rows;
+    const initialSelection = {};
+
+    rows.forEach((row, index) => {
+      initialSelectedRows.forEach((selected) => {
+        if (selected.id === row.original.id) {
+          initialSelection[index] = true;
+        }
+      });
+    });
+
+    setRowSelection(initialSelection);
+  }, []);
 
   return (
     <div>
