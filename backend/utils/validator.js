@@ -9,6 +9,7 @@ const loginSchema = Joi.object({
     "any.required": "Password is required",
   }),
 });
+
 const signupSchema = Joi.object({
   name: Joi.string().max(20).required().messages({
     "string.max": "Name should not exceed {#limit} characters",
@@ -31,6 +32,7 @@ const signupSchema = Joi.object({
     "any.required": "Password is required",
   }),
 });
+
 const addQuestionSchema = Joi.object({
   subject: Joi.string().label("Subject").required().messages({
     "any.required": "Subject is required",
@@ -56,6 +58,7 @@ const addQuestionSchema = Joi.object({
       "any.required": "Correct Answer is required",
     }),
 });
+
 const addExamSchema = Joi.object({
   subject: Joi.string().label("Subject").required().messages({
     "any.required": "Subject is required",
@@ -80,6 +83,10 @@ const addExamSchema = Joi.object({
     .messages({
       "any.required": "Questions is required",
     }),
+  // optional for editing the exam data
+  examId: Joi.number().label("Examiner Id"),
+  examinerId: Joi.number().label("Examiner Id"),
+  examQuestionsId: Joi.number().label("Exam Questions Id"),
 });
 
 /* Validator functions */
