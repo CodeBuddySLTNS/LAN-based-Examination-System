@@ -17,6 +17,7 @@ class ExamModel {
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
         e.start_time, 
         e.examiner_id,
+        eq.id as exam_question_id,
         GROUP_CONCAT(eq.question_data) AS questions
       FROM exams e
       LEFT JOIN exam_questions eq ON e.id = eq.exam_id
