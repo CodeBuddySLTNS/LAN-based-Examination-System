@@ -73,7 +73,7 @@ const DataTable = ({
   }, []);
 
   return (
-    <div>
+    <div className="w-full overflow-auto">
       {isFilter && (
         <div className="flex items-center pb-4">
           <Input
