@@ -8,40 +8,35 @@ class ExamQuestionModel {
 
   async getAll() {
     await this.createExamQuestionTable();
-    const result = await sqlQuery(`SELECT * FROM exam_questions`);
-    return result;
+    return await sqlQuery(`SELECT * FROM exam_questions`);
   }
 
   async getExamQuestionById(id) {
     await this.createExamQuestionTable();
     const query = `SELECT * FROM exam_questions WHERE id = ? LIMIT 1`;
     const params = [id];
-    const result = await sqlQuery(query, params);
-    return result;
+    return await sqlQuery(query, params);
   }
 
   async addExamQuestion(examId, questions) {
     await this.createExamQuestionTable();
     const query = `INSERT INTO exam_questions (exam_id, question_data) VALUES (?, ?)`;
     const params = [examId, JSON.stringify(questions)];
-    const result = await sqlQuery(query, params);
-    return result;
+    return await sqlQuery(query, params);
   }
 
   async editExamQuestion(examId, questions) {
     await this.createExamQuestionTable();
-    const query = `UPDATE exam_questions SET question_data = ? WHERE id = ? LIMIT 1`;
+    const query = `UPDATE exam_questions SET question_data = ? WHERE exam_id = ? LIMIT 1`;
     const params = [JSON.stringify(questions), examId];
-    const result = await sqlQuery(query, params);
-    return result;
+    return await sqlQuery(query, params);
   }
 
   async deleteExamQuestion(examId) {
     await this.createExamQuestionTable();
     const query = `DELETE FROM exam_questions WHERE id = ? LIMIT 1`;
     const params = [examId];
-    const result = await sqlQuery(query, params);
-    return result;
+    return await sqlQuery(query, params);
   }
 }
 
