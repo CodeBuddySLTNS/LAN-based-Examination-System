@@ -1,14 +1,16 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axios from "axios";
+import config from "../../system.config.json";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
 export const Axios = axios.create({
-  baseURL: "http://localhost:5000",
-  withCredentials: true,
+  baseURL: config.isProduction
+    ? config.productionServer
+    : config.developmentServer,
 });
 
 export const Axios2 = (endpoint, method) => async (data) => {
