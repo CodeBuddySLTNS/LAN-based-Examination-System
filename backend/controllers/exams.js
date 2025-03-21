@@ -2,7 +2,7 @@ const ExamModel = require("../database/models/exam");
 const ExamQuestionModel = require("../database/models/exam_question");
 const CustomError = require("../utils/customError");
 const { validateExam } = require("../utils/validator");
-const { BAD_REQUEST } = require("../constants/statusCodes");
+const { BAD_REQUEST, SUCCESS } = require("../constants/statusCodes");
 
 const Exam = new ExamModel();
 const ExamQuestion = new ExamQuestionModel();
@@ -26,15 +26,25 @@ const addExam = async (req, res) => {
 };
 
 const editExam = async (req, res) => {
+  const isQuestionsOnly = req.params.mode === "questions";
   const { error, value } = validateExam(req.body);
   const userId = res.locals.userId;
-  console.log(value);
+
   if (error) {
     throw new CustomError(error.message, BAD_REQUEST, error);
   }
 
+  if (isQuestionsOnly) {
+    const result = await ExamQuestion.editExamQuestion(
+      value.examId,
+      value.questions
+    );
+
+    return res.json({ message: "Questions updated successfully.", result });
+  }
+
   const result = await Exam.editExam(userId, value);
-  res.send(result);
+  res.json(result);
 };
 
 const deleteExam = async (req, res) => {
