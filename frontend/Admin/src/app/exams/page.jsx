@@ -15,17 +15,56 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Axios, Axios2 } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
+  const queryClient = useQueryClient();
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [questionsDialog, setQuestionsDialog] = useState({
     open: false,
     data: null,
     initialSelectedRows: {},
   });
-  const [selectedQuestions, setSelectedQuestions] = useState([]);
+
+  const handleOpenQuestionsDialog = ({ row }) => {
+    const questions = row.original.questions
+      ? JSON.parse(row.original.questions)
+      : [];
+    setQuestionsDialog({
+      open: true,
+      data: { ...row.original, questions },
+      initialSelectedRows: questions,
+    });
+    setSelectedQuestions(questions);
+  };
+
+  const handleEditQuestions = async (mode) => {
+    const data = {
+      examId: questionsDialog.data.id,
+      examQuestionsId: questionsDialog.data.exam_questions_id,
+      subject: questionsDialog.data.subject,
+      title: questionsDialog.data.title,
+      description: questionsDialog.data.description,
+      durationHours: questionsDialog.data.duration.split(" : ")[0],
+      durationMinutes: questionsDialog.data.duration.split(" : ")[1],
+      startTime: questionsDialog.data.start_time,
+      examinerId: questionsDialog.data.examiner_id,
+      questions: selectedQuestions,
+    };
+
+    if (mode.questionsOnly) {
+      const response = await Axios2("/exams/edit/questions", "PATCH")(data);
+      queryClient.invalidateQueries(["exams"]);
+      return response;
+    }
+
+    const response = await Axios2("/exams/edit/exam", "PATCH")(data);
+    queryClient.invalidateQueries(["exams"]);
+    return response;
+  };
 
   const { data: exams } = useQuery({
     queryKey: ["exams"],
@@ -37,17 +76,20 @@ const Page = () => {
     queryFn: Axios2("/questions", "GET"),
   });
 
-  const handleOpenQuestionsDialog = ({ row, table }) => {
-    const questions = row.original.questions
-      ? JSON.parse(row.original.questions)
-      : [];
-    setQuestionsDialog({
-      open: true,
-      data: { questions },
-      initialSelectedRows: questions,
-    });
-    setSelectedQuestions(questions);
-  };
+  const { mutateAsync: edit, data } = useMutation({
+    mutationFn: handleEditQuestions,
+    onError: (error) => {
+      if (error.response?.data?.message) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error(error.message);
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setQuestionsDialog((prev) => ({ ...prev, open: false }));
+    },
+  });
 
   const examColumns = [
     {
@@ -375,7 +417,7 @@ const Page = () => {
   ];
 
   return (
-    <div className="p-6 pt-3">
+    <div className="w-full p-6 pt-3">
       <DataTable
         data={exams}
         columns={examColumns}
@@ -393,7 +435,7 @@ const Page = () => {
             <DialogTitle>Exam Questions</DialogTitle>
             <DialogDescription>Add or remove questions here.</DialogDescription>
           </DialogHeader>
-          <div className="w-full">
+          <div className="w-full overflow-auto">
             <DataTable
               data={questions}
               columns={questionColumns}
@@ -403,6 +445,25 @@ const Page = () => {
               }}
               initialSelectedRows={questionsDialog.initialSelectedRows}
             />
+            <div className="mt-6 flex justify-end gap-4">
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setQuestionsDialog((prev) => ({ ...prev, open: false }))
+                }
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    await edit({ questionsOnly: true });
+                  } catch (e) {}
+                }}
+              >
+                Save changes
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
