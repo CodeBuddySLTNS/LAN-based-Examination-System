@@ -39,7 +39,8 @@ const editExam = async (req, res) => {
       value.examId,
       value.questions
     );
-
+    console.log(value);
+    console.log(result);
     return res.json({ message: "Questions updated successfully.", result });
   }
 
