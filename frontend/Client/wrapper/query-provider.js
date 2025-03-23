@@ -8,6 +8,6 @@ const client = new QueryClient({
   },
 });
 
-export default QueryProvider = ({ children }) => {
+export const QueryProvider = ({ children }) => {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 };
