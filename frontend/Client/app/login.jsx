@@ -6,16 +6,22 @@ import { useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
-import QueryProvider from "@/wrapper/query-provider";
+import { QueryProvider } from "@/wrapper/query-provider";
 
-const Login = () => {
+const LoginPage = () => {
   const [formdata, setFormdata] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
-  // const {} = useMutation({
-  //   mutationFn: Axios2("/login", "POST"),
-  // });
+  const { mutateAsync: login } = useMutation({
+    mutationFn: Axios2("/auth/login", "POST"),
+    onError: (e) => {
+      console.log(e);
+    },
+    onSuccess: (d) => {
+      console.log(d);
+    },
+  });
 
   const validateForm = () => {
     const errors = {};
@@ -28,54 +34,62 @@ const Login = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      console.log(formdata);
-      setFormdata({ username: "", password: "" });
-      setErrors({});
-      useMainStore.getState().setIsLoggedIn(true);
-      router.dismissAll();
-      router.replace("/");
+      try {
+        await login(formdata);
+        setFormdata({ username: "", password: "" });
+        setErrors({});
+        useMainStore.getState().setIsLoggedIn(true);
+        router.dismissAll();
+        router.replace("/");
+      } catch (e) {}
     }
   };
 
   return (
-    <QueryProvider>
-      <View style={styles.loginContainer}>
-        <View style={styles.loginForm}>
-          <Text style={styles.formTitle}>CodeBuddy Exam</Text>
-          <View style={styles.inputField}>
-            <Text style={styles.inputLabel}>username</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your username"
-              value={formdata.username}
-              onChangeText={(text) =>
-                setFormdata((prev) => ({ ...prev, username: text }))
-              }
-            />
-            {errors.username && (
-              <Text style={styles.errorText}>{errors.username}</Text>
-            )}
-          </View>
-          <View style={styles.inputField}>
-            <Text style={styles.inputLabel}>password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your username"
-              secureTextEntry
-              value={formdata.password}
-              onChangeText={(text) =>
-                setFormdata((prev) => ({ ...prev, password: text }))
-              }
-            />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
-          </View>
-          <Button title="Login" onPress={handleSubmit} />
+    <View style={styles.loginContainer}>
+      <View style={styles.loginForm}>
+        <Text style={styles.formTitle}>CodeBuddy Exam</Text>
+        <View style={styles.inputField}>
+          <Text style={styles.inputLabel}>username</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your username"
+            value={formdata.username}
+            onChangeText={(text) =>
+              setFormdata((prev) => ({ ...prev, username: text }))
+            }
+          />
+          {errors.username && (
+            <Text style={styles.errorText}>{errors.username}</Text>
+          )}
         </View>
+        <View style={styles.inputField}>
+          <Text style={styles.inputLabel}>password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your username"
+            secureTextEntry
+            value={formdata.password}
+            onChangeText={(text) =>
+              setFormdata((prev) => ({ ...prev, password: text }))
+            }
+          />
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
+        </View>
+        <Button title="Login" onPress={handleSubmit} />
       </View>
+    </View>
+  );
+};
+
+const Login = () => {
+  return (
+    <QueryProvider>
+      <LoginPage />
     </QueryProvider>
   );
 };
