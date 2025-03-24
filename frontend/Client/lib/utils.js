@@ -3,9 +3,10 @@ import axios from "axios";
 import config from "@/system.config.json";
 
 export const AxiosInstance = axios.create({
-  baseURL: config.isProduction
-    ? config.productionServer
-    : config.developmentServer,
+  baseURL:
+    "http://localhost:5000" || config.isProduction
+      ? config.productionServer
+      : config.developmentServer,
 });
 
 export const Axios2 = (endpoint, method) => async (data) => {
