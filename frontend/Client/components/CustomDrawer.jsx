@@ -18,7 +18,7 @@ export default function CustomDrawer(props) {
           />
           <Text style={styles.name}>{user.name}</Text>
           <Text style={styles.department}>
-            {user.department} {user.year} | @{user.username}
+            {user.department} {user.year} | offline
           </Text>
           <View style={styles.buttons}>
             {/* <Text style={[styles.badge, styles.edit]}>Edit</Text> */}
