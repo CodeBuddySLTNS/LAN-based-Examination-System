@@ -20,6 +20,10 @@ const LoginPage = () => {
     },
     onSuccess: (d) => {
       console.log(d);
+      SecureStore.setItemAsync("token", d.token);
+      useMainStore.getState().setUser(d.user);
+      router.dismissAll();
+      router.replace("/home");
     },
   });
 
@@ -40,9 +44,6 @@ const LoginPage = () => {
         await login(formdata);
         setFormdata({ username: "", password: "" });
         setErrors({});
-        useMainStore.getState().setIsLoggedIn(true);
-        router.dismissAll();
-        router.replace("/");
       } catch (e) {}
     }
   };
