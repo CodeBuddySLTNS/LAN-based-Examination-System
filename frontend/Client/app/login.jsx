@@ -19,10 +19,8 @@ const LoginPage = () => {
       console.log(e);
     },
     onSuccess: (d) => {
-      console.log(d);
       SecureStore.setItemAsync("token", d.token);
       useMainStore.getState().setUser(d.user);
-      router.dismissAll();
       router.replace("/home");
     },
   });
