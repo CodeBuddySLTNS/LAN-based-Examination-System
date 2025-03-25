@@ -1,4 +1,4 @@
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { styles } from "@/styles/home.styles";
 import { Link, useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
@@ -16,29 +16,12 @@ const Homepage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
-  useEffect(() => {
-    if (exams) {
-      console.log(exams);
-      console.log(user);
-    }
-    if (error) {
-      console.log(error);
-    }
-  }, [exams, error]);
-
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.text}>Welcome {user.name}</Text>
       </View>
-      <FlatList
-        data={exams}
-        renderItem={({ item }) => {
-          <View style={{ flex: 1 }} key={item.id}>
-            <Text>{item.title}</Text>
-          </View>;
-        }}
-      />
+
       <Link href="/login">Login</Link>
     </View>
   );
