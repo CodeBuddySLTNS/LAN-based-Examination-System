@@ -11,7 +11,8 @@ export default function DrawerLayout() {
           drawerStyle: {
             backgroundColor: light.bg,
           },
-          drawerContentStyle: { backgroundColor: "cyans" },
+          drawerInactiveTintColor: light.text,
+          drawerInactiveBackgroundColor: light.bgVariant,
           drawerItemStyle: {
             marginTop: 12,
           },
@@ -21,6 +22,14 @@ export default function DrawerLayout() {
         <Drawer.Screen
           name="home"
           options={{ drawerLabel: "Home", title: "Home" }}
+        />
+        <Drawer.Screen
+          name="exam-schedules"
+          options={{ drawerLabel: "Exam Schedules", title: "Exam Schedules" }}
+        />
+        <Drawer.Screen
+          name="[id]"
+          options={{ drawerItemStyle: { display: "none" } }}
         />
       </Drawer>
     </GestureHandlerRootView>
