@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: light.bgVariant,
+    backgroundColor: light.primaryVariant,
   },
   profileContainer: {
     alignItems: "center",
