@@ -20,13 +20,14 @@ export const styles = StyleSheet.create({
   },
   name: {
     fontSize: 19,
-    fontWeight: "bold",
+    fontFamily: "Nunito-Bold",
     paddingTop: 5,
     color: light.text,
   },
   department: {
     color: light.text,
     paddingBottom: 5,
+    fontFamily: "Nunito-Regular",
   },
   buttons: {
     flexDirection: "row",
@@ -34,6 +35,7 @@ export const styles = StyleSheet.create({
   },
   badge: {
     color: light.text,
+    fontFamily: "Nunito-Regular",
     borderWidth: 1.3,
     borderRadius: 10,
     paddingHorizontal: 15,
