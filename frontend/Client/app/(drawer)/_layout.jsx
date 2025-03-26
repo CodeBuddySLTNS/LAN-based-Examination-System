@@ -16,12 +16,21 @@ export default function DrawerLayout() {
           drawerItemStyle: {
             marginTop: 12,
           },
+          drawerLabelStyle: {
+            fontFamily: "Nunito-Bold",
+          },
+          headerTitleStyle: {
+            fontFamily: "Nunito-Bold",
+          },
         }}
         drawerContent={(props) => <CustomDrawer {...props} />}
       >
         <Drawer.Screen
           name="home"
-          options={{ drawerLabel: "Home", title: "Good day, Renz" }}
+          options={{
+            drawerLabel: "Home",
+            title: "Home",
+          }}
         />
         <Drawer.Screen
           name="exam-schedules"
