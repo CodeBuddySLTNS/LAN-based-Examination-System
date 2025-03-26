@@ -9,6 +9,7 @@ import { useMainStore } from "@/states/store";
 const IndexPage = () => {
   const router = useRouter();
   const navState = useRootNavigationState();
+
   const { data: user, error } = useQuery({
     queryKey: ["user"],
     queryFn: Axios2("/users/user/me"),
