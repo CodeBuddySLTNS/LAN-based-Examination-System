@@ -5,7 +5,6 @@ import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/wrapper/query-provider";
-import { useEffect } from "react";
 
 const Homepage = () => {
   const router = useRouter();
@@ -19,10 +18,12 @@ const Homepage = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.text}>Welcome {user.name}</Text>
+        <Text style={styles.text}>Welcome g {user.name}</Text>
       </View>
 
-      <Link href="/login">Login</Link>
+      <Link href="/login" style={{ fontFamily: "Nunito-Regular" }}>
+        Login
+      </Link>
     </View>
   );
 };
