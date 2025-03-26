@@ -8,8 +8,17 @@ import { useMainStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 
+const dummyuser = {
+  id: 1,
+  name: "Lansano, Leo P.",
+  username: "leo",
+  department: "BSIT",
+  year: 3,
+  role: "user",
+};
+
 export default function CustomDrawer(props) {
-  const user = useMainStore((state) => state.user);
+  const user = useMainStore((state) => state.user) || dummyuser;
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -26,9 +35,9 @@ export default function CustomDrawer(props) {
             style={styles.avatar}
             source={require("@/assets/images/pikachu.png")}
           />
-          <Text style={styles.name}>{user.name}</Text>
+          <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.department}>
-            {user.department} {user.year} | offline
+            {user?.department} {user?.year} | offline
           </Text>
           <View style={styles.buttons}>
             {/* <Text style={[styles.badge, styles.edit]}>Edit</Text> */}

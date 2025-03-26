@@ -6,9 +6,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/wrapper/query-provider";
 
+const dummyuser = {
+  id: 1,
+  name: "Lansano, Leo P.",
+  username: "leo",
+  department: "BSIT",
+  year: 3,
+  role: "user",
+};
+
 const Homepage = () => {
   const router = useRouter();
-  const user = useMainStore((state) => state.user);
+  const user = useMainStore((state) => state.user) || dummyuser;
 
   const { data: exams, error } = useQuery({
     queryKey: ["exams"],
@@ -17,13 +26,9 @@ const Homepage = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={styles.text}>Welcome g {user.name}</Text>
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.text}>Welcome {user.name}</Text>
       </View>
-
-      <Link href="/login" style={{ fontFamily: "Nunito-Regular" }}>
-        Login
-      </Link>
     </View>
   );
 };
