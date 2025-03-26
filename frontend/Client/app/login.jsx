@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { Button, Text, TextInput, ToastAndroid, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
-import { QueryProvider } from "@/wrapper/query-provider";
+import { QueryProvider } from "@/providers/query-provider";
 
 const LoginPage = () => {
   const [formdata, setFormdata] = useState({ username: "", password: "" });
