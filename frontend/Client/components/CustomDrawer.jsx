@@ -5,9 +5,19 @@ import {
 import { Image, Text, View } from "react-native";
 import { styles } from "@/styles/drawer.styles";
 import { useMainStore } from "@/states/store";
+import * as SecureStore from "expo-secure-store";
+import { useRouter } from "expo-router";
 
 export default function CustomDrawer(props) {
   const user = useMainStore((state) => state.user);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync("token");
+    useMainStore.getState().setUser(null);
+    router.replace("/login");
+  };
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.container}>
@@ -22,7 +32,9 @@ export default function CustomDrawer(props) {
           </Text>
           <View style={styles.buttons}>
             {/* <Text style={[styles.badge, styles.edit]}>Edit</Text> */}
-            <Text style={[styles.badge, styles.logout]}>Logout</Text>
+            <Text style={[styles.badge, styles.logout]} onPress={handleLogout}>
+              Logout
+            </Text>
           </View>
         </View>
       </View>

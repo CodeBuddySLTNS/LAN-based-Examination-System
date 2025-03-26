@@ -21,7 +21,7 @@ export default function DrawerLayout() {
       >
         <Drawer.Screen
           name="home"
-          options={{ drawerLabel: "Home", title: "Home" }}
+          options={{ drawerLabel: "Home", title: "Good day, Renz" }}
         />
         <Drawer.Screen
           name="exam-schedules"

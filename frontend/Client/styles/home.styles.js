@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
+    fontFamily: "Nunito_400Regular",
     fontWeight: "bold",
   },
 });

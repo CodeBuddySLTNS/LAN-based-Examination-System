@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 19,
     fontWeight: "bold",
+    fontFamily: "Nunito",
   },
   input: {
     width: "100%",
