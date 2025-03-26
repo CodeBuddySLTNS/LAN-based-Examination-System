@@ -13,13 +13,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <Stack screenOptions={{ animation: "slide_from_bottom" }}>
+        <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(drawer)"
-            options={{ animation: "slide_from_bottom", headerShown: false }}
-          />
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaView>
     </SafeAreaProvider>
