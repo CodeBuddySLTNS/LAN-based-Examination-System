@@ -1,7 +1,15 @@
 import { Stack } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
 
 export default function RootLayout() {
+  const [loadedFonts] = useFonts({
+    "Nunito-Regular": require("@/assets/fonts/NunitoRegular.ttf"),
+    "Nunito-Bold": require("@/assets/fonts/NunitoBold.ttf"),
+    "Nunito-SemiBold": require("@/assets/fonts/NunitoSemiBold.ttf"),
+    "Nunito-Medium": require("@/assets/fonts/NunitoMedium.ttf"),
+  });
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
