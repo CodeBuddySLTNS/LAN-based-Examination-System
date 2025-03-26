@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Exam App",
-    "slug": "Exam App",
+    "slug": "exam-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/bulbasaur.png",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mrhairy.ExamApp"
     },
     "web": {
       "bundler": "metro",
@@ -33,10 +34,30 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/NunitoBold.ttf",
+            "./assets/fonts/NunitoRegular.ttf",
+            "./assets/fonts/NunitoMedium.ttf",
+            "./assets/fonts/NunitoSemiBold.ttf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f1595fd5-8ac6-4142-9271-29df0568245a"
+      }
     }
   }
 }
