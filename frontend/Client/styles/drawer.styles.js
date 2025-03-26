@@ -22,10 +22,10 @@ export const styles = StyleSheet.create({
     fontSize: 19,
     fontFamily: "Nunito-Bold",
     paddingTop: 5,
-    color: light.text,
+    color: light.white,
   },
   department: {
-    color: light.text,
+    color: light.white,
     paddingBottom: 5,
     fontFamily: "Nunito-Regular",
   },
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     gap: 5,
   },
   badge: {
-    color: light.text,
+    color: light.white,
     fontFamily: "Nunito-Regular",
     borderWidth: 1.3,
     borderRadius: 10,

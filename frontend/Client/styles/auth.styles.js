@@ -25,17 +25,18 @@ export const styles = StyleSheet.create({
   formTitle: {
     textAlign: "center",
     fontSize: 19,
-    fontWeight: "bold",
-    fontFamily: "Nunito",
+    fontFamily: "Nunito-Bold",
   },
   input: {
     width: "100%",
     borderColor: "#999",
     borderWidth: 1,
     borderRadius: 5,
+    fontFamily: "Nunito-Regular",
   },
   inputLabel: {
     paddingVertical: 1.5,
+    fontFamily: "Nunito-Regular",
   },
   errorText: {
     color: "red",
