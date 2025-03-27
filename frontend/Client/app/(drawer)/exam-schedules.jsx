@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import { styles } from "@/styles/exam-schedules.styles";
+import Table from "@/components/data-table";
 
 const dummydata = [
   {
@@ -114,35 +115,23 @@ const ExamSchedulesPage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
+  const colums = ["Subject", "Title", "Start Time", "Duration"];
+  const rows = exams.map((exam) => [
+    exam.subject,
+    exam.title,
+    new Date(exam.start_time).toLocaleString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    exam.duration,
+  ]);
+
   return (
     <View style={styles.container}>
-      <View>
-        <FlatList
-          data={exams || dummydata}
-          style={styles.examsList}
-          keyExtractor={(item) => item.id.toString()}
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <Text style={[styles.headerText, styles.headerTitle]}>Title</Text>
-              <Text style={[styles.headerText, styles.headerSubject]}>
-                Subject
-              </Text>
-              <Text style={[styles.headerText, styles.headerTime]}>Time</Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <View style={styles.rows}>
-              <Text style={[styles.rowTitle, styles.rowText]}>
-                {item.title}
-              </Text>
-              <Text style={[styles.rowSubject, styles.rowText]}>
-                {item.title}
-              </Text>
-              <Text style={[styles.rowTime, styles.rowText]}>{item.title}</Text>
-            </View>
-          )}
-        />
-      </View>
+      <Table colums={colums} rows={rows} />
     </View>
   );
 };

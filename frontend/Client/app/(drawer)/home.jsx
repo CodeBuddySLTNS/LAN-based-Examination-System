@@ -27,7 +27,7 @@ const Homepage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.welcomeContainer}>
-        <Text style={styles.text}>Welcome {user.name}</Text>
+        <Text style={styles.text}>Welcome {user.username}</Text>
       </View>
     </View>
   );
