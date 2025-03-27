@@ -1,4 +1,6 @@
 import { Stack } from "expo-router";
+import "@/global.css";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
@@ -11,14 +13,14 @@ export default function RootLayout() {
   });
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        </Stack>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <GluestackUIProvider mode="light"><SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="login" options={{ headerShown: false }} />
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          </Stack>
+        </SafeAreaView>
+      </SafeAreaProvider></GluestackUIProvider>
   );
 }
