@@ -13,7 +13,8 @@ export default function RootLayout() {
   });
 
   return (
-    <GluestackUIProvider mode="light"><SafeAreaProvider>
+    <GluestackUIProvider mode="light">
+      <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -21,6 +22,7 @@ export default function RootLayout() {
             <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           </Stack>
         </SafeAreaView>
-      </SafeAreaProvider></GluestackUIProvider>
+      </SafeAreaProvider>
+    </GluestackUIProvider>
   );
 }

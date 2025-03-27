@@ -6,7 +6,19 @@ import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import { styles } from "@/styles/exam-schedules.styles";
-import Table from "@/components/data-table";
+import Entypo from "@expo/vector-icons/Entypo";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionContentText,
+  AccordionHeader,
+  AccordionIcon,
+  AccordionItem,
+  AccordionTitleText,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Divider } from "@/components/ui/divider";
+import { HStack } from "@/components/ui/hstack";
 
 const dummydata = [
   {
@@ -115,23 +127,88 @@ const ExamSchedulesPage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
-  const colums = ["Subject", "Title", "Start Time", "Duration"];
-  const rows = exams.map((exam) => [
-    exam.subject,
-    exam.title,
-    new Date(exam.start_time).toLocaleString("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-    exam.duration,
-  ]);
-
   return (
-    <View style={styles.container}>
-      <Table colums={colums} rows={rows} />
+    <View className="p-4 mb-20">
+      <View className="py-2 flex-row">
+        <Text className="flex-1 text-xl font-bold">Course Code</Text>
+        <Text className="flex-1 text-xl font-bold">Exam</Text>
+      </View>
+      <Accordion
+        size="lg"
+        variant="unfilled"
+        type="multiple"
+        isCollapsible={true}
+        isDisabled={false}
+        className="w-full border border-outline-200"
+      >
+        <FlatList
+          data={exams}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={<Divider />}
+          renderItem={({ item }) => (
+            <AccordionItem value={item.id}>
+              <AccordionHeader>
+                <AccordionTrigger>
+                  {({ isExpanded }) => {
+                    return (
+                      <>
+                        <AccordionTitleText className="font-semibold">
+                          {item.subject}
+                        </AccordionTitleText>
+                        <AccordionTitleText className="font-semibold">
+                          {item.title}
+                        </AccordionTitleText>
+                        {isExpanded ? (
+                          <Entypo name="chevron-up" size={24} color="black" />
+                        ) : (
+                          <Entypo name="chevron-down" size={24} color="black" />
+                        )}
+                      </>
+                    );
+                  }}
+                </AccordionTrigger>
+              </AccordionHeader>
+              <AccordionContent>
+                <View className="flex-row">
+                  <AccordionContentText className="font-semibold">
+                    Description:{" "}
+                  </AccordionContentText>
+                  <AccordionContentText className="flex-1">
+                    {item.description || "No description"}
+                  </AccordionContentText>
+                </View>
+                <View className="flex-row">
+                  <AccordionContentText className="font-semibold">
+                    When:{" "}
+                  </AccordionContentText>
+                  <AccordionContentText className="flex-1">
+                    {new Date(item.start_time).toLocaleString("en-US", {
+                      month: "long",
+                      day: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </AccordionContentText>
+                </View>
+                <View className="flex-row">
+                  <AccordionContentText className="font-semibold">
+                    Duration:{" "}
+                  </AccordionContentText>
+                  <AccordionContentText className="flex-1">
+                    {Number(item.duration.split(" : ")[0]) > 1
+                      ? ` ${Number(item.duration.split(" : ")[0])} hours`
+                      : ` ${Number(item.duration.split(" : ")[0])} hour`}
+                    {item.duration.split(":")[1].trim() !== "00"
+                      ? ` and ${item.duration} minutes`
+                      : ""}
+                  </AccordionContentText>
+                </View>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+        />
+      </Accordion>
     </View>
   );
 };

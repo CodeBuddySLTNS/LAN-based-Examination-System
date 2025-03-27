@@ -5,6 +5,8 @@ import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
+import { Badge, BadgeText } from "@/components/ui/badge";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const dummyuser = {
   id: 1,
@@ -27,7 +29,18 @@ const Homepage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.welcomeContainer}>
-        <Text style={styles.text}>Welcome {user.username}</Text>
+        <Text style={styles.text}>
+          Magandang umaga, {user.username}{" "}
+          <Entypo name="emoji-happy" size={24} color="black" />
+        </Text>
+
+        <View style={styles.welcomeQuote}>
+          <Text style={styles.quoteText}>
+            "Believe in yourself, and all that you are. Know that there is
+            something inside you that is greater than any obstacle." – Christian
+            D. Larson
+          </Text>
+        </View>
       </View>
     </View>
   );

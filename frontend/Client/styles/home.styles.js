@@ -17,6 +17,22 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     elevation: 10,
+    gap: 3,
+  },
+  welcomeQuote: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: light.darkWhite,
+    shadowColor: light.black,
+    shadowOffset: {
+      height: 2,
+      width: 2,
+    },
+    shadowOpacity: 0.1,
+    elevation: 2,
+  },
+  quoteText: {
+    fontFamily: "Nunito-Regular",
   },
   text: {
     fontSize: 20,

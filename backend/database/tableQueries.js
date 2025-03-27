@@ -12,7 +12,9 @@ module.exports.usersTableQuery = `CREATE TABLE IF NOT EXISTS users (
 module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     id INT PRIMARY KEY AUTO_INCREMENT,
     subject VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOT NULL UNIQUE,
+    department VARCHAR(255) NOT NULL,
+    year INT NOT NULL,
+    label ENUM('Prelim', 'Midterm', 'Semi-Final', 'Final') NOT NULL,
     description TEXT,
     duration_hours INT NOT NULL,
     duration_minutes INT NOT NULL,
@@ -44,6 +46,14 @@ module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questi
 module.exports.subjectsTableQuery = `CREATE TABLE IF NOT EXISTS subjects (
     id INT PRIMARY KEY AUTO_INCREMENT,
     course_code VARCHAR(15) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    created_by INT NOT NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);`;
+
+module.exports.departmentsTableQuery = `CREATE TABLE IF NOT EXISTS departments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    short_name VARCHAR(15) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL UNIQUE,
     created_by INT NOT NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
