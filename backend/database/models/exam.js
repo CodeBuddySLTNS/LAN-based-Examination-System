@@ -12,6 +12,8 @@ class ExamModel {
       SELECT 
         e.id, 
         e.subject, 
+        e.department, 
+        e.year, 
         e.label, 
         e.description, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 

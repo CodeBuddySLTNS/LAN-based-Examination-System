@@ -1,7 +1,7 @@
 const CustomError = require("../utils/customError");
 const sqlQuery = require("../database/sqlQuery");
 const UserModel = require("../database/models/user");
-const { CONFLICT, NOT_FOUND } = require("../constants/statusCodes");
+const { CONFLICT, NOT_FOUND, FORBIDDEN } = require("../constants/statusCodes");
 
 const User = new UserModel();
 
@@ -23,6 +23,17 @@ const userInfo = async (req, res) => {
 
 const verifyAccount = async (req, res) => {
   const { username, toVerify } = req.body;
+  const userId = res.locals.userId;
+  const user = await User.getUserInfo(userId);
+  const whitelist = ["Admin", "Faculty"];
+
+  if (!whitelist.includes(user?.role)) {
+    throw new CustomError(
+      "You are not authorized to perform this action",
+      FORBIDDEN
+    );
+  }
+
   const result = await User.verifyUser(username, toVerify);
 
   if (result) {
@@ -37,6 +48,17 @@ const verifyAccount = async (req, res) => {
 
 const editAccount = async (req, res) => {
   const { username, updateBody } = req.body;
+  const userId = res.locals.userId;
+  const user = await User.getUserInfo(userId);
+  const whitelist = ["Admin", "Faculty"];
+
+  if (!whitelist.includes(user?.role)) {
+    throw new CustomError(
+      "You are not authorized to perform this action",
+      FORBIDDEN
+    );
+  }
+
   const updateArray = [];
 
   if (typeof updateBody === "object") {
@@ -61,6 +83,17 @@ const editAccount = async (req, res) => {
 
 const deleteAccount = async (req, res) => {
   const { username } = req.body;
+  const userId = res.locals.userId;
+  const user = await User.getUserInfo(userId);
+  const whitelist = ["Admin", "Faculty"];
+
+  if (!whitelist.includes(user?.role)) {
+    throw new CustomError(
+      "You are not authorized to perform this action",
+      FORBIDDEN
+    );
+  }
+
   const result = await User.deleteUser(username);
 
   if (result) {

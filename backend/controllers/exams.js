@@ -39,8 +39,7 @@ const editExam = async (req, res) => {
       value.examId,
       value.questions
     );
-    console.log(value);
-    console.log(result);
+
     return res.json({ message: "Questions updated successfully.", result });
   }
 
@@ -51,9 +50,9 @@ const editExam = async (req, res) => {
 const deleteExam = async (req, res) => {
   const userId = res.locals.userId;
   const examId = req.params.id;
-
+  console.log(userId, examId);
   const result = await Exam.deleteExam(userId, examId);
-  res.send(result);
+  res.send({ message: "Successfully deleted.", result });
 };
 
 module.exports = { exams, addExam, editExam, deleteExam };

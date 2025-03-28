@@ -6,6 +6,6 @@ const Router = express.Router();
 Router.get("/", tryCatch(controller.exams));
 Router.post("/add", tryCatch(controller.addExam));
 Router.patch("/edit/:mode", tryCatch(controller.editExam));
-Router.delete("/delete", tryCatch(controller.deleteExam));
+Router.delete("/delete/:id", tryCatch(controller.deleteExam));
 
 module.exports = Router;

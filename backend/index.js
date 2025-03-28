@@ -3,11 +3,9 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const { Server } = require("socket.io");
-
+const socketConnection = require("./socket.io/connection");
 const app = express();
 const server = http.createServer(app);
-const socket = new Server(server);
 const port = process.env.PORT || 5000;
 
 // middlewares
@@ -32,6 +30,9 @@ app.use("/exams", require("./routes/exams"));
 
 // handle errors
 app.use(require("./middlewares/errorHandler"));
+
+// socket connection
+socketConnection(server);
 
 // run the server
 server.listen(port, () => {
