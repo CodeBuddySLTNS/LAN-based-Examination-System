@@ -12,7 +12,7 @@ class ExamModel {
       SELECT 
         e.id, 
         e.subject, 
-        e.title, 
+        e.label, 
         e.description, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
         e.start_time, 
@@ -36,10 +36,12 @@ class ExamModel {
 
   async addExam(userId, examData) {
     await this.createExamTable();
-    const query = `INSERT INTO exams (subject, title, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO exams (subject, department, year, label, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?)`;
     const params = [
       examData.subject,
-      examData.title,
+      examData.department,
+      examData.year,
+      examData.label,
       examData.description,
       examData.durationHours,
       examData.durationMinutes,
@@ -52,9 +54,9 @@ class ExamModel {
 
   async editExam(userId, examData) {
     await this.createExamTable();
-    const query = `UPDATE exams SET title = ?, description = ?, duration_hours = ?, duration_minutes = ?, start_time = ? WHERE id = ? LIMIT 1`;
+    const query = `UPDATE exams SET label = ?, description = ?, duration_hours = ?, duration_minutes = ?, start_time = ? WHERE id = ? LIMIT 1`;
     const params = [
-      examData.title,
+      examData.label,
       examData.description,
       examData.durationHours,
       examData.durationMinutes,
