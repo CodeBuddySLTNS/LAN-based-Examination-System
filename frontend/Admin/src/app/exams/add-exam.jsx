@@ -30,12 +30,24 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+} from "@/components/ui/select";
 
 const AddExam = () => {
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [isSubjectOptions, setIsSubjectOptions] = useState(false);
-  const [subjectOptionValue, setSubjectOptionValue] = useState("");
-  const { register, handleSubmit, reset } = useForm();
+  const [optionsValue, setOptionsValue] = useState({
+    subject: "",
+    department: "",
+    label: "",
+  });
+  const { register, handleSubmit, setValue, reset } = useForm();
 
   const { data: questions } = useQuery({
     queryKey: ["questions"],
@@ -59,16 +71,24 @@ const AddExam = () => {
 
     onSuccess: (d) => {
       toast.success("Exam successfully created.");
-      setSubjectOptionValue("");
+      setOptionsValue({
+        subject: "",
+        department: "",
+        label: "",
+      });
       reset();
     },
   });
 
   const onSubmit = async (data) => {
-    if (!subjectOptionValue) return toast.error("Subject is required.");
+    if (!optionsValue.subject) return toast.error("Subject is required.");
+    if (!optionsValue.department) return toast.error("Department is required.");
+    if (!optionsValue.label) return toast.error("Exam Label is required.");
     const examData = {
-      subject: subjectOptionValue,
-      title: data.title,
+      subject: optionsValue.subject,
+      department: optionsValue.department,
+      year: data.year,
+      label: optionsValue.label,
       description: data.description,
       durationHours: Number(data.durationHours),
       durationMinutes: Number(data.durationMinutes) || 0,
@@ -279,10 +299,10 @@ const AddExam = () => {
                     aria-expanded={open}
                     className="w-full justify-between"
                   >
-                    {subjectOptionValue
+                    {optionsValue.subject
                       ? subjectOptions?.find(
                           (subject) =>
-                            subject.course_code === subjectOptionValue
+                            subject.course_code === optionsValue.subject
                         )?.name
                       : "Select subject..."}
                     <ChevronsUpDown className="opacity-50" />
@@ -299,11 +319,13 @@ const AddExam = () => {
                             key={subject.course_code}
                             value={subject.course_code}
                             onSelect={(currentValue) => {
-                              setSubjectOptionValue(
-                                currentValue === subjectOptionValue
-                                  ? ""
-                                  : currentValue
-                              );
+                              setOptionsValue((prev) => ({
+                                ...prev,
+                                subject:
+                                  currentValue === optionsValue.subject
+                                    ? ""
+                                    : currentValue,
+                              }));
                               setIsSubjectOptions(false);
                             }}
                           >
@@ -311,7 +333,7 @@ const AddExam = () => {
                             <Check
                               className={cn(
                                 "ml-auto",
-                                subjectOptionValue === subject.course_code
+                                optionsValue.subject === subject.course_code
                                   ? "opacity-100"
                                   : "opacity-0"
                               )}
@@ -324,9 +346,59 @@ const AddExam = () => {
                 </PopoverContent>
               </Popover>
             </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-3">
+                <Label htmlFor="department">Department</Label>
+                <Select
+                  value={optionsValue.department}
+                  onValueChange={(value) =>
+                    setOptionsValue((prev) => ({ ...prev, department: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="BSCS">BSCS</SelectItem>
+                      <SelectItem value="BSSW">BSSW</SelectItem>
+                      <SelectItem value="BSIT">BSIT</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  {...register("year")}
+                  id="year"
+                  type="number"
+                  min="1"
+                  max="4"
+                  required
+                />
+              </div>
+            </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="title">Exam Title</Label>
-              <Input id="title" {...register("title")} required />
+              <Label>Exam Label</Label>
+              <Select
+                value={optionsValue.label}
+                onValueChange={(value) =>
+                  setOptionsValue((prev) => ({ ...prev, label: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select exam label" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="Prelim">Prelim</SelectItem>
+                    <SelectItem value="Midterm">Midterm</SelectItem>
+                    <SelectItem value="Semi-Final">Semi-Final</SelectItem>
+                    <SelectItem value="Final">Final</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="description">Description</Label>

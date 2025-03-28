@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ArrowUpDown,
   Check,
@@ -33,16 +32,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios, Axios2 } from "@/lib/utils";
@@ -56,11 +45,14 @@ import {
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import DataTable from "@/components/data-table";
+import DeleteDialog from "@/components/delete-dialog";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Page() {
-  const [actionData, setActionData] = React.useState(null);
-  const [isEditDialog, setIsEditDialog] = React.useState(false);
-  const [deleteDialog, setDeleteDialog] = React.useState(false);
+  const [actionData, setActionData] = useState(null);
+  const [isEditDialog, setIsEditDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -96,6 +88,9 @@ export default function Page() {
 
   const { mutateAsync: action } = useMutation({
     mutationFn: handleAction,
+    onSuccess: (d) => toast.success(d?.data?.message || "Action successful"),
+    onError: (e) =>
+      toast.error(e?.response?.data?.message || "An error occurred"),
   });
 
   const {
@@ -316,7 +311,7 @@ export default function Page() {
     },
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData) {
       setValue("lastname", actionData?.name?.split(",")[0]);
       setValue(
@@ -460,28 +455,19 @@ export default function Page() {
       </Dialog>
 
       {/* Alert Dialog for delete account action */}
-      <AlertDialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete
-              <span className="text-red-500"> @{actionData?.username}</span>'s
-              account and remove his/her data from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() =>
-                action({ username: actionData?.username, action: "delete" })
-              }
-            >
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteDialog
+        open={deleteDialog}
+        setOpen={setDeleteDialog}
+        action={action}
+        actionData={actionData}
+        message={
+          <>
+            This action cannot be undone. This will permanently delete
+            <span className="text-red-500"> @{actionData?.username}</span>'s
+            account and remove his/her data from our servers.
+          </>
+        }
+      />
     </div>
   );
 }

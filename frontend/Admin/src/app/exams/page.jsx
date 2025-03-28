@@ -1,4 +1,5 @@
 import DataTable from "@/components/data-table";
+import DeleteDialog from "@/components/delete-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -9,6 +10,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -16,11 +25,20 @@ import {
 } from "@/components/ui/tooltip";
 import { Axios, Axios2 } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ArrowUpDown,
+  Check,
+  Edit,
+  LucideDelete,
+  MoreHorizontal,
+  XIcon,
+} from "lucide-react";
+import { act, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
+  const [actionData, setActionData] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
   const queryClient = useQueryClient();
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [questionsDialog, setQuestionsDialog] = useState({
@@ -46,7 +64,9 @@ const Page = () => {
       examId: questionsDialog.data.id,
       examQuestionsId: questionsDialog.data.exam_questions_id,
       subject: questionsDialog.data.subject,
-      title: questionsDialog.data.title,
+      department: questionsDialog.data.department,
+      year: questionsDialog.data.year,
+      label: questionsDialog.data.label,
       description: questionsDialog.data.description,
       durationHours: questionsDialog.data.duration.split(" : ")[0],
       durationMinutes: questionsDialog.data.duration.split(" : ")[1],
@@ -56,14 +76,28 @@ const Page = () => {
     };
 
     if (mode.questionsOnly) {
-      const response = await Axios2("/exams/edit/questions", "PATCH")(data);
-      queryClient.invalidateQueries(["exams"]);
-      return response;
+      return await Axios2("/exams/edit/questions", "PATCH")(data);
     }
 
-    const response = await Axios2("/exams/edit/exam", "PATCH")(data);
-    queryClient.invalidateQueries(["exams"]);
-    return response;
+    return await Axios2("/exams/edit/exam", "PATCH")(data);
+  };
+
+  const handleAction = async (data) => {
+    let response;
+    switch (data?.action) {
+      case "editQuestions":
+        response = await handleEditQuestions(data);
+        queryClient.invalidateQueries(["exams"]);
+        return response;
+
+      case "delete":
+        response = await Axios2(`/exams/delete/${data.id}`, "DELETE")(data);
+        queryClient.invalidateQueries(["exams"]);
+        return response;
+
+      default:
+        throw new Error("Invalid action.");
+    }
   };
 
   const { data: exams } = useQuery({
@@ -76,8 +110,8 @@ const Page = () => {
     queryFn: Axios2("/questions", "GET"),
   });
 
-  const { mutateAsync: edit, data } = useMutation({
-    mutationFn: handleEditQuestions,
+  const { mutateAsync: action } = useMutation({
+    mutationFn: handleAction,
     onError: (error) => {
       if (error.response?.data?.message) {
         toast.error(error.response?.data?.message);
@@ -130,7 +164,7 @@ const Page = () => {
       cell: ({ row }) => <div className="">{row.getValue("subject")}</div>,
     },
     {
-      accessorKey: "title",
+      accessorKey: "label",
       header: ({ column }) => {
         return (
           <Button
@@ -138,13 +172,47 @@ const Page = () => {
             className="w-full"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Title
+            Label
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("title")}</div>
+        <div className="text-center">{row.getValue("label")}</div>
+      ),
+    },
+    {
+      accessorKey: "department",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Department
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("department")}</div>
+      ),
+    },
+    {
+      accessorKey: "year",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Year
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("year")}</div>
       ),
     },
     {
@@ -233,6 +301,46 @@ const Page = () => {
           })}
         </div>
       ),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+        const username = row.original.username;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  // setIsEditDialog(true);
+                  setActionData(user);
+                }}
+              >
+                <Edit className="text-green-600" />
+                Edit Account
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setDeleteDialog(true);
+                  setActionData(user);
+                }}
+              >
+                <LucideDelete className="text-red-500" />
+                Delete Account
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
   ];
 
@@ -457,7 +565,10 @@ const Page = () => {
               <Button
                 onClick={async () => {
                   try {
-                    await edit({ questionsOnly: true });
+                    await action({
+                      questionsOnly: true,
+                      action: "editQuestions",
+                    });
                   } catch (e) {}
                 }}
               >
@@ -467,6 +578,14 @@ const Page = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Alert Dialog for delete exam action */}
+      <DeleteDialog
+        open={deleteDialog}
+        setOpen={setDeleteDialog}
+        action={action}
+        actionData={actionData}
+      />
     </div>
   );
 };
