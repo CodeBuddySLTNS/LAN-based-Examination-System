@@ -128,87 +128,26 @@ const ExamSchedulesPage = () => {
   });
 
   return (
-    <View className="p-4 mb-20">
-      <View className="py-2 flex-row">
-        <Text className="flex-1 text-xl font-bold">Course Code</Text>
-        <Text className="flex-1 text-xl font-bold">Exam</Text>
-      </View>
-      <Accordion
-        size="lg"
-        variant="unfilled"
-        type="multiple"
-        isCollapsible={true}
-        isDisabled={false}
-        className="w-full border border-outline-200"
-      >
-        <FlatList
-          data={exams}
-          keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={<Divider />}
-          renderItem={({ item }) => (
-            <AccordionItem value={item.id}>
-              <AccordionHeader>
-                <AccordionTrigger>
-                  {({ isExpanded }) => {
-                    return (
-                      <>
-                        <AccordionTitleText className="font-semibold">
-                          {item.subject}
-                        </AccordionTitleText>
-                        <AccordionTitleText className="font-semibold">
-                          {item.title}
-                        </AccordionTitleText>
-                        {isExpanded ? (
-                          <Entypo name="chevron-up" size={24} color="black" />
-                        ) : (
-                          <Entypo name="chevron-down" size={24} color="black" />
-                        )}
-                      </>
-                    );
-                  }}
-                </AccordionTrigger>
-              </AccordionHeader>
-              <AccordionContent>
-                <View className="flex-row">
-                  <AccordionContentText className="font-semibold">
-                    Description:{" "}
-                  </AccordionContentText>
-                  <AccordionContentText className="flex-1">
-                    {item.description || "No description"}
-                  </AccordionContentText>
-                </View>
-                <View className="flex-row">
-                  <AccordionContentText className="font-semibold">
-                    When:{" "}
-                  </AccordionContentText>
-                  <AccordionContentText className="flex-1">
-                    {new Date(item.start_time).toLocaleString("en-US", {
-                      month: "long",
-                      day: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </AccordionContentText>
-                </View>
-                <View className="flex-row">
-                  <AccordionContentText className="font-semibold">
-                    Duration:{" "}
-                  </AccordionContentText>
-                  <AccordionContentText className="flex-1">
-                    {Number(item.duration.split(" : ")[0]) > 1
-                      ? ` ${Number(item.duration.split(" : ")[0])} hours`
-                      : ` ${Number(item.duration.split(" : ")[0])} hour`}
-                    {item.duration.split(":")[1].trim() !== "00"
-                      ? ` and ${item.duration} minutes`
-                      : ""}
-                  </AccordionContentText>
-                </View>
-              </AccordionContent>
-            </AccordionItem>
-          )}
-        />
-      </Accordion>
+    <View className="flex-1">
+      <FlatList
+        data={exams}
+        keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={
+          <View>
+            <View>
+              <Text>Exam Schedules</Text>
+            </View>
+          </View>
+        }
+        ItemSeparatorComponent={<Divider />}
+        renderItem={({ item }) => (
+          <View>
+            <View className="">
+              <Text className="font-Nunito-Bold">{item.label}</Text>
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
 };
