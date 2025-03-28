@@ -13,7 +13,7 @@ export default function DrawerLayout() {
           drawerStyle: {
             backgroundColor: light.bg,
           },
-          drawerInactiveTintColor: light.white,
+          drawerInactiveTintColor: light.color,
           drawerInactiveBackgroundColor: light.bgVariant,
           drawerItemStyle: {
             marginTop: 12,
