@@ -28,14 +28,14 @@ const Homepage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.text}>
+      <View className="">
+        <Text className="">
           Magandang umaga, {user.username}{" "}
           <Entypo name="emoji-happy" size={24} color="black" />
         </Text>
 
-        <View style={styles.welcomeQuote}>
-          <Text style={styles.quoteText}>
+        <View className="">
+          <Text className="">
             "Believe in yourself, and all that you are. Know that there is
             something inside you that is greater than any obstacle." – Christian
             D. Larson
