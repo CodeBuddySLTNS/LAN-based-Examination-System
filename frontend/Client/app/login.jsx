@@ -7,10 +7,13 @@ import { Button, Text, TextInput, ToastAndroid, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
+import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const LoginPage = () => {
   const [formdata, setFormdata] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const usernameRef = useRef(null);
@@ -63,32 +66,45 @@ const LoginPage = () => {
       <View style={styles.loginForm}>
         <Text style={styles.formTitle}>CodeBuddy Exam</Text>
         <View style={styles.inputField}>
-          <Text style={styles.inputLabel}>username</Text>
-          <TextInput
-            ref={usernameRef}
-            style={styles.input}
-            placeholder="Enter your username"
-            value={formdata.username}
-            onChangeText={(text) =>
-              setFormdata((prev) => ({ ...prev, username: text }))
-            }
-          />
+          <Text className="font-Nunito-SemiBold pl-0.5 mb-1">Username</Text>
+          <Input>
+            <InputField
+              ref={usernameRef}
+              className="font-Nunito-Regular"
+              placeholder="Enter your username"
+              value={formdata.username}
+              onChangeText={(text) =>
+                setFormdata((prev) => ({ ...prev, username: text }))
+              }
+            />
+          </Input>
           {errors.username && (
             <Text style={styles.errorText}>{errors.username}</Text>
           )}
         </View>
         <View style={styles.inputField}>
-          <Text style={styles.inputLabel}>password</Text>
-          <TextInput
-            ref={passwordRef}
-            style={styles.input}
-            placeholder="Enter your username"
-            secureTextEntry
-            value={formdata.password}
-            onChangeText={(text) =>
-              setFormdata((prev) => ({ ...prev, password: text }))
-            }
-          />
+          <Text className="font-Nunito-SemiBold pl-0.5 mb-1">Password</Text>
+          <Input>
+            <InputField
+              type={showPassword ? "text" : "password"}
+              ref={passwordRef}
+              className="font-Nunito-Regular"
+              placeholder="Enter your password"
+              onChangeText={(text) =>
+                setFormdata((prev) => ({ ...prev, password: text }))
+              }
+            />
+            <InputSlot
+              className="pr-3"
+              onPress={() => setShowPassword((prev) => !prev)}
+            >
+              <FontAwesome
+                name={showPassword ? "eye-slash" : "eye"}
+                size={19}
+                color="gray"
+              />
+            </InputSlot>
+          </Input>
           {errors.password && (
             <Text style={styles.errorText}>{errors.password}</Text>
           )}
