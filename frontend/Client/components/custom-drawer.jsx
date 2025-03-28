@@ -7,6 +7,12 @@ import { styles } from "@/styles/drawer.styles";
 import { useMainStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
+} from "./ui/avatar";
 
 const dummyuser = {
   id: 1,
@@ -29,19 +35,24 @@ export default function CustomDrawer(props) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <View style={styles.container}>
-        <View style={styles.profileContainer}>
-          <Image
-            style={styles.avatar}
-            source={require("@/assets/images/pikachu.png")}
-          />
-          <Text style={styles.name}>{user?.name}</Text>
-          <Text style={styles.department}>
-            {user?.department} {user?.year} | offline
+      <View className="bg-primary p-6 pb-5 rounded-lg">
+        <View className="items-center">
+          <Avatar size="xl" className="border-secondary border-2 bg-secondary">
+            <AvatarFallbackText>You</AvatarFallbackText>
+            <AvatarBadge />
+            <AvatarImage source={require("@/assets/images/pikachu.png")} />
+          </Avatar>
+          <Text className="font-Nunito-Bold text-color text-xl">
+            {user?.name}
           </Text>
-          <View style={styles.buttons}>
-            {/* <Text style={[styles.badge, styles.edit]}>Edit</Text> */}
-            <Text style={[styles.badge, styles.logout]} onPress={handleLogout}>
+          <Text className="font-Nunito-Regular text-color text-sm">
+            {user?.department} {user?.year} | online
+          </Text>
+          <View className="">
+            <Text
+              className="border mt-2 px-4 pt-0.5 pb-1 rounded-md bg-red-700 font-Nunito-Regular text-white"
+              onPress={handleLogout}
+            >
               Logout
             </Text>
           </View>
