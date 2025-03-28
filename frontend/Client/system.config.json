@@ -1,5 +1,5 @@
 {
-  "isProduction": false,
+  "isProduction": true,
   "productionServer": "http://10.102.4.161:5000",
   "developmentServer": "http://localhost:5000"
 }
