@@ -31,7 +31,11 @@ export default function DeleteDialog({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() =>
-              action({ username: actionData?.username, action: "delete" })
+              action({
+                id: actionData?.id,
+                username: actionData?.username,
+                action: "delete",
+              })
             }
           >
             Continue
