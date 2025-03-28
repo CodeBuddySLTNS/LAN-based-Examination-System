@@ -63,8 +63,14 @@ const addExamSchema = Joi.object({
   subject: Joi.string().label("Subject").required().messages({
     "any.required": "Subject is required",
   }),
-  title: Joi.string().label("Title").required().messages({
-    "any.required": "Title is required",
+  department: Joi.string().label("Department").required().messages({
+    "any.required": "Department is required",
+  }),
+  year: Joi.number().label("Year").required().messages({
+    "any.required": "Year is required",
+  }),
+  label: Joi.string().label("Label").required().messages({
+    "any.required": "Label is required",
   }),
   description: Joi.string().allow("").label("Description"),
   durationHours: Joi.number().label("Duration Hours").required().messages({
