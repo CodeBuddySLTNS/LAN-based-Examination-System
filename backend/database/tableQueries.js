@@ -51,14 +51,6 @@ module.exports.subjectsTableQuery = `CREATE TABLE IF NOT EXISTS subjects (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
-module.exports.departmentsTableQuery = `CREATE TABLE IF NOT EXISTS departments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    short_name VARCHAR(15) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    created_by INT NOT NULL,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
-);`;
-
 module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS responses (
     id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
