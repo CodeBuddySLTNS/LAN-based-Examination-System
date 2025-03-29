@@ -425,7 +425,7 @@ const AddExam = () => {
                   min="0"
                   max="59"
                   placeholder="Enter minutes (default 0 minutes)"
-                  {...register("duration_minutes")}
+                  {...register("durationMinutes")}
                 />
               </div>
             </div>
