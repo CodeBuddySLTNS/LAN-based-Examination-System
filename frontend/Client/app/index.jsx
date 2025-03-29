@@ -4,7 +4,7 @@ import { QueryProvider } from "@/providers/query-provider";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { useRootNavigationState, useRouter } from "expo-router";
-import { useMainStore } from "@/states/store";
+import { useMainStore, useSocketStore } from "@/states/store";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -19,8 +19,10 @@ const IndexPage = () => {
     if (user) {
       useMainStore.getState().setUser(user.user);
       if (!navState?.key) return;
+      useSocketStore.getState().initializeSocket();
       router.replace("/home");
     }
+
     if (error) {
       if (!navState?.key) return;
       router.replace("/login");

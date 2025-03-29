@@ -1,5 +1,4 @@
 import { View, Text, FlatList } from "react-native";
-import React from "react";
 import { QueryProvider } from "@/providers/query-provider";
 import { useLocalSearchParams } from "expo-router";
 
@@ -7,7 +6,6 @@ const TakeExamPage = () => {
   const params = useLocalSearchParams();
   const exam = params.exam ? JSON.parse(params.exam) : {};
   const questions = exam.questions ? JSON.parse(exam.questions) : [];
-  console.log(questions);
 
   return (
     <View>
