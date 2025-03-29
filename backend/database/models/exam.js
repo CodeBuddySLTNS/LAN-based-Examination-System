@@ -10,18 +10,14 @@ class ExamModel {
     await this.createExamTable();
     const result = await sqlQuery(`
       SELECT 
-        e.id, 
-        e.subject, 
-        e.department, 
-        e.year, 
-        e.label, 
-        e.description, 
+        e.*, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
-        e.start_time, 
-        e.examiner_id,
         eq.id as exam_question_id,
+        s.course_code,
+        s.name as subject,
         GROUP_CONCAT(eq.question_data) AS questions
       FROM exams e
+      JOIN subjects s ON e.subject = s.course_code
       LEFT JOIN exam_questions eq ON e.id = eq.exam_id
       GROUP BY e.id
     `);
