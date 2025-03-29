@@ -6,7 +6,7 @@ const socketConnection = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(socket.handshake.query.name, "connected");
+    console.log(socket.id, "connected");
   });
 };
 
