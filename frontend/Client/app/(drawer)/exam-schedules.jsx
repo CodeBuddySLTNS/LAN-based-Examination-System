@@ -5,20 +5,10 @@ import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
-import { styles } from "@/styles/exam-schedules.styles";
-import Entypo from "@expo/vector-icons/Entypo";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionContentText,
-  AccordionHeader,
-  AccordionIcon,
-  AccordionItem,
-  AccordionTitleText,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Badge, BadgeIcon, BadgeText } from "@/components/ui/badge";
+import { X } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
-import { HStack } from "@/components/ui/hstack";
+import { ExamCard } from "@/components/exam-card";
 
 const dummydata = [
   {
@@ -133,20 +123,15 @@ const ExamSchedulesPage = () => {
         data={exams}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
-          <View>
+          <View className="p-4">
             <View>
               <Text>Exam Schedules</Text>
             </View>
           </View>
         }
-        ItemSeparatorComponent={<Divider />}
-        renderItem={({ item }) => (
-          <View>
-            <View className="">
-              <Text className="font-Nunito-Bold">{item.label}</Text>
-            </View>
-          </View>
-        )}
+        ListFooterComponent={<View className="h-4" />}
+        ItemSeparatorComponent={<View className="h-2" />}
+        renderItem={({ item }) => <ExamCard item={item} />}
       />
     </View>
   );
