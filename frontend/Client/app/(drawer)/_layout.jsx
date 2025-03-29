@@ -48,7 +48,7 @@ export default function DrawerLayout() {
           }}
         />
         <Drawer.Screen
-          name="[id]"
+          name="take-exam"
           options={{ drawerItemStyle: { display: "none" } }}
         />
       </Drawer>
