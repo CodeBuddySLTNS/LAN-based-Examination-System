@@ -19,7 +19,7 @@ const IndexPage = () => {
     if (user) {
       useMainStore.getState().setUser(user.user);
       if (!navState?.key) return;
-      useSocketStore.getState().initializeSocket();
+      useSocketStore.getState().initializeSocket(user.user);
       router.replace("/home");
     }
 
