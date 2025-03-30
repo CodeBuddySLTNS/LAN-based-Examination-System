@@ -4,8 +4,11 @@ import CustomDrawer from "@/components/custom-drawer";
 import { light } from "@/constants/themes";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useRouter, useSegments } from "expo-router";
 
 export default function DrawerLayout() {
+  const router = useRouter();
+  const segments = useSegments();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -41,17 +44,15 @@ export default function DrawerLayout() {
           name="exam-schedules"
           options={{
             drawerLabel: "Exam Schedules",
-            title: "Exam Schedules",
+            title: segments?.join("/").includes("take-exam")
+              ? "Good Luck, You got this! 🍀"
+              : "Exam Schedules",
             drawerIcon: ({ size, color }) => (
               <MaterialIcons name="schedule" size={size} color={color} />
             ),
           }}
-        />
-        <Drawer.Screen
-          name="take-exam"
-          options={{
-            title: "Good Luck, You got this! 🍀",
-            drawerItemStyle: { display: "none" },
+          listeners={{
+            focus: () => router.replace("/(drawer)/exam-schedules"),
           }}
         />
       </Drawer>
