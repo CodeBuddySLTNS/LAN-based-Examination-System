@@ -1,4 +1,4 @@
-import { useMainStore } from "@/states/store";
+import { useMainStore, useSocketStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
@@ -10,12 +10,14 @@ import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Card } from "@/components/ui/card";
 import { VStack } from "@/components/ui/vstack";
+import { useToast } from "@/components/ui/toast";
 
 const LoginPage = () => {
   const [formdata, setFormdata] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const toast = useToast();
 
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
@@ -34,7 +36,7 @@ const LoginPage = () => {
     onSuccess: (d) => {
       SecureStore.setItemAsync("token", d.token);
       useMainStore.getState().setUser(d.user);
-      router.replace("/home");
+      useSocketStore.getState().initializeSocket(d.user, toast, router);
     },
   });
 
