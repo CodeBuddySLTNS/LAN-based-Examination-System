@@ -1,14 +1,15 @@
 import { useMainStore } from "@/states/store";
-import { styles } from "@/styles/auth.styles";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { Button, Text, TextInput, ToastAndroid, View } from "react-native";
+import { Button, Text, ToastAndroid, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Card } from "@/components/ui/card";
+import { VStack } from "@/components/ui/vstack";
 
 const LoginPage = () => {
   const [formdata, setFormdata] = useState({ username: "", password: "" });
@@ -62,10 +63,12 @@ const LoginPage = () => {
   };
 
   return (
-    <View style={styles.loginContainer}>
-      <View style={styles.loginForm}>
-        <Text style={styles.formTitle}>CodeBuddy Exam</Text>
-        <View style={styles.inputField}>
+    <View className="flex-1 justify-center items-center">
+      <Card className="w-[80%] gap-2 rounded-md elevation-md pb-4">
+        <Text className="font-Nunito-Bold text-xl text-center">
+          CodeBuddy Exam
+        </Text>
+        <VStack className="gap-0.5">
           <Text className="font-Nunito-SemiBold pl-0.5 mb-1">Username</Text>
           <Input>
             <InputField
@@ -79,10 +82,12 @@ const LoginPage = () => {
             />
           </Input>
           {errors.username && (
-            <Text style={styles.errorText}>{errors.username}</Text>
+            <Text className="font-Nunito-Regular text-red-600">
+              {errors.username}
+            </Text>
           )}
-        </View>
-        <View style={styles.inputField}>
+        </VStack>
+        <VStack className="gap-0.5 mb-2">
           <Text className="font-Nunito-SemiBold pl-0.5 mb-1">Password</Text>
           <Input>
             <InputField
@@ -106,15 +111,17 @@ const LoginPage = () => {
             </InputSlot>
           </Input>
           {errors.password && (
-            <Text style={styles.errorText}>{errors.password}</Text>
+            <Text className="font-Nunito-Regular text-red-600">
+              {errors.password}
+            </Text>
           )}
-        </View>
+        </VStack>
         <Button
           title={isPending ? "Logging in..." : "Login"}
           disabled={isPending}
           onPress={handleSubmit}
         />
-      </View>
+      </Card>
     </View>
   );
 };
