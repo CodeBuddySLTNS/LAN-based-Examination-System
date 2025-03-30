@@ -4,7 +4,6 @@ import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
-import { Badge, BadgeText } from "@/components/ui/badge";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Card } from "@/components/ui/card";
 
