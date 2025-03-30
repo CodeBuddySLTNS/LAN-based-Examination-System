@@ -49,7 +49,10 @@ export default function DrawerLayout() {
         />
         <Drawer.Screen
           name="take-exam"
-          options={{ drawerItemStyle: { display: "none" } }}
+          options={{
+            title: "Good Luck, You got this! 🍀",
+            drawerItemStyle: { display: "none" },
+          }}
         />
       </Drawer>
     </GestureHandlerRootView>

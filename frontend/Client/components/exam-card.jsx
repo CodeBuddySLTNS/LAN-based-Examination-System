@@ -71,7 +71,7 @@ export const ExamCard = ({ item }) => {
         className="mt-3 bg-primary"
         onPress={() =>
           router.push({
-            pathname: "/(drawer)/take-exam",
+            pathname: "/(drawer)/exam-schedules/take-exam",
             params: { exam: JSON.stringify(item) },
           })
         }
