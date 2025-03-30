@@ -5,10 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { useRootNavigationState, useRouter } from "expo-router";
 import { useMainStore, useSocketStore } from "@/states/store";
+import { useToast } from "@/components/ui/toast";
 
 const IndexPage = () => {
   const router = useRouter();
   const navState = useRootNavigationState();
+  const toast = useToast();
 
   const { data: user, error } = useQuery({
     queryKey: ["user"],
@@ -19,7 +21,7 @@ const IndexPage = () => {
     if (user) {
       useMainStore.getState().setUser(user.user);
       if (!navState?.key) return;
-      useSocketStore.getState().initializeSocket(user.user);
+      useSocketStore.getState().initializeSocket(user.user, toast);
       router.replace("/home");
     }
 
@@ -30,7 +32,7 @@ const IndexPage = () => {
   }, [user, error, navState?.key]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View className="flex-1 justify-center items-center">
       <ActivityIndicator size="large" />
     </View>
   );
