@@ -17,24 +17,22 @@ export const useMainStore = create((set) => ({
 export const useSocketStore = create((set, get) => ({
   socket: null,
 
-  initializeSocket: () => {
+  initializeSocket: (query) => {
     if (!get().socket) {
       const url = config.isProduction
         ? config.productionServer
         : config.developmentServer;
 
-      const socket = io(url);
+      const socket = io(url, { query: query });
 
       socket.on("connect", () => {
         console.log("you are now connected");
+        useMainStore.getState().setIsOnline(true);
       });
 
       socket.on("disconnect", (connection) => {
         console.log("you were disconnected", connection);
-      });
-
-      socket.on("connect_error", (connection) => {
-        console.log("connect error:", connection.message);
+        useMainStore.getState().setIsOnline(false);
       });
 
       set({ socket });
