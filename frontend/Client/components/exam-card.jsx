@@ -3,7 +3,7 @@ import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
 import { useRouter } from "expo-router";
 
-export const ExamCard = ({ item }) => {
+export const ExamCard = ({ item, btnText, btnFn }) => {
   const router = useRouter();
   return (
     <View className="mx-4  p-4 pt-3 rounded-md bg-white elevation-md">
@@ -66,18 +66,9 @@ export const ExamCard = ({ item }) => {
         </Text>
       </View>
 
-      <Button
-        size="sm"
-        className="mt-3 bg-primary"
-        onPress={() =>
-          router.push({
-            pathname: "/(drawer)/exam-schedules/take-exam",
-            params: { exam: JSON.stringify(item) },
-          })
-        }
-      >
+      <Button size="sm" className="mt-3 bg-primary" onPress={btnFn}>
         <ButtonText className="font-Nunito-Bold text-[1.05rem]">
-          Take Exam
+          {btnText || "Action"}
         </ButtonText>
       </Button>
     </View>
