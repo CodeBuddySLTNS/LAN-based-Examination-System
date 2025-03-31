@@ -17,7 +17,7 @@ const ExamSchedulesPage = () => {
   });
 
   const myexams = exams?.filter(
-    (exam) => exam.year === user.year && exam.department === user.department
+    (exam) => exam?.year === user?.year && exam?.department === user?.department
   );
 
   return (
@@ -34,7 +34,18 @@ const ExamSchedulesPage = () => {
         }
         ListFooterComponent={<View className="h-4" />}
         ItemSeparatorComponent={<View className="h-2" />}
-        renderItem={({ item }) => <ExamCard item={item} />}
+        renderItem={({ item }) => (
+          <ExamCard
+            item={item}
+            btnText="Take Exam"
+            btnFn={() =>
+              router.push({
+                pathname: "/(drawer)/exam-schedules/take-exam",
+                params: { exam: JSON.stringify(item) },
+              })
+            }
+          />
+        )}
       />
     </View>
   );
