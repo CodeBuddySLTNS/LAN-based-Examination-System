@@ -52,7 +52,7 @@ export default function DrawerLayout() {
             ),
           }}
           listeners={{
-            focus: () => router.replace("/(drawer)/exam-schedules"),
+            drawerItemPress: () => router.replace("/(drawer)/exam-schedules"),
           }}
         />
       </Drawer>
