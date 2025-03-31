@@ -14,8 +14,12 @@ const TakeExamPage = () => {
   const [isTakingExam, setIsTakingExam] = useState(false);
 
   return (
-    <View className="flex-1 justify-center">
-      {isTakingExam ? <StartExam /> : <ExamCard item={exam} />}
+    <View className={`flex-1 ${!isTakingExam && "justify-center"}`}>
+      {isTakingExam ? (
+        <StartExam questions={questions} />
+      ) : (
+        <ExamCard item={exam} btnText="START" btnFn={setIsTakingExam} />
+      )}
     </View>
   );
 };
