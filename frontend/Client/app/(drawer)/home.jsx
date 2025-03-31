@@ -25,11 +25,26 @@ const Homepage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
+  const greet = () => {
+    const date = new Date();
+    let message;
+    if (date.getHours() === 12) {
+      message = "Magandang tanghali";
+    } else if (date.getHours() >= 13 && date.getHours() < 18) {
+      message = "Magandang hapon";
+    } else if (date.getHours() >= 18) {
+      message = "Magandang gabi";
+    } else {
+      message = "Magandang umaga";
+    }
+    return message;
+  };
+
   return (
     <View className="p-3">
       <Card className="elevation-md">
         <Text className="font-Nunito-Bold text-2xl">
-          Magandang umaga, {user.username}{" "}
+          {greet()}, {user.username}{" "}
           <Entypo name="emoji-happy" size={24} color="black" />
         </Text>
 
