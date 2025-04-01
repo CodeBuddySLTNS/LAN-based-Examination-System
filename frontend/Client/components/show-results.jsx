@@ -17,23 +17,29 @@ const ShowResults = ({ isOpen, close }) => {
 
   const handleAction = () => {
     router.replace("/(drawer)/home");
-    onClose(false);
+    close(false);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={close}>
       <ModalBackdrop />
       <ModalContent>
-        <View className="absolute top-3 right-3">
+        <Pressable
+          className="absolute top-3 right-3"
+          onPress={() => close(false)}
+        >
           <Icon size="xl" as={X} />
-        </View>
+        </Pressable>
         <ModalHeader>
           <Text className="flex-1 font-Nunito-Bold text-2xl text-center">
             Results
           </Text>
         </ModalHeader>
         <ModalBody>
-          <Text></Text>
+          <View className="p-2 items-center rounded bg-gray-200">
+            <Text className="font-Nunito-SemiBold">Your Score:</Text>
+            <Text className="font-Nunito-Bold text-2xl">15 / 30</Text>
+          </View>
         </ModalBody>
         <ModalFooter>
           <HStack className="flex-1 justify-center">
