@@ -538,7 +538,7 @@ const Page = () => {
           setQuestionsDialog({ ...questionsDialog, open })
         }
       >
-        <DialogContent className="md:w-full md:max-w-[90dvw]">
+        <DialogContent className="h-[90%] md:w-full md:max-w-[90dvw]">
           <DialogHeader>
             <DialogTitle>Exam Questions</DialogTitle>
             <DialogDescription>Add or remove questions here.</DialogDescription>
