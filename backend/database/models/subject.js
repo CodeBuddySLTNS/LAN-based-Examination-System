@@ -39,15 +39,6 @@ class SubjectModel {
   }
 
   async deleteSubject(subjectId, userId) {
-    const subjectInfo = await this.getSubjectById(subjectId);
-
-    if (subjectInfo?.created_by !== userId) {
-      throw new CustomError(
-        "You are not authorized to do this action.",
-        UNAUTHORIZED
-      );
-    }
-
     const query = `DELETE FROM subjects WHERE id = ? LIMIT 1`;
     const params = [subjectId];
     const result = await sqlQuery(query, params);

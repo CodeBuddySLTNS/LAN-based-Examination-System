@@ -1,3 +1,5 @@
+const { FORBIDDEN } = require("../../constants/statusCodes");
+const CustomError = require("../../utils/customError");
 const sqlQuery = require("../sqlQuery");
 const { examsTableQuery } = require("../tableQueries");
 
@@ -69,12 +71,6 @@ class ExamModel {
 
   async deleteExam(userId, examId) {
     await this.createExamTable();
-    const exam = await this.getExamById(examId);
-
-    if (exam[0].examiner_id !== userId) {
-      throw new Error("You are not authorized to delete this exam");
-    }
-
     const query = `DELETE FROM exams WHERE id = ? AND examiner_id = ? LIMIT 1`;
     const params = [examId, userId];
     const result = await sqlQuery(query, params);
