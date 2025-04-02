@@ -76,9 +76,18 @@ class UserModel {
     return null;
   }
 
+  // get all users from users table
+  async getUsers() {
+    await this.createUsersTable(); // creates users table if it doesn't exist
+    const query = `SELECT id, name, username, department, year, role, isVerified FROM users`;
+    const users = await sqlQuery(query);
+    return users;
+  }
+
+  // check if a user exists in users table
   async getUserInfo(userId) {
     await this.createUsersTable(); // creates users table if it doesn't exist
-    const query = `SELECT id, name, username, department, year, role
+    const query = `SELECT id, name, username, department, year, role, isVerified
     FROM users WHERE id = ? LIMIT 1`;
     const result = await sqlQuery(query, [userId]);
 
@@ -96,30 +105,6 @@ class UserModel {
     await this.createUsersTable(); // creates users table if it doesn't exist
     const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
-    if (result) {
-      if (result.length > 0) {
-        return result[0];
-      }
-      return null;
-    }
-    return null;
-  }
-
-  // get all users from users table
-  async getUsers() {
-    await this.createUsersTable(); // creates users table if it doesn't exist
-    const query = `SELECT id, name, username, department, year, role, isVerified FROM users`;
-    const users = await sqlQuery(query);
-    return users;
-  }
-
-  // check if a user exists in users table
-  async getUserInfo(userId) {
-    await this.createUsersTable(); // creates users table if it doesn't exist
-    const query = `SELECT id, name, username, department, year, role
-    FROM users WHERE id = ? LIMIT 1`;
-    const result = await sqlQuery(query, [userId]);
-
     if (result) {
       if (result.length > 0) {
         return result[0];

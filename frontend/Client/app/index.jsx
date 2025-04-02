@@ -17,13 +17,15 @@ const IndexPage = () => {
     queryFn: Axios2("/users/user/me"),
   });
 
+  const initializeUser = async (user) => {
+    await useMainStore.getState().setUser(user.user);
+    await useSocketStore.getState().initializeSocket(user.user, toast);
+    if (!navState?.key) return;
+    router.replace("/home");
+  };
+
   useEffect(() => {
-    if (user) {
-      useMainStore.getState().setUser(user.user);
-      if (!navState?.key) return;
-      useSocketStore.getState().initializeSocket(user.user, toast);
-      router.replace("/home");
-    }
+    if (user) initializeUser(user);
 
     if (error) {
       if (!navState?.key) return;

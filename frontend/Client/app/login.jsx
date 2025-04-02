@@ -33,10 +33,10 @@ const LoginPage = () => {
         ToastAndroid.LONG
       );
     },
-    onSuccess: (d) => {
+    onSuccess: async (d) => {
       SecureStore.setItemAsync("token", d.token);
-      useMainStore.getState().setUser(d.user);
-      useSocketStore.getState().initializeSocket(d.user, toast, router);
+      await useMainStore.getState().setUser(d.user);
+      await useSocketStore.getState().initializeSocket(d.user, toast);
       router.push("/(drawer)/home");
     },
   });

@@ -1,4 +1,7 @@
 const { Server } = require("socket.io");
+const handler = require("./events-handler");
+
+const activeUsers = new Object();
 
 const socketConnection = (server) => {
   const io = new Server(server, {
@@ -6,7 +9,26 @@ const socketConnection = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(socket.handshake.query.name, "connected");
+    // handle connection event
+    handler.onconnect({ socket, activeUsers });
+
+    // handle exam event
+    socket.on("takeExam", (data) =>
+      handler.takeExam({ socket, activeUsers, data })
+    );
+
+    // handle exam progress event
+    socket.on("examProgress", (data) =>
+      handler.examProgress({ socket, activeUsers, data })
+    );
+
+    // handle finish exam event
+    socket.on("finishExam", (data) =>
+      handler.finishExam({ socket, activeUsers, data })
+    );
+
+    // handle user disconnected
+    socket.on("disconnect", () => handler.disconnect({ socket, activeUsers }));
   });
 };
 

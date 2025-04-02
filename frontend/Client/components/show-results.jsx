@@ -16,6 +16,7 @@ const ShowResults = ({ isOpen, close }) => {
   const router = useRouter();
 
   const handleAction = () => {
+    router.dismissAll();
     router.replace("/(drawer)/home");
     close(false);
   };

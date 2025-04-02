@@ -16,7 +16,7 @@ export const useMainStore = create((set) => ({
 export const useSocketStore = create((set, get) => ({
   socket: null,
 
-  initializeSocket: (query, toast, router) => {
+  initializeSocket: (query, toast) => {
     if (!get().socket) {
       const url = config.isProduction
         ? config.productionServer
@@ -25,7 +25,6 @@ export const useSocketStore = create((set, get) => ({
       const socket = io(url, { query: query });
 
       socket.on("connect", () => {
-        console.log("you are now connected");
         useMainStore.getState().setIsOnline(true);
         toast.show({
           id: 0,
@@ -34,7 +33,6 @@ export const useSocketStore = create((set, get) => ({
       });
 
       socket.on("disconnect", (connection) => {
-        console.log("you were disconnected", connection);
         useMainStore.getState().setIsOnline(false);
         toast.show({
           id: 0,

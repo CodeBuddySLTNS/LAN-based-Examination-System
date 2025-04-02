@@ -3,21 +3,26 @@ import { View, Text, Pressable } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 import ShowResults from "./show-results";
+import { useSocketStore } from "@/states/store";
 
-const StartExam = ({ questions }) => {
+const StartExam = ({ examId, questions }) => {
   const [count, setCount] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [answer, setAnswer] = useState({ status: false, data: null });
+  const socket = useSocketStore((state) => state.socket);
 
   const handleAnswer = (answer) => {
     setAnswer((prev) => ({ status: true, data: answer }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (count + 1 === questions.length) {
       setShowResults(true);
       return;
     }
+
+    socket.emit("examProgress", { examId, progress: count + 2 });
+
     setAnswer((prev) => ({ status: false, data: null }));
     setCount(count + 1);
   };
@@ -92,7 +97,7 @@ const StartExam = ({ questions }) => {
           disabled={!answer.status}
         >
           <Text className="font-Nunito-Bold text-xl text-white text-center">
-            Next
+            {count + 1 === questions?.length ? "Finish Exam" : "Next"}
           </Text>
         </Pressable>
       </View>

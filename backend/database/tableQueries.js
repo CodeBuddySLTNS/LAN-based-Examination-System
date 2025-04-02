@@ -19,6 +19,7 @@ module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     duration_hours INT NOT NULL,
     duration_minutes INT NOT NULL,
     start_time DATETIME,
+    is_started BOOLEAN,
     examiner_id INT NOT NULL,
     FOREIGN KEY (subject) REFERENCES subjects(course_code) ON DELETE CASCADE,
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
@@ -61,4 +62,16 @@ module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS responses (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question_bank(id) ON DELETE CASCADE
+);`;
+
+module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS student_scores (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT NOT NULL,
+    exam_id INT NOT NULL,
+    total_score INT NOT NULL DEFAULT 0,
+    max_score INT NOT NULL DEFAULT 0,
+    percentage DECIMAL(5,2) GENERATED ALWAYS AS ((total_score / max_score) * 100) STORED,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_score (student_id, exam_id)
 );`;
