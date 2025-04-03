@@ -1,6 +1,9 @@
-const { BAD_REQUEST } = require("../constants/statusCodes");
+const { BAD_REQUEST, FORBIDDEN } = require("../constants/statusCodes");
 const SubjectModel = require("../database/models/subject");
+const UserModel = require("../database/models/user");
 const CustomError = require("../utils/customError");
+
+const User = new UserModel();
 
 const Subject = new SubjectModel();
 
@@ -40,8 +43,17 @@ const editSubject = async (req, res) => {
 
 const deleteSubject = async (req, res) => {
   const { subjectId } = req.body;
-
   const userId = res.locals.userId;
+  const user = await User.getUserInfo(userId);
+  const whitelist = ["Admin", "Faculty"];
+
+  if (!whitelist.includes(user?.role)) {
+    throw new CustomError(
+      "You are not authorized to perform this action",
+      FORBIDDEN
+    );
+  }
+
   const result = await Subject.deleteSubject(subjectId, userId);
   res.json({ message: "Deleted Successfully", result });
 };

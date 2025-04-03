@@ -1,10 +1,12 @@
 const Joi = require("joi");
 const QuestionModel = require("../database/models/question");
 const { validateQuestion } = require("../utils/validator");
-const { CREATED, BAD_REQUEST } = require("../constants/statusCodes");
+const { CREATED, BAD_REQUEST, FORBIDDEN } = require("../constants/statusCodes");
 const CustomError = require("../utils/customError");
+const UserModel = require("../database/models/user");
 
 const Question = new QuestionModel();
+const User = new UserModel();
 
 const questions = async (req, res) => {
   const questions = await Question.getAll();
@@ -33,7 +35,17 @@ const addQuestion = async (req, res) => {
 const deleteQuestion = async (req, res) => {
   const { questionId } = req.body;
   const { userId } = res.locals;
-  console.log(req.body);
+
+  const user = await User.getUserInfo(userId);
+  const whitelist = ["Admin", "Faculty"];
+
+  if (!whitelist.includes(user?.role)) {
+    throw new CustomError(
+      "You are not authorized to perform this action",
+      FORBIDDEN
+    );
+  }
+
   if (!questionId || !userId) {
     throw new CustomError("Invalid request", BAD_REQUEST);
   }

@@ -71,7 +71,7 @@ class ExamModel {
 
   async deleteExam(userId, examId) {
     await this.createExamTable();
-    const query = `DELETE FROM exams WHERE id = ? AND examiner_id = ? LIMIT 1`;
+    const query = `DELETE FROM exams WHERE id = ? LIMIT 1`;
     const params = [examId, userId];
     const result = await sqlQuery(query, params);
     return result;
