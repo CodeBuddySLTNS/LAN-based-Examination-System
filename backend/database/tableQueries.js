@@ -57,14 +57,14 @@ module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS responses (
     student_id INT NOT NULL,
     exam_id INT NOT NULL,
     question_id INT NOT NULL,
-    answer TEXT NOT NULL,
+    answer JSON NOT NULL,
     is_correct BOOLEAN,
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question_bank(id) ON DELETE CASCADE
 );`;
 
-module.exports.responsesTableQuery = `CREATE TABLE IF NOT EXISTS student_scores (
+module.exports.ScoresTableQuery = `CREATE TABLE IF NOT EXISTS student_scores (
     id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     exam_id INT NOT NULL,

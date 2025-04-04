@@ -36,17 +36,6 @@
       ],
       "expo-secure-store",
       "expo-font",
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/NunitoBold.ttf",
-            "./assets/fonts/NunitoRegular.ttf",
-            "./assets/fonts/NunitoMedium.ttf",
-            "./assets/fonts/NunitoSemiBold.ttf"
-          ]
-        }
-      ],
       "expo-sqlite",
       [
         "expo-sqlite",

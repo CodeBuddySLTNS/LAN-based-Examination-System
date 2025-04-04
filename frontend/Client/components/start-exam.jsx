@@ -3,16 +3,33 @@ import { View, Text, Pressable } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 import ShowResults from "./show-results";
-import { useSocketStore } from "@/states/store";
+import { useMainStore, useSocketStore } from "@/states/store";
+import { useSQLiteContext } from "expo-sqlite";
+import { drizzle } from "drizzle-orm/expo-sqlite";
+import { response } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 const StartExam = ({ examId, questions }) => {
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db);
+  const user = useMainStore((state) => state.user);
   const [count, setCount] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [answer, setAnswer] = useState({ status: false, data: null });
   const socket = useSocketStore((state) => state.socket);
 
-  const handleAnswer = (answer) => {
-    setAnswer((prev) => ({ status: true, data: answer }));
+  const handleAnswer = async (answer) => {
+    try {
+      await drizzleDb.insert(response).values({
+        student_id: user.id,
+        exam_id: examId,
+        question_id: questions[count].id,
+        answer: answer,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    setAnswer({ status: true, data: answer });
   };
 
   const handleNext = async () => {
@@ -21,9 +38,21 @@ const StartExam = ({ examId, questions }) => {
       return;
     }
 
+    try {
+      console.log(
+        await drizzleDb
+          .select()
+          .from(response)
+          .where(eq(response.exam_id, examId))
+      );
+      await drizzleDb.delete(response).where(eq(response.exam_id, examId));
+    } catch (error) {
+      console.log(error);
+    }
+
     socket.emit("examProgress", { examId, progress: count + 2 });
 
-    setAnswer((prev) => ({ status: false, data: null }));
+    setAnswer({ status: false, data: null });
     setCount(count + 1);
   };
 

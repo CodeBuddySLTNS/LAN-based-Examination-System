@@ -66,6 +66,19 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
         </Text>
       </View>
 
+      <View className="flex-row gap-2 pt-1">
+        <Text className="font-Nunito-Bold text-gray-800 text-07">Status:</Text>
+        <Text className="flex-1 font-Nunito-Regular text-07">
+          <Text
+            className={`font-Nunito-Regular ${
+              item.is_started ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {item.is_started ? item.is_started : "Not Started"}
+          </Text>
+        </Text>
+      </View>
+
       <Button size="sm" className="mt-3 bg-primary" onPress={btnFn}>
         <ButtonText className="font-Nunito-Bold text-[1.05rem]">
           {btnText || "Action"}
