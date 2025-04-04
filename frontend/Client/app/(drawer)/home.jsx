@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
@@ -6,6 +6,7 @@ import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
 
 const dummyuser = {
   id: 1,
@@ -18,12 +19,15 @@ const dummyuser = {
 
 const Homepage = () => {
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
   const user = useMainStore((state) => state.user) || dummyuser;
 
   const { data: exams, error } = useQuery({
     queryKey: ["exams"],
     queryFn: Axios2("/exams", "GET"),
   });
+
+  const handleRefresh = async () => {};
 
   const greet = () => {
     const date = new Date();
@@ -41,7 +45,12 @@ const Homepage = () => {
   };
 
   return (
-    <View className="p-3">
+    <ScrollView
+      className="p-3"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
       <Card className="elevation-md">
         <Text className="font-Nunito-Bold text-2xl">
           {greet()}, {user.username}{" "}
@@ -56,7 +65,7 @@ const Homepage = () => {
           </Text>
         </View>
       </Card>
-    </View>
+    </ScrollView>
   );
 };
 

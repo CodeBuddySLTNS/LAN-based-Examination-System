@@ -8,17 +8,17 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/drizzle/migrations";
 import { Suspense } from "react";
 import { ActivityIndicator } from "react-native";
-// import { useFonts } from "expo-font";
+import { useFonts } from "expo-font";
 
 export const DATABASE_NAME = "systemdb";
 
 export default function RootLayout() {
-  // const [loadedFonts] = useFonts({
-  //   "Nunito-Regular": require("@/assets/fonts/NunitoRegular.ttf"),
-  //   "Nunito-Bold": require("@/assets/fonts/NunitoBold.ttf"),
-  //   "Nunito-SemiBold": require("@/assets/fonts/NunitoSemiBold.ttf"),
-  //   "Nunito-Medium": require("@/assets/fonts/NunitoMedium.ttf"),
-  // });
+  const [loadedFonts] = useFonts({
+    "Nunito-Regular": require("@/assets/fonts/NunitoRegular.ttf"),
+    "Nunito-Bold": require("@/assets/fonts/NunitoBold.ttf"),
+    "Nunito-SemiBold": require("@/assets/fonts/NunitoSemiBold.ttf"),
+    "Nunito-Medium": require("@/assets/fonts/NunitoMedium.ttf"),
+  });
 
   const expoDb = openDatabaseSync(DATABASE_NAME);
   const db = drizzle(expoDb);
