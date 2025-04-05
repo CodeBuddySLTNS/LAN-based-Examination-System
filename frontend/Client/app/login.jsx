@@ -129,12 +129,4 @@ const LoginPage = () => {
   );
 };
 
-const Login = () => {
-  return (
-    <QueryProvider>
-      <LoginPage />
-    </QueryProvider>
-  );
-};
-
-export default Login;
+export default LoginPage;

@@ -72,7 +72,7 @@ const Page = () => {
       durationMinutes: questionsDialog.data.duration.split(" : ")[1],
       startTime: questionsDialog.data.start_time,
       examinerId: questionsDialog.data.examiner_id,
-      questions: selectedQuestions,
+      questions: selectedQuestions.map((q) => ({ ...q, points: 1 })),
     };
 
     if (mode.questionsOnly) {

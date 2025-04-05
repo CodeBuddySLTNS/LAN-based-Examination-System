@@ -11,7 +11,6 @@ import { Icon } from "./ui/icon";
 import { House, X } from "lucide-react-native";
 import { HStack } from "./ui/hstack";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
 
 const ShowResults = ({ result, setResults, submitFn }) => {
   const router = useRouter();
@@ -23,10 +22,6 @@ const ShowResults = ({ result, setResults, submitFn }) => {
     router.replace("/(drawer)/home");
     close(false);
   };
-
-  useEffect(() => {
-    submitFn();
-  }, []);
 
   return (
     <Modal isOpen={result.status} onClose={close}>

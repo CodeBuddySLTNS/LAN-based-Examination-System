@@ -29,12 +29,4 @@ const TakeExamPage = () => {
   );
 };
 
-const TakeExam = () => {
-  return (
-    <QueryProvider>
-      <TakeExamPage />
-    </QueryProvider>
-  );
-};
-
-export default TakeExam;
+export default TakeExamPage;

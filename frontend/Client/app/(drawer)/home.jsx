@@ -69,12 +69,4 @@ const Homepage = () => {
   );
 };
 
-const Home = () => {
-  return (
-    <QueryProvider>
-      <Homepage />
-    </QueryProvider>
-  );
-};
-
-export default Home;
+export default Homepage;

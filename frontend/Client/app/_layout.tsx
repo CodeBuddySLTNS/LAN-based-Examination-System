@@ -9,6 +9,7 @@ import migrations from "@/drizzle/migrations";
 import { Suspense } from "react";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
+import { QueryProvider } from "@/providers/query-provider";
 
 export const DATABASE_NAME = "systemdb";
 
@@ -25,27 +26,29 @@ export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
 
   return (
-    <GluestackUIProvider mode="light">
-      <Suspense fallback={<ActivityIndicator size="large" />}>
-        <SQLiteProvider
-          databaseName={DATABASE_NAME}
-          options={{ enableChangeListener: true }}
-          useSuspense
-        >
-          <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="login" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="(drawer)"
-                  options={{ headerShown: false }}
-                />
-              </Stack>
-            </SafeAreaView>
-          </SafeAreaProvider>
-        </SQLiteProvider>
-      </Suspense>
-    </GluestackUIProvider>
+    <QueryProvider>
+      <GluestackUIProvider mode="light">
+        <Suspense fallback={<ActivityIndicator size="large" />}>
+          <SQLiteProvider
+            databaseName={DATABASE_NAME}
+            options={{ enableChangeListener: true }}
+            useSuspense
+          >
+            <SafeAreaProvider>
+              <SafeAreaView style={{ flex: 1 }}>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="login" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="(drawer)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+              </SafeAreaView>
+            </SafeAreaProvider>
+          </SQLiteProvider>
+        </Suspense>
+      </GluestackUIProvider>
+    </QueryProvider>
   );
 }

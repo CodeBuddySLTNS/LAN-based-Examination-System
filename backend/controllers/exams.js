@@ -79,10 +79,6 @@ const handleMultipleSubmissions = async (req, res) => {
 
   console.log(value);
 
-  return res.json({
-    message: "Successfully submitted.",
-  });
-
   const result = await Response.addMultipleResponse(
     userId,
     value.examId,

@@ -6,7 +6,7 @@ import { useMainStore, useSocketStore } from "@/states/store";
 import { useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { response } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import ShowResults from "./show-results";
 import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@tanstack/react-query";
@@ -25,9 +25,13 @@ const StartExam = ({ examId, questions }) => {
     mutationFn: Axios2("/exams/submit", "POST"),
     onError: (e) => {
       console.log(e.message);
+      setResults((prev) => ({ ...prev, loading: false }));
     },
     onSuccess: (data) => {
       console.log(data);
+      drizzleDb.delete(response).execute();
+      SecureStore.deleteItemAsync("takingExam");
+      setResults((prev) => ({ ...prev, loading: false }));
     },
   });
 
@@ -42,7 +46,7 @@ const StartExam = ({ examId, questions }) => {
         examId: examId,
         studentId: user.id,
         questionId: questions[count].id,
-        answer: answer,
+        answer: JSON.stringify([answer]),
       });
     } catch (error) {
       console.log(error);
@@ -53,6 +57,7 @@ const StartExam = ({ examId, questions }) => {
   const handleNext = async () => {
     if (count + 1 === questions.length) {
       setResults((prev) => ({ ...prev, status: true }));
+      submitExam();
       return;
     }
 
@@ -62,9 +67,8 @@ const StartExam = ({ examId, questions }) => {
     setCount((prev) => prev + 1);
   };
 
-  const handleSubmit = async () => {
+  async function submitExam() {
     try {
-      console.log("submitting...");
       await submit({
         examId,
         responses: await drizzleDb
@@ -72,19 +76,13 @@ const StartExam = ({ examId, questions }) => {
           .from(response)
           .where(eq(response.examId, examId)),
       });
-
-      console.log("submitted.");
-
-      // await drizzleDb.delete(response).where(eq(response.examId, examId));
-      // await SecureStore.deleteItemAsync("takingExam");
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   const renderChoices = (array) => {
     const choices = JSON.parse(array) || [];
-
     return (
       <VStack className="gap-3">
         {choices.map((choice, id) => (
@@ -108,11 +106,7 @@ const StartExam = ({ examId, questions }) => {
 
   return (
     <VStack className="flex-1 p-4 gap-4">
-      <ShowResults
-        result={results}
-        setResults={setResults}
-        submitFn={handleSubmit}
-      />
+      <ShowResults result={results} setResults={setResults} />
       <View className="items-center p-4 rounded-md bg-gray-50 elevation">
         <Text className="font-Nunito-SemiBold text-07 mb-1">Time Left:</Text>
         <HStack className="gap-2">

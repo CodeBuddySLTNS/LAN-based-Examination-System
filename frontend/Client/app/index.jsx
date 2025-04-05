@@ -40,14 +40,4 @@ const IndexPage = () => {
   );
 };
 
-const index = () => {
-  return (
-    <QueryProvider>
-      <View style={{ flex: 1 }}>
-        <IndexPage />
-      </View>
-    </QueryProvider>
-  );
-};
-
-export default index;
+export default IndexPage;
