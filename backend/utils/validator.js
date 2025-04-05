@@ -95,6 +95,19 @@ const addExamSchema = Joi.object({
   examQuestionsId: Joi.number().label("Exam Questions Id"),
 });
 
+const multipleResponseSchema = Joi.object({
+  examId: Joi.number().label("Exam Id").required().messages({
+    "any.required": "Exam Id is required",
+  }),
+  responses: Joi.array()
+    .items(Joi.object())
+    .label("Responses")
+    .required()
+    .messages({
+      "any.required": "Responses is required",
+    }),
+});
+
 /* Validator functions */
 
 // -> login validation
@@ -112,3 +125,7 @@ module.exports.validateQuestion = (payload) =>
 // -> exam validation
 module.exports.validateExam = (payload) =>
   addExamSchema.validate(payload, { abortEarly: false });
+
+// -> exam validation
+module.exports.validateMultiResponse = (payload) =>
+  multipleResponseSchema.validate(payload, { abortEarly: false });

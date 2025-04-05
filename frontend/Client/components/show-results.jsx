@@ -11,9 +11,12 @@ import { Icon } from "./ui/icon";
 import { House, X } from "lucide-react-native";
 import { HStack } from "./ui/hstack";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 
-const ShowResults = ({ isOpen, close }) => {
+const ShowResults = ({ result, setResults, submitFn }) => {
   const router = useRouter();
+
+  const close = () => setResults((prev) => ({ ...prev, status: false }));
 
   const handleAction = () => {
     router.dismissAll();
@@ -21,14 +24,15 @@ const ShowResults = ({ isOpen, close }) => {
     close(false);
   };
 
+  useEffect(() => {
+    submitFn();
+  }, []);
+
   return (
-    <Modal isOpen={isOpen} onClose={close}>
+    <Modal isOpen={result.status} onClose={close}>
       <ModalBackdrop />
       <ModalContent>
-        <Pressable
-          className="absolute top-3 right-3"
-          onPress={() => close(false)}
-        >
+        <Pressable className="absolute top-3 right-3" onPress={() => close()}>
           <Icon size="xl" as={X} />
         </Pressable>
         <ModalHeader>

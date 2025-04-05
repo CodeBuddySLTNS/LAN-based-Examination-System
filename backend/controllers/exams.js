@@ -1,13 +1,15 @@
 const ExamModel = require("../database/models/exam");
 const ExamQuestionModel = require("../database/models/exam_question");
 const CustomError = require("../utils/customError");
-const { validateExam } = require("../utils/validator");
+const { validateExam, validateMultiResponse } = require("../utils/validator");
 const { BAD_REQUEST, SUCCESS, FORBIDDEN } = require("../constants/statusCodes");
 const UserModel = require("../database/models/user");
+const ResponseModel = require("../database/models/response");
 
 const User = new UserModel();
 const Exam = new ExamModel();
 const ExamQuestion = new ExamQuestionModel();
+const Response = new ResponseModel();
 
 const exams = async (req, res) => {
   const exams = await Exam.getAll();
@@ -67,4 +69,32 @@ const deleteExam = async (req, res) => {
   res.send({ message: "Successfully deleted.", result });
 };
 
-module.exports = { exams, addExam, editExam, deleteExam };
+const handleMultipleSubmissions = async (req, res) => {
+  const { error, value } = validateMultiResponse(req.body);
+  const userId = res.locals.userId;
+
+  if (error) {
+    throw new CustomError(error.message, BAD_REQUEST);
+  }
+
+  console.log(value);
+
+  return res.json({
+    message: "Successfully submitted.",
+  });
+
+  const result = await Response.addMultipleResponse(
+    userId,
+    value.examId,
+    value.responses
+  );
+  res.send(result);
+};
+
+module.exports = {
+  exams,
+  addExam,
+  editExam,
+  deleteExam,
+  handleMultipleSubmissions,
+};

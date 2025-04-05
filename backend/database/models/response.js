@@ -10,40 +10,38 @@ class ResponseModel {
 
   async getAll() {
     await this.createResponsesTable();
-    const query = `SELECT s.*, u.name as created_by FROM subjects s JOIN users u ON u.id = s.created_by`;
-    const result = await sqlQuery(query);
-    return result;
   }
 
   async getResponseById(id) {
-    await this.createSubjectsTable();
-    const query = `SELECT *  FROM subjects WHERE id = ?`;
-    const result = await sqlQuery(query, [id]);
-    return result[0];
+    await this.createResponsesTable();
   }
 
   async addResponse(userId, course_code, name) {
-    await this.createSubjectsTable();
-    const query = `INSERT INTO subjects (course_code, name, created_by)
-        VALUES (?, ?, ?);`;
-    const params = [course_code, name, userId];
-    const result = await sqlQuery(query, params);
+    await this.createResponsesTable();
+  }
+
+  async addMultipleResponse(user_id, exam_id, responses) {
+    await this.createResponsesTable();
+    const query =
+      "INSERT INTO responses (exam_id, student_id, question_id, answer, is_correct) VALUES ?;";
+    const values = responses.map(({ questionId, answer }) => [
+      exam_id,
+      user_id,
+      questionId,
+      answer,
+      null,
+    ]);
+    const result = await sqlQuery(query, [values]);
     return result;
   }
 
   async updateResponse(subject) {
-    const query = `INSERT INTO subjects( course_code, name ) VALUES (?, ?)`;
-    const params = [subject.courseCode, subject.subjectName];
-    const result = await sqlQuery(query, params);
-    return result;
+    await this.createResponsesTable();
   }
 
   async deleteResponses(subjectId, userId) {
-    const query = `DELETE FROM subjects WHERE id = ? LIMIT 1`;
-    const params = [subjectId];
-    const result = await sqlQuery(query, params);
-    return result;
+    await this.createResponsesTable();
   }
 }
 
-module.exports = SubjectModel;
+module.exports = ResponseModel;

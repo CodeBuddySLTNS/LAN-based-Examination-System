@@ -9,21 +9,33 @@ import { response } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import ShowResults from "./show-results";
 import * as SecureStore from "expo-secure-store";
+import { useMutation } from "@tanstack/react-query";
+import { Axios2 } from "@/lib/utils";
 
 const StartExam = ({ examId, questions }) => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
   const [count, setCount] = useState(0);
-  const [results, setResults] = useState({ status: false, data: null });
+  const [results, setResults] = useState({ status: false, loading: true });
   const [answer, setAnswer] = useState({ status: false, data: null });
   const socket = useSocketStore((state) => state.socket);
+
+  const { mutateAsync: submit } = useMutation({
+    mutationFn: Axios2("/exams/submit", "POST"),
+    onError: (e) => {
+      console.log(e.message);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
 
   const handleAnswer = async (answer) => {
     try {
       await SecureStore.setItemAsync(
-        "examProgress",
-        JSON.stringify({ examId, progress: count + 1 })
+        "takingExam",
+        JSON.stringify({ status: true, examId, progress: count + 1 })
       );
 
       await drizzleDb.insert(response).values({
@@ -41,11 +53,6 @@ const StartExam = ({ examId, questions }) => {
   const handleNext = async () => {
     if (count + 1 === questions.length) {
       setResults((prev) => ({ ...prev, status: true }));
-      try {
-        await drizzleDb.delete(response).where(eq(response.examId, examId));
-      } catch (error) {
-        console.log(error);
-      }
       return;
     }
 
@@ -55,7 +62,25 @@ const StartExam = ({ examId, questions }) => {
     setCount((prev) => prev + 1);
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    try {
+      console.log("submitting...");
+      await submit({
+        examId,
+        responses: await drizzleDb
+          .select()
+          .from(response)
+          .where(eq(response.examId, examId)),
+      });
+
+      console.log("submitted.");
+
+      // await drizzleDb.delete(response).where(eq(response.examId, examId));
+      // await SecureStore.deleteItemAsync("takingExam");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const renderChoices = (array) => {
     const choices = JSON.parse(array) || [];
@@ -84,9 +109,9 @@ const StartExam = ({ examId, questions }) => {
   return (
     <VStack className="flex-1 p-4 gap-4">
       <ShowResults
-        isOpen={results.status}
+        result={results}
+        setResults={setResults}
         submitFn={handleSubmit}
-        close={(prev) => setResults({ ...prev, status: false })}
       />
       <View className="items-center p-4 rounded-md bg-gray-50 elevation">
         <Text className="font-Nunito-SemiBold text-07 mb-1">Time Left:</Text>

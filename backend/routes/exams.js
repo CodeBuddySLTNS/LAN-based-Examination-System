@@ -7,5 +7,6 @@ Router.get("/", tryCatch(controller.exams));
 Router.post("/add", tryCatch(controller.addExam));
 Router.patch("/edit/:mode", tryCatch(controller.editExam));
 Router.delete("/delete/:id", tryCatch(controller.deleteExam));
+Router.post("/submit", tryCatch(controller.handleMultipleSubmissions));
 
 module.exports = Router;
