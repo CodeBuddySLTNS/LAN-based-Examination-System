@@ -74,7 +74,7 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
               item.is_started ? "text-green-500" : "text-red-500"
             }`}
           >
-            {item.is_started ? item.is_started : "Not Started"}
+            {item.is_started ? "Ongoing" : "Not Started"}
           </Text>
         </Text>
       </View>

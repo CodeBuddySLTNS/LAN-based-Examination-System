@@ -14,7 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -23,17 +22,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowUpDown,
-  Check,
-  Edit,
-  LucideDelete,
-  MoreHorizontal,
-  XIcon,
-} from "lucide-react";
-import { act, useEffect, useState } from "react";
+import { ArrowUpDown, Edit, LucideDelete, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
@@ -48,9 +40,7 @@ const Page = () => {
   });
 
   const handleOpenQuestionsDialog = ({ row }) => {
-    const questions = row.original.questions
-      ? JSON.parse(row.original.questions)
-      : [];
+    const questions = row.original.questions;
     setQuestionsDialog({
       open: true,
       data: { ...row.original, questions },
@@ -68,8 +58,8 @@ const Page = () => {
       year: questionsDialog.data.year,
       label: questionsDialog.data.label,
       description: questionsDialog.data.description,
-      durationHours: questionsDialog.data.duration.split(" : ")[0],
-      durationMinutes: questionsDialog.data.duration.split(" : ")[1],
+      durationHours: questionsDialog.data.duration_hours,
+      durationMinutes: questionsDialog.data.duration_minutes,
       startTime: questionsDialog.data.start_time,
       examinerId: questionsDialog.data.examiner_id,
       questions: selectedQuestions.map((q) => ({ ...q, points: 1 })),

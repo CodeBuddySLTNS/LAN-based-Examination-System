@@ -16,17 +16,16 @@ const ExamSchedulesPage = () => {
 
   const { data: exams, isFetching } = useQuery({
     queryKey: ["exams"],
-    queryFn: Axios2("/exams", "GET"),
+    queryFn: Axios2(
+      `/exams?department=${user.department}&year=${user.year}`,
+      "GET"
+    ),
   });
 
   const handleRefresh = () => {
     setRefreshing(true);
     queryClient.invalidateQueries(["exams"]);
   };
-
-  const myexams = exams?.filter(
-    (exam) => exam?.year === user?.year && exam?.department === user?.department
-  );
 
   useEffect(() => {
     if (!isFetching) setRefreshing(false);
@@ -38,7 +37,7 @@ const ExamSchedulesPage = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-        data={myexams || []}
+        data={exams || []}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
           <View className="p-4">

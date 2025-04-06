@@ -5,14 +5,30 @@ const { validateExam, validateMultiResponse } = require("../utils/validator");
 const { BAD_REQUEST, SUCCESS, FORBIDDEN } = require("../constants/statusCodes");
 const UserModel = require("../database/models/user");
 const ResponseModel = require("../database/models/response");
+const ScoreModel = require("../database/models/score");
 
 const User = new UserModel();
 const Exam = new ExamModel();
 const ExamQuestion = new ExamQuestionModel();
 const Response = new ResponseModel();
+const Score = new ScoreModel();
 
 const exams = async (req, res) => {
+  const { department, year } = req.query;
+
+  if (department && year) {
+    return res.send(await Exam.getExamsByDepartment(department, year));
+  }
+
   const exams = await Exam.getAll();
+  exams.forEach((exam) => {
+    exam.questions = JSON.parse(exam.questions || "[]");
+    exam.duration = `${exam.duration_hours} hours${
+      exam.duration_minutes ? ` and ${exam.duration_minutes} minutes` : ""
+    }`;
+    exam.is_started = exam.is_started === 1 ? true : false;
+    exam.is_expired = exam.is_expired === 1 ? true : false;
+  });
   res.send(exams);
 };
 
@@ -79,12 +95,10 @@ const handleMultipleSubmissions = async (req, res) => {
 
   console.log(value);
 
-  const result = await Response.addMultipleResponse(
-    userId,
-    value.examId,
-    value.responses
-  );
-  res.send(result);
+  await Response.addMultipleResponse(userId, value.examId, value.responses);
+  await Response.checkAnswers(userId, value.examId);
+
+  // Calculate the score after checking answers
 };
 
 module.exports = {

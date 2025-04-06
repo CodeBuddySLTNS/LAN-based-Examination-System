@@ -35,7 +35,7 @@ class ResponseModel {
     return result;
   }
 
-  async updateResponse(subject) {
+  async checkAnswers(student_id, exam_id) {
     await this.createResponsesTable();
   }
 

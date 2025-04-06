@@ -11,7 +11,7 @@ const {
 } = require("../constants/statusCodes");
 
 const User = new UserModel();
-const expiresIn = 3 * 60 * 60; // 3 hours
+const expiresIn = 5 * 60 * 60; // 5 hours
 
 const login = async (req, res) => {
   // Validate the request body

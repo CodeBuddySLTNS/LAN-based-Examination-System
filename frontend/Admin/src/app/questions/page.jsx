@@ -199,13 +199,13 @@ export default function Page() {
         );
       },
       cell: ({ row }) =>
-        JSON.parse(row.getValue("choices"))?.length > 0 ? (
+        row.getValue("choices")?.length > 0 ? (
           <div className="text-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>View</TooltipTrigger>
                 <TooltipContent>
-                  {JSON.parse(row.getValue("choices"))?.join(", ")}
+                  {row.getValue("choices")?.join(", ")}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -234,7 +234,7 @@ export default function Page() {
             <Tooltip>
               <TooltipTrigger>View</TooltipTrigger>
               <TooltipContent>
-                {JSON.parse(row.getValue("correct_answer"))?.join(", ")}
+                {row.getValue("correct_answer")?.join(", ")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

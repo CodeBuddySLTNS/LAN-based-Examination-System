@@ -1,5 +1,8 @@
 const sqlQuery = require("../sqlQuery");
-const { usersTableQuery } = require("../tableQueries");
+const {
+  usersTableQuery,
+  completedExamsTableQuery,
+} = require("../tableQueries");
 
 class UserModel {
   // creates users table if it doesn't exist
@@ -112,6 +115,19 @@ class UserModel {
       return null;
     }
     return null;
+  }
+
+  async addCompletedExam(userId, examId) {
+    await sqlQuery(completedExamsTableQuery);
+    const query = `INSERT INTO completed_exams (student_id, exam_id) VALUES (?, ?);`;
+    const result = await sqlQuery(query, [userId, examId]);
+  }
+
+  async getCompletedExams(userId) {
+    await sqlQuery(completedExamsTableQuery);
+    const query = `SELECT * FROM completed_exams WHERE student_id = ?`;
+    const result = await sqlQuery(query, [userId]);
+    return result;
   }
 }
 

@@ -19,7 +19,8 @@ module.exports.examsTableQuery = `CREATE TABLE IF NOT EXISTS exams (
     duration_hours INT NOT NULL,
     duration_minutes INT NOT NULL,
     start_time DATETIME,
-    is_started BOOLEAN,
+    is_started BOOLEAN DEFAULT false,
+    is_expired BOOLEAN DEFAULT false,
     examiner_id INT NOT NULL,
     FOREIGN KEY (subject) REFERENCES subjects(course_code) ON DELETE CASCADE,
     FOREIGN KEY (examiner_id) REFERENCES users(id) ON DELETE CASCADE
@@ -42,6 +43,14 @@ module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questi
     exam_id INT NOT NULL,
     question_data JSON NOT NULL,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+);`;
+
+module.exports.completedExamsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    exam_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
 
 module.exports.subjectsTableQuery = `CREATE TABLE IF NOT EXISTS subjects (
