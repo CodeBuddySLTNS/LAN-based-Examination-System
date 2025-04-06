@@ -4,7 +4,6 @@ import { Button, ButtonText } from "./ui/button";
 import { useRouter } from "expo-router";
 
 export const ExamCard = ({ item, btnText, btnFn }) => {
-  const router = useRouter();
   return (
     <View className="mx-4  p-4 pt-3 rounded-md bg-white elevation-md">
       <View className="flex-row justify-between items-center">

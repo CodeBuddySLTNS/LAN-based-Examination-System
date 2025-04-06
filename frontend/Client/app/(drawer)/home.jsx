@@ -1,4 +1,11 @@
-import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +14,9 @@ import { QueryProvider } from "@/providers/query-provider";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
+import { Icon } from "@/components/ui/icon";
+import { X } from "lucide-react-native";
+import { Pre } from "@expo/html-elements";
 
 const dummyuser = {
   id: 1,
@@ -20,9 +30,10 @@ const dummyuser = {
 const Homepage = () => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [showQuote, setShowQuote] = useState(true);
   const user = useMainStore((state) => state.user) || dummyuser;
 
-  const { data: exams, error } = useQuery({
+  const { data: exams } = useQuery({
     queryKey: ["exams"],
     queryFn: Axios2("/exams", "GET"),
   });
@@ -51,20 +62,71 @@ const Homepage = () => {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-      <Card className="elevation-md">
-        <Text className="font-Nunito-Bold text-2xl">
-          {greet()}, {user.username}{" "}
-          <Entypo name="emoji-happy" size={24} color="black" />
-        </Text>
+      {showQuote && (
+        <Card className="elevation-md relative">
+          <Pressable
+            onPress={() => setShowQuote(false)}
+            className="p-2 absolute right-0"
+          >
+            <Icon as={X} size="lg" />
+          </Pressable>
 
-        <View className="p-2 bg-gray-100 rounded">
-          <Text className="font-Nunito-Regular text-07">
-            "Believe in yourself, and all that you are. Know that there is
-            something inside you that is greater than any obstacle." – Christian
-            D. Larson
+          <Text className="font-Nunito-Bold text-2xl">
+            {greet()}, {user.username}{" "}
+            <Entypo name="emoji-happy" size={24} color="black" />
           </Text>
-        </View>
+
+          <View className="p-2 bg-gray-100 rounded">
+            <Text className="font-Nunito-Regular text-07">
+              "Believe in yourself, and all that you are. Know that there is
+              something inside you that is greater than any obstacle." –
+              Christian D. Larson
+            </Text>
+          </View>
+        </Card>
+      )}
+
+      <Card className="py-9 mt-3 elevation-md">
+        <Text className="font-Nunito-Bold text-4xl text-center text-green-600">
+          100%
+        </Text>
+        <Text className="font-Nunito-Regular text-07 text-center">
+          Your average Accuracy
+        </Text>
       </Card>
+
+      <View className="mt-4">
+        <Text className="font-Nunito-SemiBold text-xl text-center">
+          Upcoming exams
+        </Text>
+      </View>
+
+      {exams &&
+        exams.length > 0 &&
+        exams.map((exam) => (
+          <Card
+            key={exam.id}
+            className="flex-row items-center mt-3 gap-3 elevation-md"
+          >
+            <Text className="flex-1 font-Nunito-Bold text-07">
+              {exam.label} ({exam.course_code})
+            </Text>
+            <Text className="flex-1 font-Nunito-Bold text-07 text-center">
+              Jan 16
+            </Text>
+            <Pressable
+              onPress={() => {
+                router.push("/(drawer)/exam-schedules/take-exam", {
+                  params: { exam: JSON.stringify(exam) },
+                });
+              }}
+            >
+              <Text className="font-Nunito-Bold text-07 rounded px-3 py-1 bg-primary text-white">
+                View
+              </Text>
+            </Pressable>
+          </Card>
+        ))}
     </ScrollView>
   );
 };
