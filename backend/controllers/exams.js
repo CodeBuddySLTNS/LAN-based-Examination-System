@@ -96,9 +96,9 @@ const handleMultipleSubmissions = async (req, res) => {
   console.log(value);
 
   await Response.addMultipleResponse(userId, value.examId, value.responses);
-  await Response.checkAnswers(userId, value.examId);
-
-  // Calculate the score after checking answers
+  res.send({
+    message: "Successfully submitted.",
+  });
 };
 
 module.exports = {

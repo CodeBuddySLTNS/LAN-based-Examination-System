@@ -6,20 +6,24 @@ import { useMainStore, useSocketStore } from "@/states/store";
 import { useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { response } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
-import ShowResults from "./show-results";
+import { eq } from "drizzle-orm";
 import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
+import { Icon } from "./ui/icon";
+import { ChartNoAxesColumn, House } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import ShowResults from "./show-results";
 
 const StartExam = ({ examId, questions }) => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
-  const [count, setCount] = useState(0);
+  const [status, setStatus] = useState({ count: 0, completed: false });
   const [results, setResults] = useState({ status: false, loading: true });
   const [answer, setAnswer] = useState({ status: false, data: null });
   const socket = useSocketStore((state) => state.socket);
+  const router = useRouter();
 
   const { mutateAsync: submit } = useMutation({
     mutationFn: Axios2("/exams/submit", "POST"),
@@ -39,13 +43,13 @@ const StartExam = ({ examId, questions }) => {
     try {
       await SecureStore.setItemAsync(
         "takingExam",
-        JSON.stringify({ status: true, examId, progress: count + 1 })
+        JSON.stringify({ status: true, examId, progress: status.count + 1 })
       );
 
       await drizzleDb.insert(response).values({
         examId: examId,
         studentId: user.id,
-        questionId: questions[count].id,
+        questionId: questions[status.count].id,
         answer: JSON.stringify([answer]),
       });
     } catch (error) {
@@ -55,16 +59,25 @@ const StartExam = ({ examId, questions }) => {
   };
 
   const handleNext = async () => {
-    if (count + 1 === questions.length) {
+    if (status.count + 1 === questions.length) {
+      if (status.completed) {
+        setResults((prev) => ({ ...prev, status: true }));
+        return;
+      }
+      await SecureStore.setItemAsync(
+        "takingExam",
+        JSON.stringify({ status: true, examId })
+      );
+      setStatus((prev) => ({ ...prev, completed: true }));
       setResults((prev) => ({ ...prev, status: true }));
       submitExam();
       return;
     }
 
-    socket.emit("examProgress", { examId, progress: count + 2 });
+    socket.emit("examProgress", { examId, progress: status.count + 2 });
 
     setAnswer({ status: false, data: null });
-    setCount((prev) => prev + 1);
+    setStatus((prev) => ({ ...prev, count: prev.count + 1 }));
   };
 
   async function submitExam() {
@@ -80,6 +93,11 @@ const StartExam = ({ examId, questions }) => {
       console.log(error);
     }
   }
+
+  const returnHome = () => {
+    router.dismissAll();
+    router.replace("/(drawer)/home");
+  };
 
   const renderChoices = (array) => {
     const choices = JSON.parse(array) || [];
@@ -116,12 +134,12 @@ const StartExam = ({ examId, questions }) => {
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">26</Text>
+            <Text className="font-Nunito-Bold text-3xl">00</Text>
             <Text className="font-Nunito-Bold text-sm">MM</Text>
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">46</Text>
+            <Text className="font-Nunito-Bold text-3xl">00</Text>
             <Text className="font-Nunito-Bold text-sm">SS</Text>
           </View>
         </HStack>
@@ -129,30 +147,64 @@ const StartExam = ({ examId, questions }) => {
       <View className="flex-1">
         <View className="flex-1">
           <View className="p-4">
-            <Text className="font-Nunito-Regular text-lg text-center mb-2">
-              Question:
-            </Text>
-            <Text className="pt-1 pb-3 text-xl text-center">
-              {questions[count].question_text}
-            </Text>
+            {questions.length === 0 ? (
+              <Text className="font-Nunito-Regular text-lg text-center mb-2">
+                No Questions.
+              </Text>
+            ) : (
+              <>
+                <Text className="font-Nunito-Regular text-lg text-center mb-2">
+                  Question:
+                </Text>
+                <Text className="pt-1 pb-3 text-xl text-center">
+                  {questions[status.count].question_text}
+                </Text>
+              </>
+            )}
           </View>
-          <VStack className="flex-1">
-            {questions[count].question_type === "multiple_choice"
-              ? renderChoices(questions[count].choices)
-              : ""}
-          </VStack>
+          {questions.length !== 0 && (
+            <VStack className="flex-1">
+              {questions[status.count].question_type === "multiple_choice"
+                ? renderChoices(questions[status.count].choices)
+                : ""}
+            </VStack>
+          )}
         </View>
-        <Pressable
-          className={`p-3 elevation rounded-md ${
-            answer.status ? "bg-primary" : "bg-gray-300"
-          }`}
-          onPress={handleNext}
-          disabled={!answer.status}
-        >
-          <Text className="font-Nunito-Bold text-xl text-white text-center">
-            {count + 1 === questions?.length ? "Finish Exam" : "Next"}
-          </Text>
-        </Pressable>
+        <View className="flex-row gap-2">
+          <Pressable
+            className={`flex-1 p-3 elevation rounded-md ${
+              answer.status ? "bg-primary" : "bg-gray-300"
+            }`}
+            onPress={handleNext}
+            disabled={!answer.status}
+          >
+            <View className="flex-row gap-1.5 items-center justify-center">
+              {status.completed && (
+                <Icon color="white" as={ChartNoAxesColumn} size="lg" />
+              )}
+              <Text className="font-Nunito-SemiBold text-xl text-white">
+                {status.completed
+                  ? "Results"
+                  : status.count + 1 === questions?.length
+                  ? "Finish Exam"
+                  : "Next"}
+              </Text>
+            </View>
+          </Pressable>
+          {status.completed && (
+            <Pressable
+              className="flex-1 p-3 elevation rounded-md bg-primary"
+              onPress={returnHome}
+            >
+              <View className="flex-row gap-1.5 items-center justify-center">
+                <Icon color="white" as={House} size="lg" />
+                <Text className="font-Nunito-SemiBold text-xl text-white">
+                  Home
+                </Text>
+              </View>
+            </Pressable>
+          )}
+        </View>
       </View>
     </VStack>
   );
