@@ -5,7 +5,7 @@ const _layout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="take-exam" />
+      <Stack.Screen name="take-exam/[examId]" />
     </Stack>
   );
 };

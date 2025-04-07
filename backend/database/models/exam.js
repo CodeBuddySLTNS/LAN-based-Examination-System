@@ -30,7 +30,20 @@ class ExamModel {
 
   async getExamById(examId) {
     await this.createExamTable();
-    const query = `SELECT * FROM exams WHERE id = ? LIMIT 1`;
+    const query = `SELECT 
+        e.*, 
+        CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
+        eq.id as exam_question_id,
+        s.course_code,
+        s.name as subject,
+        u.name as examineer,
+        GROUP_CONCAT(eq.question_data) AS questions
+      FROM exams e
+      JOIN subjects s ON e.subject = s.course_code
+      JOIN users u ON e.examiner_id = u.id
+      LEFT JOIN exam_questions eq ON e.id = eq.exam_id
+      WHERE e.id = ?
+      GROUP BY e.id LIMIT 1`;
     const params = [examId];
     const result = await sqlQuery(query, params);
     return result;

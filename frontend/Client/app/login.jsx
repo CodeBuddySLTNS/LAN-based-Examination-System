@@ -37,7 +37,7 @@ const LoginPage = () => {
       SecureStore.setItemAsync("token", d.token);
       await useMainStore.getState().setUser(d.user);
       await useSocketStore.getState().initializeSocket(d.user, toast);
-      router.push("/(drawer)/home");
+      router.replace("/(drawer)/home");
     },
   });
 

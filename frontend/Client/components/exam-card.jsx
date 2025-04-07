@@ -1,7 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
-import { useRouter } from "expo-router";
 
 export const ExamCard = ({ item, btnText, btnFn }) => {
   return (

@@ -116,9 +116,8 @@ const Homepage = () => {
             </Text>
             <Pressable
               onPress={() => {
-                router.push("/(drawer)/exam-schedules/take-exam", {
-                  params: { exam: JSON.stringify(exam) },
-                });
+                console.log(typeof exam);
+                router.push(`/(drawer)/exam-schedules/take-exam/${exam.id}`);
               }}
             >
               <Text className="font-Nunito-Bold text-07 rounded px-3 py-1 bg-primary text-white">

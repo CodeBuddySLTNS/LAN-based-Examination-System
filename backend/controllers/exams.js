@@ -14,7 +14,11 @@ const Response = new ResponseModel();
 const Score = new ScoreModel();
 
 const exams = async (req, res) => {
-  const { department, year } = req.query;
+  const { id, department, year } = req.query;
+
+  if (id) {
+    return res.send(await Exam.getExamById(id));
+  }
 
   if (department && year) {
     return res.send(await Exam.getExamsByDepartment(department, year));

@@ -95,7 +95,6 @@ const StartExam = ({ examId, questions }) => {
   }
 
   const returnHome = () => {
-    router.dismissAll();
     router.replace("/(drawer)/home");
   };
 
