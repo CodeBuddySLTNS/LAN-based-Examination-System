@@ -205,7 +205,7 @@ export default function Page() {
               <Tooltip>
                 <TooltipTrigger>View</TooltipTrigger>
                 <TooltipContent>
-                  {row.getValue("choices")?.join(", ")}
+                  {JSON.parse(row.getValue("choices") || "[]")?.join(", ")}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -234,7 +234,7 @@ export default function Page() {
             <Tooltip>
               <TooltipTrigger>View</TooltipTrigger>
               <TooltipContent>
-                {row.getValue("correct_answer")?.join(", ")}
+                {JSON.parse(row.getValue("correct_answer") || "[]")?.join(", ")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

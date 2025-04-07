@@ -16,13 +16,10 @@ const Score = new ScoreModel();
 const exams = async (req, res) => {
   const { id, department, year } = req.query;
 
-  if (id) {
-    return res.send(await Exam.getExamById(id));
-  }
+  if (id) return res.send(await Exam.getExamById(id));
 
-  if (department && year) {
+  if (department && year)
     return res.send(await Exam.getExamsByDepartment(department, year));
-  }
 
   const exams = await Exam.getAll();
   exams.forEach((exam) => {

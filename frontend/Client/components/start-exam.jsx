@@ -15,11 +15,10 @@ import { ChartNoAxesColumn, House } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import ShowResults from "./show-results";
 
-const StartExam = ({ examId, questions }) => {
+const StartExam = ({ examId, questions, status, setStatus }) => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
-  const [status, setStatus] = useState({ count: 0, completed: false });
   const [results, setResults] = useState({ status: false, loading: true });
   const [answer, setAnswer] = useState({ status: false, data: null });
   const socket = useSocketStore((state) => state.socket);
@@ -95,6 +94,11 @@ const StartExam = ({ examId, questions }) => {
   }
 
   const returnHome = () => {
+    setStatus({
+      takingExam: false,
+      count: 0,
+      completed: false,
+    });
     router.replace("/(drawer)/home");
   };
 

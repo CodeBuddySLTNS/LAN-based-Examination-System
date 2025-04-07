@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -29,6 +29,7 @@ const dummyuser = {
 
 const Homepage = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const [showQuote, setShowQuote] = useState(true);
   const user = useMainStore((state) => state.user) || dummyuser;
@@ -38,7 +39,11 @@ const Homepage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
-  const handleRefresh = async () => {};
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries(["exams"]);
+    setRefreshing(false);
+  };
 
   const greet = () => {
     const date = new Date();
@@ -116,7 +121,6 @@ const Homepage = () => {
             </Text>
             <Pressable
               onPress={() => {
-                console.log(typeof exam);
                 router.push(`/(drawer)/exam-schedules/take-exam/${exam.id}`);
               }}
             >
