@@ -45,11 +45,11 @@ module.exports.examQuestionsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questi
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );`;
 
-module.exports.completedExamsTableQuery = `CREATE TABLE IF NOT EXISTS exam_questions (
+module.exports.completedExamsTableQuery = `CREATE TABLE IF NOT EXISTS completed_exams (
     id INT PRIMARY KEY AUTO_INCREMENT,
     exam_id INT NOT NULL,
     user_id INT NOT NULL,
-    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );`;
 

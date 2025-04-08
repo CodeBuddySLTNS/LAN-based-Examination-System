@@ -5,13 +5,13 @@ const { validateExam, validateMultiResponse } = require("../utils/validator");
 const { BAD_REQUEST, SUCCESS, FORBIDDEN } = require("../constants/statusCodes");
 const UserModel = require("../database/models/user");
 const ResponseModel = require("../database/models/response");
-const ScoreModel = require("../database/models/score");
+const CompletedExamModel = require("../database/models/completed_exam");
 
 const User = new UserModel();
 const Exam = new ExamModel();
 const ExamQuestion = new ExamQuestionModel();
 const Response = new ResponseModel();
-const Score = new ScoreModel();
+const CompletedExam = new CompletedExamModel();
 
 const exams = async (req, res) => {
   const { id, department, year } = req.query;
@@ -96,6 +96,7 @@ const handleMultipleSubmissions = async (req, res) => {
   console.log(value);
 
   // await Response.addMultipleResponse(userId, value.examId, value.responses);
+  await CompletedExam.completeExam(userId, value.examId);
   await Response.checkAnswers(userId, value.examId);
   res.send({
     message: "Successfully submitted.",
