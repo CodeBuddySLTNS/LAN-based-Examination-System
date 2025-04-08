@@ -313,7 +313,7 @@ const AddExam = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-[auto] p-0">
                   <Command>
-                    <CommandInput placeholder="Search subject..." />
+                    <CommandInput placeholder="Search by Course Code..." />
                     <CommandList>
                       <CommandEmpty>No subject found.</CommandEmpty>
                       <CommandGroup>

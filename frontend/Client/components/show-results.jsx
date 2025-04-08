@@ -18,7 +18,6 @@ const ShowResults = ({ result, setResults, submitFn }) => {
   const close = () => setResults((prev) => ({ ...prev, status: false }));
 
   const handleAction = () => {
-    router.dismissAll();
     router.replace("/(drawer)/home");
     close(false);
   };
