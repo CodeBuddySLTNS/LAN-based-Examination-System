@@ -14,6 +14,12 @@ class ScoreModel {
       VALUES (?, ?, ?, ?)`;
     return await sqlQuery(query, [user_id, exam_id, total_score, max_score]);
   }
+
+  async getScoresByStudentId(student_id) {
+    await this.createScoresTable();
+    const query = `SELECT * FROM student_scores WHERE student_id = ?`;
+    return await sqlQuery(query, [student_id]);
+  }
 }
 
 module.exports = ScoreModel;

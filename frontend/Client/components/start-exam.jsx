@@ -36,7 +36,6 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
       setResults((prev) => ({ ...prev, loading: false }));
     },
     onSuccess: (data) => {
-      console.log(data);
       drizzleDb.delete(response).execute();
       SecureStore.deleteItemAsync("takingExam");
       addCompletedExam({ exam_id: examId });

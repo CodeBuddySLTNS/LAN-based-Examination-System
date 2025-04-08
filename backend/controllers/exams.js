@@ -93,8 +93,6 @@ const handleMultipleSubmissions = async (req, res) => {
     throw new CustomError(error.message, BAD_REQUEST);
   }
 
-  console.log(value);
-
   await Response.addMultipleResponse(userId, value.examId, value.responses);
   await CompletedExam.completeExam(userId, value.examId);
   const results = await Response.checkAnswers(userId, value.examId);

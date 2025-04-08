@@ -22,9 +22,10 @@ const ExamSchedulesPage = () => {
     ),
   });
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    queryClient.invalidateQueries(["exams"]);
+    await queryClient.invalidateQueries(["exams"]);
+    setRefreshing(false);
   };
 
   useEffect(() => {

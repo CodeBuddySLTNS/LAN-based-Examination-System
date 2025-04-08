@@ -21,6 +21,12 @@ const userInfo = async (req, res) => {
   throw new CustomError("User not found", NOT_FOUND);
 };
 
+const averageExamAccuracy = async (req, res) => {
+  const userId = res.locals.userId;
+  const results = await User.getAverageExamAccuracy(userId);
+  res.send(results);
+};
+
 const verifyAccount = async (req, res) => {
   const { username, toVerify } = req.body;
   const userId = res.locals.userId;
@@ -112,4 +118,5 @@ module.exports = {
   verifyAccount,
   editAccount,
   deleteAccount,
+  averageExamAccuracy,
 };

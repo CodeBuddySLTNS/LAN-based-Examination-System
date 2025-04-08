@@ -4,8 +4,10 @@ const {
   completedExamsTableQuery,
 } = require("../tableQueries");
 const CompletedExamModel = require("./completed_exam");
+const ScoreModel = require("./score");
 
 const CompletedExam = new CompletedExamModel();
+const Score = new ScoreModel();
 
 class UserModel {
   // creates users table if it doesn't exist
@@ -126,17 +128,19 @@ class UserModel {
     return null;
   }
 
-  async addCompletedExam(userId, examId) {
+  async getAverageExamAccuracy(userId) {
     await sqlQuery(completedExamsTableQuery);
-    const query = `INSERT INTO completed_exams (student_id, exam_id) VALUES (?, ?);`;
-    const result = await sqlQuery(query, [userId, examId]);
-  }
+    const scores = await Score.getScoresByStudentId(userId);
 
-  async getCompletedExams(userId) {
-    await sqlQuery(completedExamsTableQuery);
-    const query = `SELECT * FROM completed_exams WHERE student_id = ?`;
-    const result = await sqlQuery(query, [userId]);
-    return result;
+    let totalPercentage = 0;
+
+    scores.forEach((score) => {
+      totalPercentage += parseFloat(score.percentage);
+    });
+
+    const average_accuracy = (totalPercentage / scores.length).toFixed(2);
+
+    return { average_accuracy };
   }
 }
 

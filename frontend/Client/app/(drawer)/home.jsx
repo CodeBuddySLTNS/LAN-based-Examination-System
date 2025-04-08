@@ -37,10 +37,29 @@ const Homepage = () => {
     queryFn: Axios2("/exams", "GET"),
   });
 
+  const { data: accuracy } = useQuery({
+    queryKey: ["accuracy"],
+    queryFn: Axios2("/users/user/accuracy", "GET"),
+  });
+
   const handleRefresh = async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries(["exams", "user"]);
+    await queryClient.invalidateQueries(["exams", "user", "accuracy"]);
     setRefreshing(false);
+  };
+
+  const averageColor = (average) => {
+    if (average > 80) {
+      return "text-green-600";
+    } else if (average > 60) {
+      return "text-green-500";
+    } else if (average > 40) {
+      return "text-yellow-500";
+    } else if (average > 20) {
+      return "text-orange-600";
+    } else {
+      return "text-red-600";
+    }
   };
 
   const greet = () => {
@@ -90,8 +109,12 @@ const Homepage = () => {
       )}
 
       <Card className="py-9 mt-3 elevation-md">
-        <Text className="font-Nunito-Bold text-4xl text-center text-green-600">
-          100%
+        <Text
+          className={`font-Nunito-Bold text-4xl text-center ${averageColor(
+            parseFloat(accuracy?.average_accuracy || "0.0")
+          )}`}
+        >
+          {accuracy?.average_accuracy ? accuracy.average_accuracy + "%" : "0%"}
         </Text>
         <Text className="font-Nunito-Regular text-07 text-center">
           Your average Accuracy

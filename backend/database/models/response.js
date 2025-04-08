@@ -80,7 +80,6 @@ class ResponseModel {
       }
     });
 
-    console.log("You got", total_score, "out of", questions.length);
     await Score.addStudentScore(
       student_id,
       exam_id,
