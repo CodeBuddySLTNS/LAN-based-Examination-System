@@ -40,13 +40,25 @@ export default function DrawerLayout() {
             ),
           }}
         />
+
         <Drawer.Screen
           name="exam-schedules"
           options={{
             drawerLabel: "Exam Schedules",
-            title: segments?.join("/").includes("take-exam")
-              ? "Good Luck, You got this! 🍀"
-              : "Exam Schedules",
+            drawerIcon: ({ size, color }) => (
+              <MaterialIcons name="schedule" size={size} color={color} />
+            ),
+          }}
+          listeners={{
+            drawerItemPress: () => router.replace("/(drawer)/exam-schedules"),
+          }}
+        />
+
+        <Drawer.Screen
+          name="take-exam/[examId]"
+          options={{
+            drawerItemStyle: { display: "none" },
+            title: "Good Luck, You got this! 🍀",
             drawerIcon: ({ size, color }) => (
               <MaterialIcons name="schedule" size={size} color={color} />
             ),

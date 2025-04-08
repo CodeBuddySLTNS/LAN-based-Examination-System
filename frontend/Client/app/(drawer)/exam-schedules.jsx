@@ -52,9 +52,7 @@ const ExamSchedulesPage = () => {
           <ExamCard
             item={item}
             btnText="Take Exam"
-            btnFn={() =>
-              router.push(`/(drawer)/exam-schedules/take-exam/${item.id}`)
-            }
+            btnFn={() => router.push(`/(drawer)/take-exam/${item.id}`)}
           />
         )}
       />

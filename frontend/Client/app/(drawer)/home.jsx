@@ -10,13 +10,11 @@ import { Link, useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
-import { QueryProvider } from "@/providers/query-provider";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { X } from "lucide-react-native";
-import { Pre } from "@expo/html-elements";
 
 const dummyuser = {
   id: 1,
@@ -124,7 +122,7 @@ const Homepage = () => {
             </Text>
             <Pressable
               onPress={() => {
-                router.push(`/(drawer)/exam-schedules/take-exam/${exam.id}`);
+                router.push(`/(drawer)/take-exam/${exam.id}`);
               }}
             >
               <Text className="font-Nunito-Bold text-07 rounded px-3 py-1 bg-primary text-white">
