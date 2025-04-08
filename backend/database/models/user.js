@@ -3,6 +3,9 @@ const {
   usersTableQuery,
   completedExamsTableQuery,
 } = require("../tableQueries");
+const CompletedExamModel = require("./completed_exam");
+
+const CompletedExam = new CompletedExamModel();
 
 class UserModel {
   // creates users table if it doesn't exist
@@ -49,7 +52,7 @@ class UserModel {
 
   // deletes a user from users table
   async deleteUser(username) {
-    await this.createUsersTable(); // creates users table if it doesn't exist
+    await this.createUsersTable();
     const query = `DELETE FROM users WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
 
@@ -81,7 +84,7 @@ class UserModel {
 
   // get all users from users table
   async getUsers() {
-    await this.createUsersTable(); // creates users table if it doesn't exist
+    await this.createUsersTable();
     const query = `SELECT id, name, username, department, year, role, isVerified FROM users`;
     const users = await sqlQuery(query);
     return users;
@@ -89,13 +92,19 @@ class UserModel {
 
   // check if a user exists in users table
   async getUserInfo(userId) {
-    await this.createUsersTable(); // creates users table if it doesn't exist
+    await this.createUsersTable();
     const query = `SELECT id, name, username, department, year, role, isVerified
     FROM users WHERE id = ? LIMIT 1`;
     const result = await sqlQuery(query, [userId]);
 
     if (result) {
       if (result.length > 0) {
+        const completedExams = await CompletedExam.getCompletedExamsById(
+          userId
+        );
+        if (completedExams)
+          return { ...result[0], completed_exams: completedExams };
+
         return result[0];
       }
       return null;
@@ -105,7 +114,7 @@ class UserModel {
 
   // check if a user exists in users table
   async checkUser(username) {
-    await this.createUsersTable(); // creates users table if it doesn't exist
+    await this.createUsersTable();
     const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
     const result = await sqlQuery(query, [username]);
     if (result) {

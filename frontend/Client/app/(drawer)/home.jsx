@@ -39,7 +39,7 @@ const Homepage = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries(["exams"]);
+    await queryClient.invalidateQueries(["exams", "user"]);
     setRefreshing(false);
   };
 

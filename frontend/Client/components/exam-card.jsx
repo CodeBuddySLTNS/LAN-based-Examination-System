@@ -1,8 +1,21 @@
 import { Pressable, Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
+import { useMainStore } from "@/states/store";
 
 export const ExamCard = ({ item, btnText, btnFn }) => {
+  const user = useMainStore((state) => state.user);
+
+  const checkIfCompleted = (examId) => {
+    let isCompleted = false;
+    if (user?.completed_exams) {
+      user.completed_exams.forEach((ce) => {
+        if (ce.exam_id === examId) return (isCompleted = true);
+      });
+    }
+    return isCompleted;
+  };
+
   return (
     <View className="mx-4  p-4 pt-3 rounded-md bg-white elevation-md">
       <View className="flex-row justify-between items-center">
@@ -11,8 +24,14 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
           <Text className="font-Nunito-Regular">{`${item.course_code}`}</Text>)
         </Text>
         <Text className="font-Nunito-Bold">
-          <Badge size="lg" action="error" className="gap-1">
-            <BadgeText>Not Yet Taken</BadgeText>
+          <Badge
+            size="lg"
+            action={checkIfCompleted(item.id) ? "success" : "error"}
+            className="gap-1"
+          >
+            <BadgeText>
+              {checkIfCompleted(item.id) ? "Completed" : "Not Yet Taken"}
+            </BadgeText>
           </Badge>
         </Text>
       </View>
@@ -77,8 +96,19 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
         </Text>
       </View>
 
-      <Button size="sm" className="mt-3 bg-primary" onPress={btnFn}>
-        <ButtonText className="font-Nunito-Bold text-[1.05rem]">
+      <Button
+        disabled={checkIfCompleted(item.id)}
+        size="sm"
+        className={`mt-3 ${
+          checkIfCompleted(item.id) ? "bg-gray-100" : "bg-primary"
+        }`}
+        onPress={btnFn}
+      >
+        <ButtonText
+          className={`font-Nunito-Bold text-[1.05rem] ${
+            checkIfCompleted(item.id) ? "text-gray-300" : "text-white"
+          }`}
+        >
           {btnText || "Action"}
         </ButtonText>
       </Button>

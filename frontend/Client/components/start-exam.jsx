@@ -19,7 +19,12 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
-  const [results, setResults] = useState({ status: false, loading: true });
+  const addCompletedExam = useMainStore((state) => state.addCompletedExam);
+  const [results, setResults] = useState({
+    status: false,
+    loading: true,
+    data: null,
+  });
   const [answer, setAnswer] = useState({ status: false, data: null });
   const socket = useSocketStore((state) => state.socket);
   const router = useRouter();
@@ -34,7 +39,9 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
       console.log(data);
       drizzleDb.delete(response).execute();
       SecureStore.deleteItemAsync("takingExam");
-      setResults((prev) => ({ ...prev, loading: false }));
+      addCompletedExam({ exam_id: examId });
+      setStatus((prev) => ({ ...prev, submitted: true }));
+      setResults((prev) => ({ ...prev, loading: false, data, data }));
     },
   });
 

@@ -95,12 +95,10 @@ const handleMultipleSubmissions = async (req, res) => {
 
   console.log(value);
 
-  // await Response.addMultipleResponse(userId, value.examId, value.responses);
+  await Response.addMultipleResponse(userId, value.examId, value.responses);
   await CompletedExam.completeExam(userId, value.examId);
-  await Response.checkAnswers(userId, value.examId);
-  res.send({
-    message: "Successfully submitted.",
-  });
+  const results = await Response.checkAnswers(userId, value.examId);
+  res.send(results);
 };
 
 module.exports = {

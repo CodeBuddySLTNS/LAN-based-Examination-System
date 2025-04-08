@@ -3,8 +3,10 @@ const CustomError = require("../../utils/customError");
 const sqlQuery = require("../sqlQuery");
 const { subjectsTableQuery, responsesTableQuery } = require("../tableQueries");
 const ExamModel = require("./exam");
+const ScoreModel = require("./score");
 
 const Exam = new ExamModel();
+const Score = new ScoreModel();
 
 class ResponseModel {
   async createResponsesTable() {
@@ -46,7 +48,8 @@ class ResponseModel {
     const resQuery = `SELECT * FROM responses WHERE student_id = ? AND exam_id = ?`;
     const responses = await sqlQuery(resQuery, [student_id, exam_id]);
 
-    let score = 0;
+    let total_score = 0;
+    const correctResponseIDs = [];
 
     questions?.forEach((q) => {
       switch (q.question_type) {
@@ -55,12 +58,14 @@ class ResponseModel {
           responses.forEach((r) => {
             if (isCorrect) return;
             const answers = JSON.parse(r.answer || "[]");
-            answers?.forEach(
-              (answer) =>
-                q.correct_answer.includes(answer) && (isCorrect = true)
-            );
+            answers?.forEach((answer) => {
+              if (q.correct_answer.includes(answer)) {
+                isCorrect = true;
+                correctResponseIDs.push(r.id);
+              }
+            });
           });
-          if (isCorrect) score += 1;
+          if (isCorrect) total_score += 1;
           break;
 
         case "identification":
@@ -75,7 +80,18 @@ class ResponseModel {
       }
     });
 
-    console.log("You got", score, "out of", questions.length);
+    console.log("You got", total_score, "out of", questions.length);
+    await Score.addStudentScore(
+      student_id,
+      exam_id,
+      total_score,
+      questions.length
+    );
+
+    return {
+      total_score,
+      max_score: questions.length,
+    };
   }
 
   async deleteResponses(subjectId, userId) {

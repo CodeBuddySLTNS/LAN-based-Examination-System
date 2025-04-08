@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import {
   Modal,
   ModalBackdrop,
@@ -34,23 +34,32 @@ const ShowResults = ({ result, setResults, submitFn }) => {
             Results
           </Text>
         </ModalHeader>
-        <ModalBody>
-          <View className="p-2 items-center rounded bg-gray-200">
-            <Text className="font-Nunito-SemiBold">Your Score:</Text>
-            <Text className="font-Nunito-Bold text-2xl">15 / 30</Text>
-          </View>
-        </ModalBody>
-        <ModalFooter>
-          <HStack className="flex-1 justify-center">
-            <Pressable
-              className="flex-row gap-1.5 items-center p-2 px-3 rounded-md bg-primary"
-              onPress={handleAction}
-            >
-              <Icon size="lg" as={House} color="white" />
-              <Text className="font-Nunito-Bold text-white">HOME</Text>
-            </Pressable>
-          </HStack>
-        </ModalFooter>
+        {result?.loading ? (
+          <ActivityIndicator />
+        ) : (
+          <>
+            <ModalBody>
+              <View className="p-2 items-center rounded bg-gray-200">
+                <Text className="font-Nunito-SemiBold">Your Score:</Text>
+                <Text className="font-Nunito-Bold text-2xl">
+                  {result.data?.total_score || "00"} /{" "}
+                  {result.data?.max_score || "00"}
+                </Text>
+              </View>
+            </ModalBody>
+            <ModalFooter>
+              <HStack className="flex-1 justify-center">
+                <Pressable
+                  className="flex-row gap-1.5 items-center p-2 px-3 rounded-md bg-primary"
+                  onPress={handleAction}
+                >
+                  <Icon size="lg" as={House} color="white" />
+                  <Text className="font-Nunito-Bold text-white">HOME</Text>
+                </Pressable>
+              </HStack>
+            </ModalFooter>
+          </>
+        )}
       </ModalContent>
     </Modal>
   );
