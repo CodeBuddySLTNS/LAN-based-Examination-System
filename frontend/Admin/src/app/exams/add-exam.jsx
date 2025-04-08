@@ -93,7 +93,10 @@ const AddExam = () => {
       durationHours: Number(data.durationHours),
       durationMinutes: Number(data.durationMinutes) || 0,
       startTime: `${data.startDate} ${data.startTime}`,
-      questions: selectedQuestions.map((q) => ({ ...q, points: 1 })),
+      questions: selectedQuestions.map((q) => ({
+        questionId: q.id,
+        points: 1,
+      })),
     };
 
     try {

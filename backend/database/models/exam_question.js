@@ -11,9 +11,9 @@ class ExamQuestionModel {
     return await sqlQuery(`SELECT * FROM exam_questions`);
   }
 
-  async getExamQuestionById(id) {
+  async getExamQuestionByExamId(id) {
     await this.createExamQuestionTable();
-    const query = `SELECT * FROM exam_questions WHERE id = ? LIMIT 1`;
+    const query = `SELECT * FROM exam_questions WHERE exam_id = ?`;
     const params = [id];
     return await sqlQuery(query, params);
   }

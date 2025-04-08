@@ -59,7 +59,7 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
 
   const handleNext = async () => {
     if (status.count + 1 === questions.length) {
-      if (status.completed) {
+      if (status.completed && status.submitted) {
         setResults((prev) => ({ ...prev, status: true }));
         return;
       }
@@ -98,12 +98,13 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
       takingExam: false,
       count: 0,
       completed: false,
+      submitted: false,
     });
     router.replace("/(drawer)/home");
   };
 
   const renderChoices = (array) => {
-    const choices = JSON.parse(array) || [];
+    const choices = array || [];
     return (
       <VStack className="gap-3">
         {choices.map((choice, id) => (

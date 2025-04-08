@@ -117,7 +117,10 @@ const Homepage = () => {
               {exam.label} ({exam.course_code})
             </Text>
             <Text className="flex-1 font-Nunito-Bold text-07 text-center">
-              Jan 16
+              {new Date(exam.start_time).toLocaleString("en-US", {
+                month: "short",
+                day: "2-digit",
+              })}
             </Text>
             <Pressable
               onPress={() => {

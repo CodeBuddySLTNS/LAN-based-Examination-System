@@ -2,6 +2,9 @@ const { UNAUTHORIZED } = require("../../constants/statusCodes");
 const CustomError = require("../../utils/customError");
 const sqlQuery = require("../sqlQuery");
 const { subjectsTableQuery, responsesTableQuery } = require("../tableQueries");
+const ExamModel = require("./exam");
+
+const Exam = new ExamModel();
 
 class ResponseModel {
   async createResponsesTable() {
@@ -37,6 +40,42 @@ class ResponseModel {
 
   async checkAnswers(student_id, exam_id) {
     await this.createResponsesTable();
+    const exam = await Exam.getExamById(exam_id);
+    const questions = exam[0]?.questions;
+
+    const resQuery = `SELECT * FROM responses WHERE student_id = ? AND exam_id = ?`;
+    const responses = await sqlQuery(resQuery, [student_id, exam_id]);
+
+    let score = 0;
+
+    questions?.forEach((q) => {
+      switch (q.question_type) {
+        case "multiple_choice":
+          let isCorrect;
+          responses.forEach((r) => {
+            if (isCorrect) return;
+            const answers = JSON.parse(r.answer || "[]");
+            answers?.forEach(
+              (answer) =>
+                q.correct_answer.includes(answer) && (isCorrect = true)
+            );
+          });
+          if (isCorrect) score += 1;
+          break;
+
+        case "identification":
+          console.log("identifcation");
+          break;
+        case "enumeration":
+          console.log("enumeration");
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    console.log("You got", score, "out of", questions.length);
   }
 
   async deleteResponses(subjectId, userId) {

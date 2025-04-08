@@ -10,11 +10,11 @@ import { Axios2 } from "@/lib/utils";
 const TakeExamPage = () => {
   const { examId } = useLocalSearchParams();
   const socket = useSocketStore((state) => state.socket);
-  const [exam, setExam] = useState({});
   const [status, setStatus] = useState({
     takingExam: false,
     count: 0,
     completed: false,
+    submitted: false,
   });
 
   const { data, isLoading, isFetching } = useQuery({
@@ -23,13 +23,9 @@ const TakeExamPage = () => {
   });
 
   const handleTakeExam = async () => {
-    await socket.emit("takeExam", exam?.id);
+    await socket.emit("takeExam", data[0]?.id);
     setStatus((prev) => ({ ...prev, takingExam: true }));
   };
-
-  useEffect(() => {
-    if (data) setExam(data[0]);
-  }, [data]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -39,6 +35,7 @@ const TakeExamPage = () => {
           takingExam: false,
           count: 0,
           completed: false,
+          submitted: false,
         });
       }
     );
@@ -58,13 +55,13 @@ const TakeExamPage = () => {
     <View className={`flex-1 ${!status.takingExam && "justify-center"}`}>
       {status.takingExam ? (
         <StartExam
-          examId={exam?.id}
-          questions={JSON.parse(exam?.questions || "[]")}
+          examId={data[0]?.id}
+          questions={data[0]?.questions}
           status={status}
           setStatus={setStatus}
         />
       ) : (
-        <ExamCard item={exam} btnText="START" btnFn={handleTakeExam} />
+        <ExamCard item={data[0]} btnText="START" btnFn={handleTakeExam} />
       )}
     </View>
   );

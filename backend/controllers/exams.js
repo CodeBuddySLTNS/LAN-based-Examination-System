@@ -23,7 +23,6 @@ const exams = async (req, res) => {
 
   const exams = await Exam.getAll();
   exams.forEach((exam) => {
-    exam.questions = JSON.parse(exam.questions || "[]");
     exam.duration = `${exam.duration_hours} hours${
       exam.duration_minutes ? ` and ${exam.duration_minutes} minutes` : ""
     }`;
@@ -96,7 +95,8 @@ const handleMultipleSubmissions = async (req, res) => {
 
   console.log(value);
 
-  await Response.addMultipleResponse(userId, value.examId, value.responses);
+  // await Response.addMultipleResponse(userId, value.examId, value.responses);
+  await Response.checkAnswers(userId, value.examId);
   res.send({
     message: "Successfully submitted.",
   });

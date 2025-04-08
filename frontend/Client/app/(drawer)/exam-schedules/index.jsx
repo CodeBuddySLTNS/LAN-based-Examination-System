@@ -53,10 +53,7 @@ const ExamSchedulesPage = () => {
             item={item}
             btnText="Take Exam"
             btnFn={() =>
-              router.push({
-                pathname: "/(drawer)/exam-schedules/take-exam",
-                params: { exam: JSON.stringify(item) },
-              })
+              router.push(`/(drawer)/exam-schedules/take-exam/${item.id}`)
             }
           />
         )}

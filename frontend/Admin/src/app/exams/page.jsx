@@ -62,7 +62,10 @@ const Page = () => {
       durationMinutes: questionsDialog.data.duration_minutes,
       startTime: questionsDialog.data.start_time,
       examinerId: questionsDialog.data.examiner_id,
-      questions: selectedQuestions.map((q) => ({ ...q, points: 1 })),
+      questions: selectedQuestions.map((q) => ({
+        questionId: q.id,
+        points: 1,
+      })),
     };
 
     if (mode.questionsOnly) {
@@ -356,7 +359,7 @@ const Page = () => {
       ),
       cell: ({ row, table }) => {
         const isSelected = selectedQuestions.some(
-          (q) => q.question_text === row.original.question_text
+          (q) => q.id === row.original.id
         );
 
         return (

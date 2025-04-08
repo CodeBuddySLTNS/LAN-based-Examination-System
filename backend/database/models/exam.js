@@ -10,64 +10,211 @@ class ExamModel {
 
   async getAll() {
     await this.createExamTable();
-    const result = await sqlQuery(`
+    const exams = await sqlQuery(`
       SELECT 
         e.*, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
-        eq.id as exam_question_id,
         s.course_code,
         s.name as subject,
-        u.name as examineer,
-        GROUP_CONCAT(eq.question_data) AS questions
+        u.name as examineer
       FROM exams e
       JOIN subjects s ON e.subject = s.course_code
       JOIN users u ON e.examiner_id = u.id
-      LEFT JOIN exam_questions eq ON e.id = eq.exam_id
-      GROUP BY e.id
     `);
-    return result;
+
+    const examIds = exams.map((exam) => exam.id);
+
+    const examQuestionsRows = await sqlQuery(
+      `
+      SELECT exam_id, question_data FROM exam_questions WHERE exam_id IN (?)
+    `,
+      [examIds]
+    );
+
+    const questionMap = {};
+    const allQuestionIds = new Set();
+
+    for (const row of examQuestionsRows) {
+      const questions = JSON.parse(row.question_data);
+      questionMap[row.exam_id] = questions;
+      questions.forEach((q) => allQuestionIds.add(q.questionId));
+    }
+
+    const questionBankRows =
+      allQuestionIds.size > 0
+        ? await sqlQuery(
+            `
+      SELECT * FROM question_bank WHERE id IN (?)
+    `,
+            [[...allQuestionIds]]
+          )
+        : [];
+
+    const examsWithQuestions = exams.map((exam) => {
+      const rawQuestions = questionMap[exam.id] || [];
+
+      const questions = rawQuestions.map((q) => {
+        const full = questionBankRows.find((row) => row.id === q.questionId);
+        if (!full) return null;
+
+        return {
+          id: q.questionId,
+          points: q.points,
+          question_text: full.question_text,
+          question_type: full.question_type,
+          choices: full.choices ? JSON.parse(full.choices) : null,
+          correct_answer: full.correct_answer
+            ? JSON.parse(full.correct_answer)
+            : null,
+        };
+      });
+
+      return { ...exam, questions };
+    });
+
+    return examsWithQuestions;
   }
 
   async getExamById(examId) {
     await this.createExamTable();
-    const query = `SELECT 
+    const exams = await sqlQuery(
+      `
+      SELECT 
         e.*, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
-        eq.id as exam_question_id,
         s.course_code,
         s.name as subject,
-        u.name as examineer,
-        GROUP_CONCAT(eq.question_data) AS questions
+        u.name as examineer
       FROM exams e
       JOIN subjects s ON e.subject = s.course_code
       JOIN users u ON e.examiner_id = u.id
-      LEFT JOIN exam_questions eq ON e.id = eq.exam_id
       WHERE e.id = ?
-      GROUP BY e.id LIMIT 1`;
-    const params = [examId];
-    const result = await sqlQuery(query, params);
-    return result;
+    `,
+      [examId]
+    );
+
+    const examIds = exams.map((exam) => exam.id);
+
+    const examQuestionsRows = await sqlQuery(
+      `
+      SELECT exam_id, question_data FROM exam_questions WHERE exam_id IN (?)
+    `,
+      [examIds]
+    );
+
+    const questionMap = {};
+    const allQuestionIds = new Set();
+
+    for (const row of examQuestionsRows) {
+      const questions = JSON.parse(row.question_data);
+      questionMap[row.exam_id] = questions;
+      questions.forEach((q) => allQuestionIds.add(q.questionId));
+    }
+
+    const questionBankRows =
+      allQuestionIds.size > 0
+        ? await sqlQuery(
+            `
+      SELECT * FROM question_bank WHERE id IN (?)
+    `,
+            [[...allQuestionIds]]
+          )
+        : [];
+
+    const examsWithQuestions = exams.map((exam) => {
+      const rawQuestions = questionMap[exam.id] || [];
+
+      const questions = rawQuestions.map((q) => {
+        const full = questionBankRows.find((row) => row.id === q.questionId);
+        if (!full) return null;
+
+        return {
+          id: q.questionId,
+          points: q.points,
+          question_text: full.question_text,
+          question_type: full.question_type,
+          choices: full.choices ? JSON.parse(full.choices) : null,
+          correct_answer: full.correct_answer
+            ? JSON.parse(full.correct_answer)
+            : null,
+        };
+      });
+
+      return { ...exam, questions };
+    });
+
+    return examsWithQuestions;
   }
 
   async getExamsByDepartment(department, year) {
     await this.createExamTable();
-    const query = `SELECT 
+    const exams = await sqlQuery(
+      `
+      SELECT 
         e.*, 
         CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
-        eq.id as exam_question_id,
         s.course_code,
         s.name as subject,
-        u.name as examineer,
-        GROUP_CONCAT(eq.question_data) AS questions
+        u.name as examineer
       FROM exams e
       JOIN subjects s ON e.subject = s.course_code
       JOIN users u ON e.examiner_id = u.id
-      LEFT JOIN exam_questions eq ON e.id = eq.exam_id
       WHERE e.department = ? AND e.year = ?
-      GROUP BY e.id`;
-    const params = [department, year];
-    const result = await sqlQuery(query, params);
-    return result;
+    `,
+      [department, year]
+    );
+
+    const examIds = exams.map((exam) => exam.id);
+
+    const examQuestionsRows = await sqlQuery(
+      `
+      SELECT exam_id, question_data FROM exam_questions WHERE exam_id IN (?)
+    `,
+      [examIds]
+    );
+
+    const questionMap = {};
+    const allQuestionIds = new Set();
+
+    for (const row of examQuestionsRows) {
+      const questions = JSON.parse(row.question_data);
+      questionMap[row.exam_id] = questions;
+      questions.forEach((q) => allQuestionIds.add(q.questionId));
+    }
+
+    const questionBankRows =
+      allQuestionIds.size > 0
+        ? await sqlQuery(
+            `
+      SELECT * FROM question_bank WHERE id IN (?)
+    `,
+            [[...allQuestionIds]]
+          )
+        : [];
+
+    const examsWithQuestions = exams.map((exam) => {
+      const rawQuestions = questionMap[exam.id] || [];
+
+      const questions = rawQuestions.map((q) => {
+        const full = questionBankRows.find((row) => row.id === q.questionId);
+        if (!full) return null;
+
+        return {
+          id: q.questionId,
+          points: q.points,
+          question_text: full.question_text,
+          question_type: full.question_type,
+          choices: full.choices ? JSON.parse(full.choices) : null,
+          correct_answer: full.correct_answer
+            ? JSON.parse(full.correct_answer)
+            : null,
+        };
+      });
+
+      return { ...exam, questions };
+    });
+
+    return examsWithQuestions;
   }
 
   async setCompletedExamById(examId) {
