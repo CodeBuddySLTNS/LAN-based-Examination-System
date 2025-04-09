@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, scr } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
 import { useMainStore } from "@/states/store";
@@ -8,15 +8,24 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
   const user = useMainStore((state) => state.user);
   const takingExam = JSON.parse(SecureStore.getItem("takingExam") || "{}");
 
-  const checkIfCompleted = (examId) => {
+  const checkIfCompleted = () => {
     let isCompleted = false;
     if (user?.completed_exams) {
       user.completed_exams.forEach((ce) => {
-        if (ce.exam_id === examId) return (isCompleted = true);
+        if (ce.exam_id === item.id) return (isCompleted = true);
       });
     }
     return isCompleted;
   };
+
+  const checkIfStarted = () =>
+    item.id === takingExam.examId && takingExam.status;
+
+  const checkIfTakingThisExam = () =>
+    item.id === takingExam.examId && takingExam.status;
+
+  const checkIfTakingOtherExam = () =>
+    takingExam.status && takingExam.examId !== item.id;
 
   return (
     <View className="mx-4  p-4 pt-3 rounded-md bg-white elevation-md">
@@ -29,18 +38,18 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
           <Badge
             size="lg"
             action={
-              checkIfCompleted(item.id)
+              checkIfCompleted()
                 ? "success"
-                : item.id === takingExam.examId && takingExam.status
+                : checkIfTakingThisExam()
                 ? "success"
                 : "error"
             }
             className="gap-1"
           >
             <BadgeText>
-              {item.id === takingExam.examId && takingExam.status
+              {checkIfTakingThisExam()
                 ? "Ongoing"
-                : checkIfCompleted(item.id)
+                : checkIfCompleted()
                 ? "Completed"
                 : "Not Yet Taken"}
             </BadgeText>
@@ -110,13 +119,11 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
 
       <Button
         disabled={
-          checkIfCompleted(item.id) ||
-          (takingExam.status && takingExam.examId !== item.id)
+          !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
         }
         size="sm"
         className={`mt-3 ${
-          checkIfCompleted(item.id) ||
-          (takingExam.status && takingExam.examId !== item.id)
+          !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
             ? "bg-gray-100"
             : "bg-primary"
         }`}
@@ -124,15 +131,14 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
       >
         <ButtonText
           className={`font-Nunito-Bold text-[1.05rem] ${
-            checkIfCompleted(item.id) ||
-            (takingExam.status && takingExam.examId !== item.id)
+            !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
               ? "text-gray-300"
               : "text-white"
           }`}
         >
-          {item.id === takingExam.examId && takingExam.status
+          {checkIfTakingThisExam()
             ? "Continue"
-            : item.id !== takingExam.examId && takingExam.status
+            : checkIfTakingOtherExam()
             ? "You are currently taking other exam"
             : btnText || "Action"}
         </ButtonText>

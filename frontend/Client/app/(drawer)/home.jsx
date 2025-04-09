@@ -1,5 +1,4 @@
 import {
-  FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -15,22 +14,14 @@ import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { X } from "lucide-react-native";
-
-const dummyuser = {
-  id: 1,
-  name: "Lansano, Leo P.",
-  username: "leo",
-  department: "BSIT",
-  year: 3,
-  role: "user",
-};
+import { Divider } from "@/components/ui/divider";
 
 const Homepage = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const [showQuote, setShowQuote] = useState(true);
-  const user = useMainStore((state) => state.user) || dummyuser;
+  const user = useMainStore((state) => state.user);
 
   const { data: exams } = useQuery({
     queryKey: ["exams"],
@@ -41,6 +32,15 @@ const Homepage = () => {
     queryKey: ["accuracy"],
     queryFn: Axios2("/users/user/accuracy", "GET"),
   });
+
+  const upcomingExams =
+    exams?.filter((exam) => {
+      let examTaken = false;
+      user?.completed_exams?.forEach((ce) => {
+        if (ce.exam_id === exam.id) return (examTaken = true);
+      });
+      return !examTaken;
+    }) || [];
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -125,14 +125,14 @@ const Homepage = () => {
       </Card>
 
       <View className="mt-4">
-        <Text className="font-Nunito-SemiBold text-xl text-center">
+        <Divider />
+        <Text className="font-Nunito-SemiBold mt-2 text-xl text-center">
           Upcoming exams
         </Text>
       </View>
 
-      {exams &&
-        exams.length > 0 &&
-        exams.map((exam) => (
+      {upcomingExams.length > 0 ? (
+        upcomingExams.map((exam) => (
           <Card
             key={exam.id}
             className="flex-row items-center mt-3 gap-3 elevation-md"
@@ -156,7 +156,12 @@ const Homepage = () => {
               </Text>
             </Pressable>
           </Card>
-        ))}
+        ))
+      ) : (
+        <Card className="mt-4 bg-transparent">
+          <Text className="font-Nunito-Regular text-center">No exams.</Text>
+        </Card>
+      )}
     </ScrollView>
   );
 };

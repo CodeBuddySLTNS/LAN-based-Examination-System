@@ -44,6 +44,7 @@ export default function DrawerLayout() {
         <Drawer.Screen
           name="exam-schedules"
           options={{
+            title: "Exam Schedules",
             drawerLabel: "Exam Schedules",
             drawerIcon: ({ size, color }) => (
               <MaterialIcons name="schedule" size={size} color={color} />
