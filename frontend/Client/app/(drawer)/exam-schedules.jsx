@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
-import { QueryProvider } from "@/providers/query-provider";
 import { ExamCard } from "@/components/exam-card";
 
 const ExamSchedulesPage = () => {

@@ -2,7 +2,7 @@ import { View, Text, BackHandler } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ExamCard } from "@/components/exam-card";
-import { useMainStore, useSocketStore } from "@/states/store";
+import { useSocketStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import * as SecureStore from "expo-secure-store";

@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useMainStore } from "@/states/store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";

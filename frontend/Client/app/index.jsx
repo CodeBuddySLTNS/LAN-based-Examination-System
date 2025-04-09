@@ -1,6 +1,5 @@
 import { ActivityIndicator, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { QueryProvider } from "@/providers/query-provider";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { useRootNavigationState, useRouter } from "expo-router";

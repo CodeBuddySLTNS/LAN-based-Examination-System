@@ -1,4 +1,4 @@
-import { Pressable, Text, View, scr } from "react-native";
+import { Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
 import { useMainStore } from "@/states/store";

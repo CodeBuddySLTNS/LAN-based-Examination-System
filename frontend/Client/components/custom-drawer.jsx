@@ -2,7 +2,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useMainStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
