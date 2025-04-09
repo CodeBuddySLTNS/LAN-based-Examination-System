@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
@@ -17,18 +17,20 @@ import Countdown, { zeroPad } from "react-countdown";
 import ShowResults from "./show-results";
 
 const StartExam = ({ examId, duration, questions, status, setStatus }) => {
+  const router = useRouter();
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
+  const countdownRef = useRef(null);
   const user = useMainStore((state) => state.user);
   const addCompletedExam = useMainStore((state) => state.addCompletedExam);
+  const [endTime, setEndTime] = useState(Date.now() + duration);
+  const [answer, setAnswer] = useState({ status: false, data: null });
+  const socket = useSocketStore((state) => state.socket);
   const [results, setResults] = useState({
     status: false,
     loading: true,
     data: null,
   });
-  const [answer, setAnswer] = useState({ status: false, data: null });
-  const socket = useSocketStore((state) => state.socket);
-  const router = useRouter();
 
   const { mutateAsync: submit } = useMutation({
     mutationFn: Axios2("/exams/submit", "POST"),
@@ -70,6 +72,8 @@ const StartExam = ({ examId, duration, questions, status, setStatus }) => {
         setResults((prev) => ({ ...prev, status: true }));
         return;
       }
+
+      countdownRef.current?.pause();
       await SecureStore.setItemAsync(
         "takingExam",
         JSON.stringify({ status: true, examId })
@@ -176,12 +180,19 @@ const StartExam = ({ examId, duration, questions, status, setStatus }) => {
 
   return (
     <VStack className="flex-1 p-4 gap-4">
-      <ShowResults result={results} setResults={setResults} />
+      <ShowResults
+        result={results}
+        setResults={setResults}
+        setStatus={setStatus}
+      />
+
       <Countdown
-        date={Date.now() + duration}
+        ref={countdownRef}
+        date={endTime}
         renderer={countdownRenderer}
         zeroPadTime={2}
       />
+
       <View className="flex-1">
         <View className="flex-1">
           <View className="p-4">
@@ -208,6 +219,7 @@ const StartExam = ({ examId, duration, questions, status, setStatus }) => {
             </VStack>
           )}
         </View>
+
         <View className="flex-row gap-2">
           <Pressable
             className={`flex-1 p-3 elevation rounded-md ${

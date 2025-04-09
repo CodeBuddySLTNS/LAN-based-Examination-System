@@ -160,6 +160,7 @@ class ExamModel {
       JOIN subjects s ON e.subject = s.course_code
       JOIN users u ON e.examiner_id = u.id
       WHERE e.department = ? AND e.year = ?
+      ORDER BY start_time DESC
     `,
       [department, year]
     );

@@ -12,12 +12,18 @@ import { House, X } from "lucide-react-native";
 import { HStack } from "./ui/hstack";
 import { useRouter } from "expo-router";
 
-const ShowResults = ({ result, setResults, submitFn }) => {
+const ShowResults = ({ result, setResults, setStatus }) => {
   const router = useRouter();
 
   const close = () => setResults((prev) => ({ ...prev, status: false }));
 
   const handleAction = () => {
+    setStatus({
+      takingExam: false,
+      count: 0,
+      completed: false,
+      submitted: false,
+    });
     router.replace("/(drawer)/home");
     close(false);
   };
@@ -26,18 +32,21 @@ const ShowResults = ({ result, setResults, submitFn }) => {
     <Modal isOpen={result.status} onClose={close}>
       <ModalBackdrop />
       <ModalContent>
-        <Pressable className="absolute top-3 right-3" onPress={() => close()}>
-          <Icon size="xl" as={X} />
-        </Pressable>
-        <ModalHeader>
-          <Text className="flex-1 font-Nunito-Bold text-2xl text-center">
-            Results
-          </Text>
-        </ModalHeader>
         {result?.loading ? (
-          <ActivityIndicator />
+          <ActivityIndicator size="large" />
         ) : (
           <>
+            <Pressable
+              className="absolute top-3 right-3"
+              onPress={() => close()}
+            >
+              <Icon size="xl" as={X} />
+            </Pressable>
+            <ModalHeader>
+              <Text className="flex-1 font-Nunito-Bold text-2xl text-center">
+                Results
+              </Text>
+            </ModalHeader>
             <ModalBody>
               <View className="p-2 items-center rounded bg-gray-200">
                 <Text className="font-Nunito-SemiBold">Your Score:</Text>

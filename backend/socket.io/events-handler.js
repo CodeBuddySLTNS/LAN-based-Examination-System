@@ -24,7 +24,7 @@ const startExam = ({ socket, activeUsers, data }) => {
 };
 
 const takeExam = async ({ socket, activeUsers, data }) => {
-  await createSession(12, { examId: 12, endTime: Date.now() });
+  // await createSession(12, { examId: 12, endTime: Date.now() });
   console.log(
     activeUsers[socket.id].name + " is taking exam on examId: " + data
   );

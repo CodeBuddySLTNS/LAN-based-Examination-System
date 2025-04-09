@@ -2,14 +2,16 @@ import { View, Text, BackHandler } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ExamCard } from "@/components/exam-card";
-import StartExam from "@/components/start-exam";
 import { useMainStore, useSocketStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
+import * as SecureStore from "expo-secure-store";
+import StartExam from "@/components/start-exam";
 
 const TakeExamPage = () => {
   const { examId } = useLocalSearchParams();
   const socket = useSocketStore((state) => state.socket);
+  const takingExam = JSON.parse(SecureStore.getItem("takingExam") || "{}");
   const [status, setStatus] = useState({
     takingExam: false,
     count: 0,
@@ -23,9 +25,19 @@ const TakeExamPage = () => {
   });
 
   const handleTakeExam = async () => {
+    console.log(data[0]?.id);
+    if (!takingExam.status) {
+      console.log(takingExam);
+      await SecureStore.setItemAsync(
+        "takingExam",
+        JSON.stringify({
+          status: true,
+          examId: data[0]?.id,
+          progress: 0,
+        })
+      );
+    }
     await socket.emit("takeExam", data[0]?.id);
-    // await Axios2("/users/user/takingexam")();
-    // useMainStore.getState().refreshUser();
     setStatus((prev) => ({ ...prev, takingExam: true }));
   };
 
