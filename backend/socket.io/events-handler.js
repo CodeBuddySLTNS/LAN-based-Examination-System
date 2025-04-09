@@ -1,3 +1,5 @@
+const { createSession } = require("./sessions");
+
 const onconnect = ({ socket, activeUsers }) => {
   if (!activeUsers[socket.id]) {
     const query = socket.handshake.query;
@@ -15,7 +17,14 @@ const onconnect = ({ socket, activeUsers }) => {
   }
 };
 
-const takeExam = ({ socket, activeUsers, data }) => {
+const startExam = ({ socket, activeUsers, data }) => {
+  console.log(
+    activeUsers[socket.id].name + " is taking exam on examId: " + data
+  );
+};
+
+const takeExam = async ({ socket, activeUsers, data }) => {
+  await createSession(12, { examId: 12, endTime: Date.now() });
   console.log(
     activeUsers[socket.id].name + " is taking exam on examId: " + data
   );
@@ -38,4 +47,11 @@ const disconnect = ({ socket, activeUsers }) => {
     console.log(activeUsers[socket.id].name, "disconnected.");
 };
 
-module.exports = { onconnect, takeExam, examProgress, finishExam, disconnect };
+module.exports = {
+  onconnect,
+  startExam,
+  takeExam,
+  examProgress,
+  finishExam,
+  disconnect,
+};

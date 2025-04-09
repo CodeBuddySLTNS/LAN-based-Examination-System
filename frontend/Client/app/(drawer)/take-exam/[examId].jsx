@@ -56,6 +56,11 @@ const TakeExamPage = () => {
       {status.takingExam ? (
         <StartExam
           examId={data[0]?.id}
+          duration={
+            (data[0]?.duration_hours * 60 + data[0]?.duration_minutes) *
+            60 *
+            1000
+          }
           questions={data[0]?.questions}
           status={status}
           setStatus={setStatus}

@@ -2,9 +2,11 @@ import { Pressable, Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
 import { useMainStore } from "@/states/store";
+import * as SecureStore from "expo-secure-store";
 
 export const ExamCard = ({ item, btnText, btnFn }) => {
   const user = useMainStore((state) => state.user);
+  const takingExam = JSON.parse(SecureStore.getItem("takingExam") || "{}");
 
   const checkIfCompleted = (examId) => {
     let isCompleted = false;
@@ -13,6 +15,7 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
         if (ce.exam_id === examId) return (isCompleted = true);
       });
     }
+
     return isCompleted;
   };
 
@@ -26,11 +29,21 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
         <Text className="font-Nunito-Bold">
           <Badge
             size="lg"
-            action={checkIfCompleted(item.id) ? "success" : "error"}
+            action={
+              checkIfCompleted(item.id)
+                ? "success"
+                : item.id === takingExam.examId && takingExam.status
+                ? "success"
+                : "error"
+            }
             className="gap-1"
           >
             <BadgeText>
-              {checkIfCompleted(item.id) ? "Completed" : "Not Yet Taken"}
+              {item.id === takingExam.examId && takingExam.status
+                ? "Ongoing"
+                : checkIfCompleted(item.id)
+                ? "Completed"
+                : "Not Yet Taken"}
             </BadgeText>
           </Badge>
         </Text>
@@ -109,7 +122,9 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
             checkIfCompleted(item.id) ? "text-gray-300" : "text-white"
           }`}
         >
-          {btnText || "Action"}
+          {item.id === takingExam.examId && takingExam.status
+            ? "Continue"
+            : btnText || "Action"}
         </ButtonText>
       </Button>
     </View>

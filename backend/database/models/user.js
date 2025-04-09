@@ -138,8 +138,9 @@ class UserModel {
       totalPercentage += parseFloat(score.percentage);
     });
 
-    const average_accuracy = (totalPercentage / scores.length).toFixed(2);
-
+    const average_accuracy = (
+      scores.length ? totalPercentage / scores.length : 0
+    ).toFixed(2);
     return { average_accuracy };
   }
 }

@@ -45,6 +45,8 @@ const Homepage = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries(["exams", "user", "accuracy"]);
+    const updated = await Axios2("/users/user/me")();
+    useMainStore.getState().setUser(updated.user);
     setRefreshing(false);
   };
 
@@ -114,7 +116,9 @@ const Homepage = () => {
             parseFloat(accuracy?.average_accuracy || "0.0")
           )}`}
         >
-          {accuracy?.average_accuracy ? accuracy.average_accuracy + "%" : "0%"}
+          {accuracy?.average_accuracy
+            ? accuracy.average_accuracy + "%"
+            : "0.00%"}
         </Text>
         <Text className="font-Nunito-Regular text-07 text-center">
           Your average Accuracy

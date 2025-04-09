@@ -12,6 +12,11 @@ const socketConnection = (server) => {
     // handle connection event
     handler.onconnect({ socket, activeUsers });
 
+    // handle start exam event
+    socket.on("startExam", (data) =>
+      handler.startExam({ socket, activeUsers, data })
+    );
+
     // handle exam event
     socket.on("takeExam", (data) =>
       handler.takeExam({ socket, activeUsers, data })

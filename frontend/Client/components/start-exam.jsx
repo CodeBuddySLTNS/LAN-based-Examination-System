@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
@@ -7,15 +7,16 @@ import { useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { response } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { Icon } from "./ui/icon";
 import { ChartNoAxesColumn, House } from "lucide-react-native";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import Countdown, { zeroPad } from "react-countdown";
 import ShowResults from "./show-results";
 
-const StartExam = ({ examId, questions, status, setStatus }) => {
+const StartExam = ({ examId, duration, questions, status, setStatus }) => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
@@ -132,28 +133,55 @@ const StartExam = ({ examId, questions, status, setStatus }) => {
     );
   };
 
-  return (
-    <VStack className="flex-1 p-4 gap-4">
-      <ShowResults result={results} setResults={setResults} />
+  useEffect(() => {
+    const savedProgress = SecureStore.getItem("takingExam");
+    if (savedProgress) {
+      const takingExam = JSON.parse(savedProgress);
+      setStatus((prev) => ({
+        ...prev,
+        count: takingExam.progress || prev.count,
+      }));
+    }
+  }, []);
+
+  const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
+    return (
       <View className="items-center p-4 rounded-md bg-gray-50 elevation">
         <Text className="font-Nunito-SemiBold text-07 mb-1">Time Left:</Text>
         <HStack className="gap-2">
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">00</Text>
+            <Text className="font-Nunito-Bold text-3xl">
+              {zeroPad(hours, 2)}
+            </Text>
             <Text className="font-Nunito-Bold text-sm">HH</Text>
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">00</Text>
+            <Text className="font-Nunito-Bold text-3xl">
+              {zeroPad(minutes, 2)}
+            </Text>
             <Text className="font-Nunito-Bold text-sm">MM</Text>
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">00</Text>
+            <Text className="font-Nunito-Bold text-3xl">
+              {zeroPad(seconds, 2)}
+            </Text>
             <Text className="font-Nunito-Bold text-sm">SS</Text>
           </View>
         </HStack>
       </View>
+    );
+  };
+
+  return (
+    <VStack className="flex-1 p-4 gap-4">
+      <ShowResults result={results} setResults={setResults} />
+      <Countdown
+        date={Date.now() + duration}
+        renderer={countdownRenderer}
+        zeroPadTime={2}
+      />
       <View className="flex-1">
         <View className="flex-1">
           <View className="p-4">
