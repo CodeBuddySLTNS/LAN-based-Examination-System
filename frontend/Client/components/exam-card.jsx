@@ -15,7 +15,6 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
         if (ce.exam_id === examId) return (isCompleted = true);
       });
     }
-
     return isCompleted;
   };
 
@@ -110,20 +109,31 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
       </View>
 
       <Button
-        disabled={checkIfCompleted(item.id)}
+        disabled={
+          checkIfCompleted(item.id) ||
+          (takingExam.status && takingExam.examId !== item.id)
+        }
         size="sm"
         className={`mt-3 ${
-          checkIfCompleted(item.id) ? "bg-gray-100" : "bg-primary"
+          checkIfCompleted(item.id) ||
+          (takingExam.status && takingExam.examId !== item.id)
+            ? "bg-gray-100"
+            : "bg-primary"
         }`}
         onPress={btnFn}
       >
         <ButtonText
           className={`font-Nunito-Bold text-[1.05rem] ${
-            checkIfCompleted(item.id) ? "text-gray-300" : "text-white"
+            checkIfCompleted(item.id) ||
+            (takingExam.status && takingExam.examId !== item.id)
+              ? "text-gray-300"
+              : "text-white"
           }`}
         >
           {item.id === takingExam.examId && takingExam.status
             ? "Continue"
+            : item.id !== takingExam.examId && takingExam.status
+            ? "You are currently taking other exam"
             : btnText || "Action"}
         </ButtonText>
       </Button>

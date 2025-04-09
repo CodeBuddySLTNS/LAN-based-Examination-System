@@ -45,8 +45,7 @@ const Homepage = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries(["exams", "user", "accuracy"]);
-    const updated = await Axios2("/users/user/me")();
-    useMainStore.getState().setUser(updated.user);
+    useMainStore.getState().refreshUser();
     setRefreshing(false);
   };
 

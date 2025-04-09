@@ -3,7 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { io } from "socket.io-client";
 import config from "@/system.config.json";
 import ShowToast from "@/components/show-toast";
-1;
+import { Axios2 } from "@/lib/utils";
 
 export const useMainStore = create(
   immer((set) => ({
@@ -14,6 +14,10 @@ export const useMainStore = create(
     setIsLoggedIn: (status) => set({ isLoggedIn: status }),
     setIsOnline: (status) => set({ isOnline: status }),
     setUser: (user) => set({ user }),
+    refreshUser: async () => {
+      const updated = await Axios2("/users/user/me")();
+      set({ user: updated.user });
+    },
     addCompletedExam: (exam) =>
       set((state) => {
         if (state.user) {

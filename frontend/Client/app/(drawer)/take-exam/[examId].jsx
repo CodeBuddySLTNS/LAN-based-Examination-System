@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ExamCard } from "@/components/exam-card";
 import StartExam from "@/components/start-exam";
-import { useSocketStore } from "@/states/store";
+import { useMainStore, useSocketStore } from "@/states/store";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 
@@ -24,6 +24,8 @@ const TakeExamPage = () => {
 
   const handleTakeExam = async () => {
     await socket.emit("takeExam", data[0]?.id);
+    // await Axios2("/users/user/takingexam")();
+    // useMainStore.getState().refreshUser();
     setStatus((prev) => ({ ...prev, takingExam: true }));
   };
 
