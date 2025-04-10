@@ -36,6 +36,13 @@ export default function Page({ className, ...props }) {
           });
           break;
 
+        case "/exams/sessions":
+          setPath({
+            name: "Exam Sessions",
+            url: "/exams/sessions",
+          });
+          break;
+
         case "/exams/history":
           setPath({
             name: "Exam Schedules/History",

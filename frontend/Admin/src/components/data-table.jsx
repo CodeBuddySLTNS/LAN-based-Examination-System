@@ -32,6 +32,7 @@ const DataTable = ({
   filter,
   isFilter = true,
   initialSelectedRows = [],
+  handleRowClick,
 }) => {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -140,6 +141,7 @@ const DataTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={handleRowClick && (() => handleRowClick(row))}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

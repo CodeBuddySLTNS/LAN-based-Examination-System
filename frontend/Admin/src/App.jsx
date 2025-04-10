@@ -21,6 +21,7 @@ import AddSubject from "./app/subjects/add-subject";
 import Exams from "./app/exams/page";
 import AddExam from "./app/exams/add-exam";
 import ExamHistory from "./app/exams/exam-history";
+import ExamSessions from "./app/exams/exam-sessions";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -126,6 +127,14 @@ function App() {
               element={
                 <Layout>
                   <AddExam />
+                </Layout>
+              }
+            />
+            <Route
+              path="/exams/sessions"
+              element={
+                <Layout>
+                  <ExamSessions />
                 </Layout>
               }
             />

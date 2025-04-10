@@ -1,12 +1,10 @@
 import { create } from "zustand";
+import config from "../../system.config.json";
 import {
   Book,
-  ClipboardList,
   ContactRound,
-  FileClock,
   FileQuestion,
   FolderArchiveIcon,
-  Folders,
   Frame,
   Map,
   MonitorCog,
@@ -25,13 +23,7 @@ export const useMainStore = create((set) => ({
 }));
 
 export const useSidebarStore = create((set) => ({
-  systemInfo: [
-    {
-      name: "CodeBuddy State College",
-      logo: School,
-      plan: "LAN-Based Examination System",
-    },
-  ],
+  systemInfo: config.systemInfo,
   navMain: [
     {
       title: "Questions Bank",
@@ -55,6 +47,10 @@ export const useSidebarStore = create((set) => ({
       isActive: true,
       icon: FolderArchiveIcon,
       items: [
+        {
+          title: "Exam Sessions",
+          url: "/exams/sessions",
+        },
         {
           title: "Exam Schedules",
           url: "/exams",
