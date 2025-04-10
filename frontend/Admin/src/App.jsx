@@ -22,6 +22,7 @@ import Exams from "./app/exams/page";
 import AddExam from "./app/exams/add-exam";
 import ExamHistory from "./app/exams/exam-history";
 import ExamSessions from "./app/exams/exam-sessions";
+import SessionPage from "./app/exams/session-page";
 
 function App() {
   const isLoggedIn = useMainStore((state) => state.isLoggedIn);
@@ -135,6 +136,14 @@ function App() {
               element={
                 <Layout>
                   <ExamSessions />
+                </Layout>
+              }
+            />
+            <Route
+              path="/exams/sessions/:sessionId"
+              element={
+                <Layout>
+                  <SessionPage />
                 </Layout>
               }
             />

@@ -5,16 +5,13 @@ import { Axios2 } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ExamSessions = () => {
   const { data: exams } = useQuery({
     queryKey: ["exams"],
     queryFn: Axios2("/exams", "GET"),
   });
-
-  const handleRowClick = (row) => {
-    console.log(row.original);
-  };
 
   const examColumns = [
     {
@@ -118,8 +115,15 @@ const ExamSessions = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="flex justify-center">
-          <Button className="">Start Exam</Button>
+        <div className="flex justify-center gap-1">
+          <Button size="sm" className="bg-red-800 hover:bg-red-600">
+            Start
+          </Button>
+          <Link to={`/exams/sessions/${row.original.id}`}>
+            <Button size="sm" className="">
+              View
+            </Button>
+          </Link>
         </div>
       ),
     },
@@ -131,7 +135,6 @@ const ExamSessions = () => {
         data={exams}
         columns={examColumns}
         filter={{ column: "subject", placeholder: "subject" }}
-        handleRowClick={handleRowClick}
       />
     </div>
   );

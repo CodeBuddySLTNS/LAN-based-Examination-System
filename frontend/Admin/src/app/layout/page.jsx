@@ -84,6 +84,13 @@ export default function Page({ className, ...props }) {
           break;
 
         default:
+          if (location.pathname.includes("/exams/sessions/")) {
+            setPath({
+              name: `Exam Sessions/Session ${location.pathname.split("/")[3]}`,
+              url: "session",
+            });
+            return;
+          }
           setPath({});
           break;
       }
@@ -93,8 +100,8 @@ export default function Page({ className, ...props }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex justify-between pr-4 h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <SidebarInset className="h-full">
+        <header className="flex justify-between pr-4 h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 sticky top-0 bg-card z-[2]">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -113,7 +120,13 @@ export default function Page({ className, ...props }) {
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
                       <BreadcrumbLink
-                        onClick={() => navigate("/" + path.url?.split("/")[1])}
+                        onClick={() =>
+                          navigate(
+                            path.url === "session"
+                              ? "/exams/sessions"
+                              : "/" + path.url?.split("/")[1]
+                          )
+                        }
                       >
                         {path.name?.split("/")[0]}
                       </BreadcrumbLink>
@@ -124,7 +137,11 @@ export default function Page({ className, ...props }) {
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink onClick={() => navigate(path.url)}>
+                      <BreadcrumbLink
+                        onClick={() =>
+                          navigate(path.url === "session" ? "#" : path.url)
+                        }
+                      >
                         {path.name?.split("/")[1]}
                       </BreadcrumbLink>
                     </BreadcrumbItem>
