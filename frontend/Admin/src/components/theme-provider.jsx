@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const initialState = {
@@ -57,4 +58,10 @@ export const useTheme = () => {
     throw new Error("useTheme must be used within a ThemeProvider");
 
   return context;
+};
+
+ThemeProvider.propTypes = {
+  children: PropTypes.node,
+  defaultTheme: PropTypes.string,
+  storageKey: PropTypes.string,
 };

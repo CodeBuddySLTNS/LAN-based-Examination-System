@@ -13,7 +13,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios, Axios2, cn } from "@/lib/utils";
+import { Axios2, cn } from "@/lib/utils";
 import {
   Check,
   ChevronsUpDown,
@@ -62,7 +62,7 @@ export const AddQuestion = () => {
 
   const { mutateAsync: addquestion, isPending } = useMutation({
     mutationFn: Axios2("/questions/add", "POST"),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Question added succesfully.");
       resetForm();
     },
@@ -104,7 +104,9 @@ export const AddQuestion = () => {
     if (valid || data.questionType !== "multiple_choice") {
       try {
         await addquestion(data);
-      } catch (error) {}
+      } catch (e) {
+        console.log(e);
+      }
 
       setIsValidCorrectAnswer(true);
     } else {
@@ -332,8 +334,8 @@ export const AddQuestion = () => {
                 )}
                 {!isValidCorrectAnswer && (
                   <p className="text-sm text-red-600">
-                    The correct answer(s) you provided doesn't match any of the
-                    given choices.
+                    The correct answer(s) you provided doesn&apos;t match any of
+                    the given choices.
                   </p>
                 )}
               </div>

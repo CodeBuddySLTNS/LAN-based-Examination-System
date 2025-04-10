@@ -1,12 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import React from "react";
 
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { toast } from "sonner";
@@ -44,7 +43,9 @@ export const AddSubject = () => {
   const onSubmit = async (data) => {
     try {
       addSubject(data);
-    } catch (error) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (

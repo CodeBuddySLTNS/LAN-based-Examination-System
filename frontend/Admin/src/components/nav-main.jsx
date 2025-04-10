@@ -19,6 +19,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 export function NavMain({ items }) {
   const { toggleSidebar, isMobile } = useSidebar();
@@ -72,3 +73,5 @@ export function NavMain({ items }) {
     </SidebarGroup>
   );
 }
+
+NavMain.propTypes = { items: PropTypes.array };

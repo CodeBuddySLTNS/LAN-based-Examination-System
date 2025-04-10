@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Axios2, cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowUpDown, Check, ChevronsUpDown, InfoIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import DataTable from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,7 +47,7 @@ const AddExam = () => {
     department: "",
     label: "",
   });
-  const { register, handleSubmit, setValue, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const { data: questions } = useQuery({
     queryKey: ["questions"],
@@ -69,7 +69,7 @@ const AddExam = () => {
       toast.error("Unable to connect to the server.");
     },
 
-    onSuccess: (d) => {
+    onSuccess: () => {
       toast.success("Exam successfully created.");
       setOptionsValue({
         subject: "",
@@ -101,7 +101,9 @@ const AddExam = () => {
 
     try {
       await addexam(examData);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const columns = [
@@ -124,7 +126,7 @@ const AddExam = () => {
           aria-label="Select all"
         />
       ),
-      cell: ({ row, table }) => (
+      cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => {

@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -20,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -34,7 +31,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -46,7 +43,7 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import DataTable from "@/components/data-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Page() {
   const [actionData, setActionData] = useState(null);
@@ -101,7 +98,7 @@ export default function Page() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     const updateBody = {};
 
     await action({ updateBody, action: "edit" });
@@ -237,7 +234,8 @@ export default function Page() {
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Make changes to your profile here. Click save when you&apos;re
+              done.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -368,7 +366,9 @@ export default function Page() {
               onClick={() => {
                 try {
                   action({ subjectId: actionData?.id, action: "delete" });
-                } catch (error) {}
+                } catch (e) {
+                  console.log(e);
+                }
               }}
             >
               Continue

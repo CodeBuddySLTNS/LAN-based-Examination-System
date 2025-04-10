@@ -3,7 +3,6 @@
 import {
   ArrowUpDown,
   Check,
-  ChevronDown,
   Edit,
   LucideDelete,
   MoreHorizontal,
@@ -14,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -30,11 +28,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -339,7 +336,8 @@ export default function Page() {
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Make changes to your profile here. Click save when you&apos;re
+              done.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -463,8 +461,8 @@ export default function Page() {
         message={
           <>
             This action cannot be undone. This will permanently delete
-            <span className="text-red-500"> @{actionData?.username}</span>'s
-            account and remove his/her data from our servers.
+            <span className="text-red-500"> @{actionData?.username}</span>
+            &apos;s account and remove his/her data from our servers.
           </>
         }
       />

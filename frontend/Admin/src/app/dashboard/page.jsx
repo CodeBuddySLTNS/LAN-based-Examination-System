@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import React from "react";
 import ChartStats from "@/components/charts/chart";
 
 export default function Dashboard() {

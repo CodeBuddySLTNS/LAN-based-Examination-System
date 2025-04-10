@@ -16,7 +16,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
 const schema = Joi.object({
@@ -61,12 +61,14 @@ export const AddAccount = () => {
 
     try {
       await signup(user);
-    } catch (error) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   React.useEffect(() => {
     if (data) reset();
-  }, [data]);
+  }, [data, reset]);
 
   return (
     <div className="p-6">

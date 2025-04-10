@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import {
   flexRender,
@@ -190,6 +191,14 @@ const DataTable = ({
       </div>
     </div>
   );
+};
+
+DataTable.propTypes = {
+  data: PropTypes.array,
+  columns: PropTypes.array,
+  filter: PropTypes.object,
+  isFilter: PropTypes.bool,
+  initialSelectedRows: PropTypes.array,
 };
 
 export default DataTable;

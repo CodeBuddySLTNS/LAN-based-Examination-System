@@ -300,7 +300,6 @@ const Page = () => {
       enableHiding: false,
       cell: ({ row }) => {
         const user = row.original;
-        const username = row.original.username;
 
         return (
           <DropdownMenu>
@@ -357,7 +356,7 @@ const Page = () => {
           aria-label="Select all"
         />
       ),
-      cell: ({ row, table }) => {
+      cell: ({ row }) => {
         const isSelected = selectedQuestions.some(
           (q) => q.id === row.original.id
         );
@@ -562,7 +561,9 @@ const Page = () => {
                       questionsOnly: true,
                       action: "editQuestions",
                     });
-                  } catch (e) {}
+                  } catch (e) {
+                    console.log(e);
+                  }
                 }}
               >
                 Save changes

@@ -4,7 +4,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Axios2 } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const ExamSessions = () => {
@@ -107,7 +106,7 @@ const ExamSessions = () => {
     },
     {
       id: "actions",
-      header: ({ column }) => {
+      header: () => {
         return (
           <Button variant="ghost" className="w-full">
             Actions

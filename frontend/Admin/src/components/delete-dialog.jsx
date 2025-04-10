@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import PropTypes from "prop-types";
 
 export default function DeleteDialog({
   open,
@@ -45,3 +46,11 @@ export default function DeleteDialog({
     </AlertDialog>
   );
 }
+
+DeleteDialog.propTypes = {
+  open: PropTypes.bool,
+  setOpen: PropTypes.func,
+  action: PropTypes.func,
+  actionData: PropTypes.object,
+  message: PropTypes.string,
+};

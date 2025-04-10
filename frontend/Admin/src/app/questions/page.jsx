@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -100,7 +100,7 @@ export default function Page() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     const updateBody = {};
 
     await action({ updateBody, action: "edit" });
@@ -328,7 +328,8 @@ export default function Page() {
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Make changes to your profile here. Click save when you&apos;re
+              done.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -459,7 +460,9 @@ export default function Page() {
               onClick={() => {
                 try {
                   action({ questionId: actionData?.id, action: "delete" });
-                } catch (error) {}
+                } catch (e) {
+                  console.log(e);
+                }
               }}
             >
               Continue
