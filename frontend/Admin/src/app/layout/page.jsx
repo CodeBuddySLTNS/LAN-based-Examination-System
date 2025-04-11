@@ -39,7 +39,7 @@ export default function Page({ className, ...props }) {
         case "/exams/sessions":
           setPath({
             name: "Exam Sessions",
-            url: "/exams/sessions",
+            url: "session",
           });
           break;
 

@@ -1,7 +1,12 @@
 const Joi = require("joi");
 const QuestionModel = require("../database/models/question");
 const { validateQuestion } = require("../utils/validator");
-const { CREATED, BAD_REQUEST, FORBIDDEN } = require("../constants/statusCodes");
+const {
+  CREATED,
+  BAD_REQUEST,
+  FORBIDDEN,
+  SUCCESS,
+} = require("../constants/statusCodes");
 const CustomError = require("../utils/customError");
 const UserModel = require("../database/models/user");
 

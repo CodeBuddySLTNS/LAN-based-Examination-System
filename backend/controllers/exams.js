@@ -16,20 +16,29 @@ const CompletedExam = new CompletedExamModel();
 const exams = async (req, res) => {
   const { id, department, year } = req.query;
 
-  if (id) return res.send(await Exam.getExamById(id));
+  if (id) return res.send(polishExamResponse(await Exam.getExamById(id)));
 
   if (department && year)
-    return res.send(await Exam.getExamsByDepartment(department, year));
+    return res.send(
+      polishExamResponse(await Exam.getExamsByDepartment(department, year))
+    );
 
-  const exams = await Exam.getAll();
-  exams.forEach((exam) => {
-    exam.duration = `${exam.duration_hours} hours${
-      exam.duration_minutes ? ` and ${exam.duration_minutes} minutes` : ""
-    }`;
-    exam.is_started = exam.is_started === 1 ? true : false;
-    exam.is_expired = exam.is_expired === 1 ? true : false;
-  });
+  const exams = polishExamResponse(await Exam.getAll());
+
   res.send(exams);
+
+  function polishExamResponse(exams) {
+    exams.forEach((exam) => {
+      exam.duration = `${exam.duration_hours} ${
+        exam.duration_hours > 1 ? "hours" : "hour"
+      } ${
+        exam.duration_minutes ? ` and ${exam.duration_minutes} minutes` : ""
+      }`;
+      exam.is_started = exam.is_started === 1 ? true : false;
+      exam.is_expired = exam.is_expired === 1 ? true : false;
+    });
+    return exams;
+  }
 };
 
 const addExam = async (req, res) => {
@@ -83,6 +92,13 @@ const deleteExam = async (req, res) => {
   const result = await Exam.deleteExam(userId, examId);
   console.log(result);
   res.send({ message: "Successfully deleted.", result });
+};
+
+const startExam = async (req, res) => {
+  const { examId, stop } = req.params;
+
+  if (stop) {
+  }
 };
 
 const handleMultipleSubmissions = async (req, res) => {

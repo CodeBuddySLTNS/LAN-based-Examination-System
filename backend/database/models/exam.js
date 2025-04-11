@@ -8,7 +8,7 @@ class ExamModel {
     await sqlQuery(examsTableQuery);
   }
 
-  async getAll() {
+  async getAll(isSorted) {
     await this.createExamTable();
     const exams = await sqlQuery(`
       SELECT 
@@ -20,7 +20,7 @@ class ExamModel {
       FROM exams e
       JOIN subjects s ON e.subject = s.course_code
       JOIN users u ON e.examiner_id = u.id
-      ORDER BY e.start_time DESC
+      ${isSorted ? "ORDER BY e.start_time DESC" : ""}
     `);
 
     const examIds = exams.map((exam) => exam.id);
