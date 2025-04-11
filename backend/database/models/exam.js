@@ -219,12 +219,12 @@ class ExamModel {
     return examsWithQuestions;
   }
 
-  async setCompletedExamById(examId) {
+  async startExam(examId, stop) {
     await this.createExamTable();
-    const query = `SELECT * FROM exams WHERE id = ? LIMIT 1`;
-    const params = [examId];
-    const result = await sqlQuery(query, params);
-    return result;
+    const query = `UPDATE exams SET is_started = ${
+      stop ? 0 : 1
+    } WHERE id = ? LIMIT 1`;
+    return await sqlQuery(query, [examId]);
   }
 
   async addExam(userId, examData) {

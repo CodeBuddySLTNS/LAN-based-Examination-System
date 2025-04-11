@@ -1,15 +1,39 @@
 import DataTable from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Spinner } from "@/components/ui/spinner";
 import { Axios2 } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ExamSessions = () => {
+  const [startId, setStartId] = useState(null);
+  const queryClient = useQueryClient();
+
+  const handleAction = (row) => {
+    try {
+      setStartId(row?.original?.id);
+      startExam({
+        examId: row?.original?.id,
+        stop: row?.original?.is_started,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const { data: exams } = useQuery({
     queryKey: ["exams"],
     queryFn: Axios2("/exams", "GET"),
+  });
+
+  const { mutateAsync: startExam, isPending } = useMutation({
+    mutationFn: Axios2("/exams/start", "PATCH"),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["session"]);
+    },
   });
 
   const examColumns = [
@@ -115,8 +139,23 @@ const ExamSessions = () => {
       },
       cell: ({ row }) => (
         <div className="flex justify-center gap-1">
-          <Button size="sm" className="bg-red-800 hover:bg-red-600">
-            Start
+          <Button
+            size="sm"
+            disabled={isPending}
+            className={
+              row.original.is_started
+                ? "w-13 bg-red-800 hover:bg-red-600"
+                : "w-13 bg-green-800 hover:bg-green-600"
+            }
+            onClick={() => handleAction(row)}
+          >
+            {startId === row.original.id && isPending ? (
+              <Spinner size="small" className="px-[2px] text-amber-400" />
+            ) : row.original.is_started ? (
+              "Stop"
+            ) : (
+              "Start"
+            )}
           </Button>
           <Link to={`/exams/sessions/${row.original.id}`}>
             <Button size="sm" className="">

@@ -95,10 +95,15 @@ const deleteExam = async (req, res) => {
 };
 
 const startExam = async (req, res) => {
-  const { examId, stop } = req.params;
+  const { examId, stop } = req.body;
 
-  if (stop) {
+  if (examId) {
+    setTimeout(async () => {
+      return res.send(await Exam.startExam(examId, stop));
+    }, 3000);
   }
+
+  // throw new CustomError("Exam Id is required.", BAD_REQUEST);
 };
 
 const handleMultipleSubmissions = async (req, res) => {
@@ -120,5 +125,6 @@ module.exports = {
   addExam,
   editExam,
   deleteExam,
+  startExam,
   handleMultipleSubmissions,
 };
