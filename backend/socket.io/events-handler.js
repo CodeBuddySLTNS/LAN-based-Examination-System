@@ -1,8 +1,8 @@
 const { createSession } = require("./sessions");
 
 const onconnect = ({ socket, activeUsers }) => {
-  if (!activeUsers[socket.id]) {
-    const query = socket.handshake.query;
+  const query = socket.handshake.query;
+  if (!activeUsers[query.id]) {
     const user = {
       id: query.id,
       name: query.name,
@@ -11,8 +11,9 @@ const onconnect = ({ socket, activeUsers }) => {
       year: query.year,
       role: query.role,
       isVerified: query.isVerified,
+      socketId: socket.id,
     };
-    activeUsers[socket.id] = user;
+    activeUsers[query.id] = user;
     console.log(socket.handshake.query.name, "connected");
   }
 };
@@ -43,8 +44,13 @@ const finishExam = ({ socket, activeUsers, data }) => {
 };
 
 const disconnect = ({ socket, activeUsers }) => {
-  if (activeUsers[socket.id])
-    console.log(activeUsers[socket.id].name, "disconnected.");
+  const userId = Object.keys(activeUsers).find(
+    (id) => activeUsers[id].socketId === socket.id
+  );
+  console.log(typeof userId);
+
+  if (userId) console.log(activeUsers[userId].name, "disconnected.");
+  delete activeUsers[userId];
 };
 
 module.exports = {

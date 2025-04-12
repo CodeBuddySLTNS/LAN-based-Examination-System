@@ -8,7 +8,7 @@ class ExamModel {
     await sqlQuery(examsTableQuery);
   }
 
-  async getAll(isSorted) {
+  async getAll(isSorted = false) {
     await this.createExamTable();
     const exams = await sqlQuery(`
       SELECT 
@@ -162,6 +162,78 @@ class ExamModel {
       JOIN users u ON e.examiner_id = u.id
       WHERE e.department = ? AND e.year = ?
       ORDER BY e.start_time DESC
+    `,
+      [department, year]
+    );
+
+    if (exams.length === 0) return [];
+
+    const examIds = exams.map((exam) => exam.id);
+    const examQuestionsRows = await sqlQuery(
+      `
+      SELECT exam_id, question_data FROM exam_questions WHERE exam_id IN (?)
+    `,
+      [examIds]
+    );
+
+    const questionMap = {};
+    const allQuestionIds = new Set();
+
+    for (const row of examQuestionsRows) {
+      const questions = JSON.parse(row.question_data);
+      questionMap[row.exam_id] = questions;
+      questions.forEach((q) => allQuestionIds.add(q.questionId));
+    }
+
+    const questionBankRows =
+      allQuestionIds.size > 0
+        ? await sqlQuery(
+            `
+      SELECT * FROM question_bank WHERE id IN (?)
+    `,
+            [[...allQuestionIds]]
+          )
+        : [];
+
+    const examsWithQuestions = exams.map((exam) => {
+      const rawQuestions = questionMap[exam.id] || [];
+
+      const questions = rawQuestions.map((q) => {
+        const full = questionBankRows.find((row) => row.id === q.questionId);
+        if (!full) return null;
+
+        return {
+          id: q.questionId,
+          points: q.points,
+          question_text: full.question_text,
+          question_type: full.question_type,
+          choices: full.choices ? JSON.parse(full.choices) : null,
+          correct_answer: full.correct_answer
+            ? JSON.parse(full.correct_answer)
+            : null,
+        };
+      });
+
+      return { ...exam, questions };
+    });
+
+    return examsWithQuestions;
+  }
+
+  async getExamsByExamineer(examiner_id) {
+    await this.createExamTable();
+    const exams = await sqlQuery(
+      `
+      SELECT 
+        e.*, 
+        CONCAT(LPAD(e.duration_hours, 2, '0'), ' : ', LPAD(e.duration_minutes, 2, '0')) AS duration, 
+        s.course_code,
+        s.name as subject,
+        u.name as examineer
+      FROM exams e
+      JOIN subjects s ON e.subject = s.course_code
+      JOIN users u ON e.examiner_id = u.id
+      WHERE e.examiner_id = ?
     `,
       [department, year]
     );

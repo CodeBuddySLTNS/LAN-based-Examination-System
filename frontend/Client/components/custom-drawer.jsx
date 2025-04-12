@@ -21,7 +21,6 @@ export default function CustomDrawer(props) {
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("token");
     useMainStore.getState().setUser(null);
-    console.log(await SecureStore.getItemAsync("token"));
     router.replace("/login");
   };
 

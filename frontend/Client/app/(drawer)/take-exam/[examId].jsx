@@ -33,6 +33,7 @@ const TakeExamPage = () => {
         JSON.stringify({
           status: true,
           examId: data[0]?.id,
+          subject: data[0]?.subject,
           progress: 0,
         })
       );
@@ -70,6 +71,7 @@ const TakeExamPage = () => {
       {status.takingExam ? (
         <StartExam
           examId={data[0]?.id}
+          subject={data[0]?.subject}
           duration={
             (data[0]?.duration_hours * 60 + data[0]?.duration_minutes) *
             60 *

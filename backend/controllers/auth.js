@@ -35,6 +35,8 @@ const login = async (req, res) => {
         department: userExist.department,
         year: userExist.year,
         role: userExist.role,
+        isVerified: userExist.isVerified,
+        completed_exams: userExist.completed_exams || [],
       };
 
       return res.json({ id, token, user });

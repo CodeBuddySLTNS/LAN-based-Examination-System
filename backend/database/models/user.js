@@ -104,10 +104,7 @@ class UserModel {
         const completedExams = await CompletedExam.getCompletedExamsById(
           userId
         );
-        if (completedExams)
-          return { ...result[0], completed_exams: completedExams };
-
-        return result[0];
+        return { ...result[0], completed_exams: completedExams || [] };
       }
       return null;
     }
@@ -121,7 +118,10 @@ class UserModel {
     const result = await sqlQuery(query, [username]);
     if (result) {
       if (result.length > 0) {
-        return result[0];
+        const completedExams = await CompletedExam.getCompletedExamsById(
+          result[0].id
+        );
+        return { ...result[0], completed_exams: completedExams || [] };
       }
       return null;
     }

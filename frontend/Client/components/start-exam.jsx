@@ -16,7 +16,14 @@ import * as SecureStore from "expo-secure-store";
 import Countdown, { zeroPad } from "react-countdown";
 import ShowResults from "./show-results";
 
-const StartExam = ({ examId, duration, questions, status, setStatus }) => {
+const StartExam = ({
+  examId,
+  subject,
+  duration,
+  questions,
+  status,
+  setStatus,
+}) => {
   const router = useRouter();
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
@@ -51,7 +58,12 @@ const StartExam = ({ examId, duration, questions, status, setStatus }) => {
     try {
       await SecureStore.setItemAsync(
         "takingExam",
-        JSON.stringify({ status: true, examId, progress: status.count + 1 })
+        JSON.stringify({
+          status: true,
+          examId,
+          subject,
+          progress: status.count + 1,
+        })
       );
 
       await drizzleDb.insert(response).values({

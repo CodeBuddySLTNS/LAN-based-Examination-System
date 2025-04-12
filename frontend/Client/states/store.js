@@ -61,5 +61,27 @@ export const useSocketStore = create(
         set({ socket });
       }
     },
+
+    refreshSocket: (newQuery, toast) => {
+      const currentSocket = get().socket;
+
+      if (currentSocket) {
+        currentSocket.disconnect();
+      }
+
+      set({ socket: null });
+
+      get().initializeSocket(newQuery, toast);
+    },
+
+    disconnectSocket: () => {
+      const currentSocket = get().socket;
+
+      if (currentSocket) {
+        currentSocket.disconnect();
+      }
+
+      set({ socket: null });
+    },
   }))
 );
