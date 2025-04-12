@@ -19,23 +19,29 @@ const onconnect = ({ socket, activeUsers }) => {
 };
 
 const startExam = ({ socket, activeUsers, data }) => {
-  console.log(
-    activeUsers[socket.id].name + " is taking exam on examId: " + data
+  const userId = Object.keys(activeUsers).find(
+    (id) => activeUsers[id].socketId === socket.id
   );
+
+  console.log(activeUsers[userId].name + " is taking exam on examId: " + data);
 };
 
 const takeExam = async ({ socket, activeUsers, data }) => {
   // await createSession(12, { examId: 12, endTime: Date.now() });
-  console.log(
-    activeUsers[socket.id].name + " is taking exam on examId: " + data
+  const userId = Object.keys(activeUsers).find(
+    (id) => activeUsers[id].socketId === socket.id
   );
+
+  console.log(activeUsers[userId].name + " is taking exam on examId: " + data);
 };
 
 const examProgress = ({ socket, activeUsers, data }) => {
+  const userId = Object.keys(activeUsers).find(
+    (id) => activeUsers[id].socketId === socket.id
+  );
+
   console.log(
-    `${activeUsers[socket.id].name} is on number ${data.progress} at examId: ${
-      data.examId
-    }`
+    `${activeUsers[userId].name} is on number ${data.progress} at examId: ${data.examId}`
   );
 };
 
@@ -47,7 +53,6 @@ const disconnect = ({ socket, activeUsers }) => {
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );
-  console.log(typeof userId);
 
   if (userId) console.log(activeUsers[userId].name, "disconnected.");
   delete activeUsers[userId];

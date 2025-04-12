@@ -1,11 +1,20 @@
 import { Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
-import { useMainStore } from "@/states/store";
+import { useMainStore, useSocketStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
+import { useState } from "react";
+import ShowAlert from "./show-alert";
+import { useSQLiteContext } from "expo-sqlite";
+import { drizzle } from "drizzle-orm/expo-sqlite";
+import { response } from "@/db/schema";
 
-export const ExamCard = ({ item, btnText, btnFn }) => {
+export const ExamCard = ({ item, setStatus }) => {
+  const [open, setOpen] = useState(false);
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
+  const socket = useSocketStore((state) => state.socket);
   const takingExam = JSON.parse(SecureStore.getItem("takingExam") || "{}");
 
   const checkIfCompleted = () => {
@@ -18,17 +27,52 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
     return isCompleted;
   };
 
-  const checkIfStarted = () =>
-    item.id === takingExam.examId && takingExam.status;
-
-  const checkIfTakingThisExam = () =>
-    item.id === takingExam.examId && takingExam.status;
+  const checkIfTakingThisExam = () => {
+    return item.id === takingExam.examId && takingExam.status;
+  };
 
   const checkIfTakingOtherExam = () =>
     takingExam.status && takingExam.examId !== item.id;
 
+  const takeExam = async () => {
+    await SecureStore.setItemAsync(
+      "takingExam",
+      JSON.stringify({
+        examId: item.id,
+        subject: item.subject,
+        status: true,
+        progress: 0,
+      })
+    );
+    drizzleDb.delete(response).execute();
+    setStatus((prev) => ({ ...prev, takingExam: true }));
+    socket.emit("takeExam", item.id);
+  };
+
+  const handleStartExam = () => {
+    if (checkIfTakingOtherExam()) {
+      setOpen(true);
+      return;
+    }
+    takeExam();
+  };
+
+  const proceedStartExam = async () => {
+    await SecureStore.deleteItemAsync("takingExam");
+    console.log(SecureStore.getItem("takingExam"));
+    takeExam();
+  };
+
   return (
     <View className="mx-4  p-4 pt-3 rounded-md bg-white elevation-md">
+      <ShowAlert
+        open={open}
+        closeFn={() => setOpen(false)}
+        title="Are you sure you want to start this exam?"
+        description={`You are currently taking another exam. Starting this exam will result in losing your progress on the "${takingExam.subject}" exam. Please confirm if you want to continue.`}
+        okayFn={proceedStartExam}
+      />
+
       <View className="flex-row justify-between items-center">
         <Text className="font-Nunito-Bold text-[1.35rem]">
           {item.label} (
@@ -118,29 +162,21 @@ export const ExamCard = ({ item, btnText, btnFn }) => {
       </View>
 
       <Button
-        disabled={
-          !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
-        }
+        disabled={!item.is_started || checkIfCompleted()}
         size="sm"
         className={`mt-3 ${
-          !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
-            ? "bg-gray-100"
-            : "bg-primary"
+          !item.is_started || checkIfCompleted() ? "bg-gray-100" : "bg-primary"
         }`}
-        onPress={btnFn}
+        onPress={handleStartExam}
       >
         <ButtonText
           className={`font-Nunito-Bold text-[1.05rem] ${
-            !item.is_started || checkIfCompleted() || checkIfTakingOtherExam()
+            !item.is_started || checkIfCompleted()
               ? "text-gray-300"
               : "text-white"
           }`}
         >
-          {checkIfTakingThisExam()
-            ? "Continue"
-            : checkIfTakingOtherExam()
-            ? "You are currently taking other exam"
-            : btnText || "Action"}
+          {checkIfTakingThisExam() ? "Continue" : "START"}
         </ButtonText>
       </Button>
     </View>

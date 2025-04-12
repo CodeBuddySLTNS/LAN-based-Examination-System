@@ -79,9 +79,7 @@ const Homepage = () => {
     if (exams && user) {
       const filtered = exams.filter((exam) => {
         let examTaken = false;
-        console.log(user);
         user.completed_exams?.forEach((ce) => {
-          console.log(ce.exam_id, exam.id);
           if (ce.exam_id === exam.id) return (examTaken = true);
         });
         return !examTaken;
