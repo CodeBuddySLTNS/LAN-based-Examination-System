@@ -45,7 +45,7 @@ const TakeExamPage = () => {
   }
 
   return (
-    <View className={`flex-1 ${!status.takingExam && "justify-center"}`}>
+    <View className={`flex-1 ${!status.takingExam && "w-full justify-center"}`}>
       {status.takingExam ? (
         <StartExam
           examId={data[0]?.id}

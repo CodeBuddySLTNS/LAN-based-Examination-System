@@ -9,5 +9,6 @@ Router.patch("/edit/:mode", tryCatch(controller.editExam));
 Router.delete("/delete/:id", tryCatch(controller.deleteExam));
 Router.post("/submit", tryCatch(controller.handleMultipleSubmissions));
 Router.patch("/start", tryCatch(controller.startExam));
+Router.patch("/expire", tryCatch(controller.expireExam));
 
 module.exports = Router;

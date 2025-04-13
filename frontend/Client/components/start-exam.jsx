@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 import { useMainStore, useSocketStore } from "@/states/store";
@@ -198,14 +198,16 @@ const StartExam = ({
         setStatus={setStatus}
       />
 
-      <Countdown
-        ref={countdownRef}
-        date={endTime}
-        renderer={countdownRenderer}
-        zeroPadTime={2}
-      />
+      <View>
+        <Countdown
+          ref={countdownRef}
+          date={endTime}
+          renderer={countdownRenderer}
+          zeroPadTime={2}
+        />
+      </View>
 
-      <View className="flex-1">
+      <View className="flex-1 gap-3.5">
         <View className="flex-1">
           <View className="p-4">
             {questions.length === 0 ? (
@@ -223,13 +225,15 @@ const StartExam = ({
               </>
             )}
           </View>
-          {questions.length !== 0 && (
-            <VStack className="flex-1">
-              {questions[status.count].question_type === "multiple_choice"
-                ? renderChoices(questions[status.count].choices)
-                : ""}
-            </VStack>
-          )}
+          <ScrollView>
+            {questions.length !== 0 && (
+              <VStack className="flex-1">
+                {questions[status.count].question_type === "multiple_choice"
+                  ? renderChoices(questions[status.count].choices)
+                  : ""}
+              </VStack>
+            )}
+          </ScrollView>
         </View>
 
         <View className="flex-row gap-2">

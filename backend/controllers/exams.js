@@ -98,12 +98,20 @@ const startExam = async (req, res) => {
   const { examId, stop } = req.body;
 
   if (examId) {
-    setTimeout(async () => {
-      return res.send(await Exam.startExam(examId, stop));
-    }, 3000);
+    return res.send(await Exam.startExam(examId, stop));
   }
 
-  // throw new CustomError("Exam Id is required.", BAD_REQUEST);
+  throw new CustomError("Exam Id is required.", BAD_REQUEST);
+};
+
+const expireExam = async (req, res) => {
+  const { examId, enable } = req.body;
+  console.log(req.body);
+  if (examId) {
+    return res.send(await Exam.expireExam(examId, enable));
+  }
+
+  throw new CustomError("Exam Id is required.", BAD_REQUEST);
 };
 
 const handleMultipleSubmissions = async (req, res) => {
@@ -126,5 +134,6 @@ module.exports = {
   editExam,
   deleteExam,
   startExam,
+  expireExam,
   handleMultipleSubmissions,
 };

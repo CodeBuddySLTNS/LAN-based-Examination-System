@@ -10,13 +10,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ExamSessions = () => {
-  const [startId, setStartId] = useState(null);
+  const [id, setId] = useState({ start: null, expire: null });
   const socket = useMainStore((state) => state.socket);
   const queryClient = useQueryClient();
 
-  const handleAction = (row) => {
+  const handleStart = (row) => {
     try {
-      setStartId(row?.original?.id);
+      setId((prev) => ({ ...prev, start: row?.original?.id }));
       startExam({
         examId: row?.original?.id,
         stop: row?.original?.is_started,
@@ -30,13 +30,36 @@ const ExamSessions = () => {
     }
   };
 
+  const handleExpire = (row) => {
+    try {
+      setId((prev) => ({ ...prev, expire: row?.original?.id }));
+      expireExam({
+        examId: row?.original?.id,
+        enable: row?.original?.is_expired,
+      });
+      socket.emit("stoppedExam", {
+        exam: row?.original,
+        enable: row?.original?.is_expired,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const { data: exams } = useQuery({
     queryKey: ["exams"],
     queryFn: Axios2("/exams", "GET"),
   });
 
-  const { mutateAsync: startExam, isPending } = useMutation({
+  const { mutateAsync: startExam, isPending: loadingStart } = useMutation({
     mutationFn: Axios2("/exams/start", "PATCH"),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["session"]);
+    },
+  });
+
+  const { mutateAsync: expireExam, isPending: loadingExpire } = useMutation({
+    mutationFn: Axios2("/exams/expire", "PATCH"),
     onSuccess: () => {
       queryClient.invalidateQueries(["session"]);
     },
@@ -79,6 +102,24 @@ const ExamSessions = () => {
         );
       },
       cell: ({ row }) => <div className="">{row.getValue("subject")}</div>,
+    },
+    {
+      accessorKey: "course_code",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Course Code
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("course_code")}</div>
+      ),
     },
     {
       accessorKey: "label",
@@ -147,15 +188,15 @@ const ExamSessions = () => {
         <div className="flex justify-center gap-1">
           <Button
             size="sm"
-            disabled={isPending}
+            disabled={loadingStart}
             className={
               row.original.is_started
                 ? "w-13 bg-red-800 hover:bg-red-600"
                 : "w-13 bg-green-800 hover:bg-green-600"
             }
-            onClick={() => handleAction(row)}
+            onClick={() => handleStart(row)}
           >
-            {startId === row.original.id && isPending ? (
+            {id.start === row.original.id && loadingStart ? (
               <Spinner size="small" className="px-[2px] text-amber-400" />
             ) : row.original.is_started ? (
               "Stop"
@@ -164,10 +205,28 @@ const ExamSessions = () => {
             )}
           </Button>
           <Link to={`/exams/sessions/${row.original.id}`}>
-            <Button size="sm" className="">
+            <Button size="sm" className="hover:bg-blue-900">
               View
             </Button>
           </Link>
+          <Button
+            size="sm"
+            disabled={loadingExpire}
+            className={
+              row.original.is_expired
+                ? "w-18 bg-blue-500 hover:bg-blue-400"
+                : "w-18 bg-teal-800 hover:bg-teal-600"
+            }
+            onClick={() => handleExpire(row)}
+          >
+            {id.expire === row.original.id && loadingExpire ? (
+              <Spinner size="small" className="px-[2px] text-amber-400" />
+            ) : row.original.is_expired ? (
+              "Enable"
+            ) : (
+              "Disable"
+            )}
+          </Button>
         </div>
       ),
     },

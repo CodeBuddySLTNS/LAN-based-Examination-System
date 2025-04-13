@@ -299,6 +299,14 @@ class ExamModel {
     return await sqlQuery(query, [examId]);
   }
 
+  async expireExam(examId, enable) {
+    await this.createExamTable();
+    const query = `UPDATE exams SET is_expired = ${
+      enable ? 0 : 1
+    } WHERE id = ? LIMIT 1`;
+    return await sqlQuery(query, [examId]);
+  }
+
   async addExam(userId, examData) {
     await this.createExamTable();
     const query = `INSERT INTO exams (subject, department, year, label, description, duration_hours, duration_minutes, start_time, examiner_id) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?)`;
