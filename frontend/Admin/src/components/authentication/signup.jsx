@@ -21,9 +21,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useMutation } from "@tanstack/react-query";
 import { useMainStore } from "@/states/store";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 
 const schema = Joi.object({
   lastname: Joi.string().label("Last Name").required(),
@@ -53,7 +54,9 @@ export default function Page({ setForm }) {
     };
     try {
       await signup(user);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const {
@@ -74,6 +77,7 @@ export default function Page({ setForm }) {
       useMainStore.getState().setUser(data.user);
       useMainStore.getState().setIsLoggedIn(true);
       useMainStore.getState().setIsLoading(true);
+      useMainStore.getState().initializeSocket(data.user);
       setTimeout(() => {
         useMainStore.getState().setIsLoading(false);
       }, 800);
@@ -245,3 +249,5 @@ export default function Page({ setForm }) {
     </div>
   );
 }
+
+Page.propTypes = { setForm: PropTypes.func };

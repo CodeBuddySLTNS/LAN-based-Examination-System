@@ -9,17 +9,28 @@ import {
   Map,
   MonitorCog,
   PieChart,
-  School,
 } from "lucide-react";
+import { io } from "socket.io-client";
 
-export const useMainStore = create((set) => ({
+export const useMainStore = create((set, get) => ({
   user: {},
+  socket: null,
   isLoading: true,
   isLoggedIn: false,
 
   setIsLoading: (status) => set({ isLoading: status }),
   setIsLoggedIn: (status) => set({ isLoggedIn: status }),
   setUser: (user) => set({ user }),
+  initializeSocket: (query) => {
+    if (get().socket) get().socket.disconnect();
+
+    const socket = io(
+      config.isProduction ? config.productionServer : config.developmentServer,
+      { query: query || get().user }
+    );
+
+    set({ socket });
+  },
 }));
 
 export const useSidebarStore = create((set) => ({

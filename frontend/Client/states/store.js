@@ -37,7 +37,7 @@ export const useSocketStore = create(
           ? config.productionServer
           : config.developmentServer;
 
-        const socket = io(url, { query: query });
+        const socket = io(url, { query });
 
         socket.on("connect", () => {
           useMainStore.getState().setIsOnline(true);

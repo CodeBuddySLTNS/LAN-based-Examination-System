@@ -18,16 +18,21 @@ const onconnect = ({ socket, activeUsers }) => {
   }
 };
 
-const startExam = ({ socket, activeUsers, data }) => {
+const startExam = async ({ socket, activeUsers, data }) => {
+  console.log("exam started:", data);
+  const examId = data?.exam?.id;
+  const endTime =
+    Date.now() +
+    (data?.exam?.duration_hours * 60 + data?.exam?.duration_minutes) *
+      60 *
+      1000;
+  await createSession(examId, { examId, endTime });
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );
-
-  console.log(activeUsers[userId].name + " is taking exam on examId: " + data);
 };
 
 const takeExam = async ({ socket, activeUsers, data }) => {
-  // await createSession(12, { examId: 12, endTime: Date.now() });
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );

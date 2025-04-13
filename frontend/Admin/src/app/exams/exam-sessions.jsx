@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Spinner } from "@/components/ui/spinner";
 import { Axios2 } from "@/lib/utils";
+import { useMainStore } from "@/states/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
@@ -10,6 +11,7 @@ import { Link } from "react-router-dom";
 
 const ExamSessions = () => {
   const [startId, setStartId] = useState(null);
+  const socket = useMainStore((state) => state.socket);
   const queryClient = useQueryClient();
 
   const handleAction = (row) => {
@@ -17,6 +19,10 @@ const ExamSessions = () => {
       setStartId(row?.original?.id);
       startExam({
         examId: row?.original?.id,
+        stop: row?.original?.is_started,
+      });
+      socket.emit("startExam", {
+        exam: row?.original,
         stop: row?.original?.is_started,
       });
     } catch (e) {

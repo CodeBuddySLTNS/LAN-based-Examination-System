@@ -2,17 +2,12 @@ import { useMainStore } from "./states/store";
 
 import Layout from "./app/layout/page";
 import Login from "./app/authentication/page";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useParams,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./app/dashboard/page";
 import Accounts from "./app/accounts/page";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Axios, Axios2 } from "./lib/utils";
+import { Axios2 } from "./lib/utils";
 import AddAccount from "./app/accounts/add-account";
 import Questions from "./app/questions/page";
 import AddQuestion from "./app/questions/add-question";
@@ -43,6 +38,7 @@ function App() {
     if (data) {
       useMainStore.getState().setUser(data.user);
       useMainStore.getState().setIsLoggedIn(true);
+      useMainStore.getState().initializeSocket(data.user);
     }
   }, [data]);
 

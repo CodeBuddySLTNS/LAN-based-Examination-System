@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Axios, Axios2 } from "@/lib/utils";
+import { Axios2 } from "@/lib/utils";
 import { useMainStore } from "@/states/store";
 import { useMutation } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
-import React from "react";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -22,7 +23,9 @@ export default function Page({ setForm }) {
   const onSubmit = async (data) => {
     try {
       await login(data);
-    } catch (error) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const {
@@ -41,12 +44,13 @@ export default function Page({ setForm }) {
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       localStorage.setItem("token", data.token);
       useMainStore.getState().setUser(data.user);
       useMainStore.getState().setIsLoggedIn(true);
       useMainStore.getState().setIsLoading(true);
+      useMainStore.getState().initializeSocket(data.user);
       setTimeout(() => {
         useMainStore.getState().setIsLoading(false);
       }, 800);
@@ -132,3 +136,5 @@ export default function Page({ setForm }) {
     </div>
   );
 }
+
+Page.propTypes = { setForm: PropTypes.func };

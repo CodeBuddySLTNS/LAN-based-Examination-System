@@ -17,11 +17,6 @@ const socketConnection = (server) => {
       handler.startExam({ socket, activeUsers, data })
     );
 
-    // handle start exam event
-    socket.on("startExam", (data) =>
-      handler.startExam({ socket, activeUsers, data })
-    );
-
     // handle exam event
     socket.on("takeExam", (data) =>
       handler.takeExam({ socket, activeUsers, data })
