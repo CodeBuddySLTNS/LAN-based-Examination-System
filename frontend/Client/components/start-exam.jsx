@@ -176,6 +176,7 @@ const StartExam = ({
     if (socket) {
       socket.on("examStatus", (status) => {
         setEndTime(status.endTime);
+        console.log(status);
       });
     }
 
@@ -198,7 +199,8 @@ const StartExam = ({
   }, []);
 
   const countdownRenderer = ({ hours, minutes, seconds }) => {
-    const OneMinuteLeft = () => (minutes < 1 ? "text-red-500" : "");
+    const OneMinuteLeft = () =>
+      hours < 1 && minutes < 1 ? "text-red-500" : "";
     return (
       <View className="items-center p-4 rounded-md bg-gray-50 elevation">
         <Text className="font-Nunito-SemiBold text-07 mb-1">Time Left:</Text>

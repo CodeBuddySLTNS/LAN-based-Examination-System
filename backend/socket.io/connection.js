@@ -14,22 +14,22 @@ const socketConnection = (server) => {
 
     // handle start exam event
     socket.on("startExam", (data) =>
-      handler.startExam({ socket, activeUsers, data })
+      handler.startExam({ io, socket, activeUsers, data })
     );
 
     // handle exam event
     socket.on("takeExam", (examId) =>
-      handler.takeExam({ socket, activeUsers, examId })
+      handler.takeExam({ io, socket, activeUsers, examId })
     );
 
     // handle exam progress event
     socket.on("examProgress", (data) =>
-      handler.examProgress({ socket, activeUsers, data })
+      handler.examProgress({ io, socket, activeUsers, data })
     );
 
     // handle finish exam event
     socket.on("finishExam", (data) =>
-      handler.finishExam({ socket, activeUsers, data })
+      handler.finishExam({ io, socket, activeUsers, data })
     );
 
     // handle user disconnected

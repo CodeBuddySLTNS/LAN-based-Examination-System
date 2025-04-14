@@ -19,21 +19,24 @@ const onconnect = ({ socket, activeUsers }) => {
 };
 
 const startExam = async ({ socket, activeUsers, data }) => {
-  console.log(data?.stop ? "exam stopped" : "exam started");
   const examId = data?.exam?.id;
   const endTime =
     Date.now() +
     (data?.exam?.duration_hours * 60 + data?.exam?.duration_minutes) *
       60 *
       1000;
-  await createSession(examId, { examId, endTime });
-  console.log(await getSession(examId));
+  await createSession(examId, {
+    examId,
+    endTime,
+    examinerId: data?.exam?.examiner_id,
+  });
+  console.log(data);
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );
 };
 
-const takeExam = async ({ socket, activeUsers, examId }) => {
+const takeExam = async ({ io, socket, activeUsers, examId }) => {
   const session = await getSession(examId);
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
@@ -43,7 +46,10 @@ const takeExam = async ({ socket, activeUsers, examId }) => {
     activeUsers[userId].name + " is taking exam on examId: " + examId,
     session
   );
+  // send to the mobile app (students)
   socket.emit("examStatus", session);
+  // send to the web app (faculty)
+  io.emit("userTakingExam", activeUsers[userId]);
 };
 
 const examProgress = ({ socket, activeUsers, data }) => {
