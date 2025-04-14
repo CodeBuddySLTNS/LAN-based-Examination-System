@@ -42,7 +42,7 @@ export default function DrawerLayout() {
         />
 
         <Drawer.Screen
-          name="exam-schedules"
+          name="exam-history"
           options={{
             title: "Exam Schedules",
             drawerLabel: "Exam Schedules",
@@ -51,7 +51,7 @@ export default function DrawerLayout() {
             ),
           }}
           listeners={{
-            drawerItemPress: () => router.replace("/(drawer)/exam-schedules"),
+            drawerItemPress: () => router.replace("/(drawer)/exam-history"),
           }}
         />
 
@@ -65,7 +65,7 @@ export default function DrawerLayout() {
             ),
           }}
           listeners={{
-            drawerItemPress: () => router.replace("/(drawer)/exam-schedules"),
+            drawerItemPress: () => router.replace("/(drawer)/exam-history"),
           }}
         />
       </Drawer>

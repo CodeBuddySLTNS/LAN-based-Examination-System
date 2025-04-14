@@ -42,7 +42,7 @@ const ExamSchedulesPage = () => {
         ListHeaderComponent={
           <View className="p-4">
             <View>
-              <Text>Exam Schedules</Text>
+              <Text>Exam History</Text>
             </View>
           </View>
         }
