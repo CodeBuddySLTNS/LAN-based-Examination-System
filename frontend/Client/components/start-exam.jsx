@@ -10,11 +10,23 @@ import { eq } from "drizzle-orm";
 import { useMutation } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { Icon } from "./ui/icon";
-import { ChartNoAxesColumn, House } from "lucide-react-native";
+import {
+  ChartNoAxesColumn,
+  House,
+  SendHorizontal,
+  Upload,
+} from "lucide-react-native";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import Countdown, { zeroPad } from "react-countdown";
 import ShowResults from "./show-results";
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+} from "./ui/alert-dialog";
 
 const StartExam = ({
   examId,
@@ -29,10 +41,11 @@ const StartExam = ({
   const drizzleDb = drizzle(db);
   const countdownRef = useRef(null);
   const user = useMainStore((state) => state.user);
+  const socket = useSocketStore((state) => state.socket);
   const addCompletedExam = useMainStore((state) => state.addCompletedExam);
   const [endTime, setEndTime] = useState(Date.now() + duration);
+  const [outOfTime, setOutOfTime] = useState({ status: false, show: false });
   const [answer, setAnswer] = useState({ status: false, data: null });
-  const socket = useSocketStore((state) => state.socket);
   const [results, setResults] = useState({
     status: false,
     loading: true,
@@ -46,11 +59,12 @@ const StartExam = ({
       setResults((prev) => ({ ...prev, loading: false }));
     },
     onSuccess: (data) => {
+      console.log(data);
       drizzleDb.delete(response).execute();
       SecureStore.deleteItemAsync("takingExam");
       addCompletedExam({ exam_id: examId });
       setStatus((prev) => ({ ...prev, submitted: true }));
-      setResults((prev) => ({ ...prev, loading: false, data, data }));
+      setResults((prev) => ({ ...prev, loading: false, data }));
     },
   });
 
@@ -116,6 +130,15 @@ const StartExam = ({
     }
   }
 
+  const handleOutOfTime = async () => {
+    if (status.submitted) {
+      setResults((prev) => ({ ...prev, status: true }));
+      return;
+    }
+    setResults((prev) => ({ ...prev, status: true }));
+    submitExam();
+  };
+
   const returnHome = () => {
     setStatus({
       takingExam: false,
@@ -150,6 +173,20 @@ const StartExam = ({
   };
 
   useEffect(() => {
+    if (socket) {
+      socket.on("examStatus", (status) => {
+        setEndTime(status.endTime);
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off("examStatus");
+      }
+    };
+  }, [socket]);
+
+  useEffect(() => {
     const savedProgress = SecureStore.getItem("takingExam");
     if (savedProgress) {
       const takingExam = JSON.parse(savedProgress);
@@ -160,27 +197,28 @@ const StartExam = ({
     }
   }, []);
 
-  const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
+  const countdownRenderer = ({ hours, minutes, seconds }) => {
+    const OneMinuteLeft = () => (minutes < 1 ? "text-red-500" : "");
     return (
       <View className="items-center p-4 rounded-md bg-gray-50 elevation">
         <Text className="font-Nunito-SemiBold text-07 mb-1">Time Left:</Text>
         <HStack className="gap-2">
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">
+            <Text className={`font-Nunito-Bold text-3xl ${OneMinuteLeft()}`}>
               {zeroPad(hours, 2)}
             </Text>
             <Text className="font-Nunito-Bold text-sm">HH</Text>
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">
+            <Text className={`font-Nunito-Bold text-3xl ${OneMinuteLeft()}`}>
               {zeroPad(minutes, 2)}
             </Text>
             <Text className="font-Nunito-Bold text-sm">MM</Text>
           </View>
           <Text className="font-Nunito-Bold text-2xl">:</Text>
           <View className="items-center">
-            <Text className="font-Nunito-Bold text-3xl">
+            <Text className={`font-Nunito-Bold text-3xl ${OneMinuteLeft()}`}>
               {zeroPad(seconds, 2)}
             </Text>
             <Text className="font-Nunito-Bold text-sm">SS</Text>
@@ -192,20 +230,49 @@ const StartExam = ({
 
   return (
     <VStack className="flex-1 p-4 gap-4">
+      <AlertDialog
+        isOpen={outOfTime.show}
+        onClose={() => setOutOfTime((prev) => ({ ...prev, show: false }))}
+      >
+        <AlertDialogBackdrop />
+        <AlertDialogContent>
+          <AlertDialogBody>
+            <Text className="font-Nunito-Bold text-center text-xl">
+              Oops! You ran out of time! Please submit your answers.
+            </Text>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <HStack className="flex-1 justify-center">
+              <Pressable
+                className="flex-row gap-2 items-center p-2 px-3 mt-3 rounded-md bg-primary"
+                onPress={() => {
+                  setOutOfTime((prev) => ({ ...prev, show: false }));
+                  handleOutOfTime();
+                }}
+              >
+                <Icon size="lg" as={Upload} color="white" />
+                <Text className="font-Nunito-Bold text-white">Submit</Text>
+              </Pressable>
+            </HStack>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <ShowResults
         result={results}
         setResults={setResults}
         setStatus={setStatus}
       />
 
-      <View>
-        <Countdown
-          ref={countdownRef}
-          date={endTime}
-          renderer={countdownRenderer}
-          zeroPadTime={2}
-        />
-      </View>
+      <Countdown
+        ref={countdownRef}
+        date={endTime}
+        renderer={countdownRenderer}
+        zeroPadTime={2}
+        onComplete={() =>
+          setOutOfTime((prev) => ({ status: true, show: true }))
+        }
+      />
 
       <View className="flex-1 gap-3.5">
         <View className="flex-1">
@@ -237,27 +304,46 @@ const StartExam = ({
         </View>
 
         <View className="flex-row gap-2">
-          <Pressable
-            className={`flex-1 p-3 elevation rounded-md ${
-              answer.status ? "bg-primary" : "bg-gray-300"
-            }`}
-            onPress={handleNext}
-            disabled={!answer.status}
-          >
-            <View className="flex-row gap-1.5 items-center justify-center">
-              {status.completed && (
-                <Icon color="white" as={ChartNoAxesColumn} size="lg" />
-              )}
-              <Text className="font-Nunito-SemiBold text-xl text-white">
-                {status.completed
-                  ? "Results"
-                  : status.count + 1 === questions?.length
-                  ? "Finish Exam"
-                  : "Next"}
-              </Text>
-            </View>
-          </Pressable>
-          {status.completed && (
+          {outOfTime.status ? (
+            <Pressable
+              className={`flex-1 p-3 elevation rounded-md bg-primary`}
+              onPress={handleOutOfTime}
+            >
+              <View className="flex-row gap-2 items-center justify-center">
+                <Icon
+                  color="white"
+                  as={status.submitted ? ChartNoAxesColumn : Upload}
+                  size="xl"
+                />
+                <Text className="font-Nunito-SemiBold text-xl text-white">
+                  {status.submitted ? "Results" : "Submit"}
+                </Text>
+              </View>
+            </Pressable>
+          ) : (
+            <Pressable
+              className={`flex-1 p-3 elevation rounded-md ${
+                answer.status ? "bg-primary" : "bg-gray-300"
+              }`}
+              onPress={handleNext}
+              disabled={!answer.status}
+            >
+              <View className="flex-row gap-1.5 items-center justify-center">
+                {status.completed && (
+                  <Icon color="white" as={ChartNoAxesColumn} size="lg" />
+                )}
+                <Text className="font-Nunito-SemiBold text-xl text-white">
+                  {status.completed
+                    ? "Results"
+                    : status.count + 1 === questions?.length
+                    ? "Finish Exam"
+                    : "Next"}
+                </Text>
+              </View>
+            </Pressable>
+          )}
+
+          {(status.completed || status.submitted) && (
             <Pressable
               className="flex-1 p-3 elevation rounded-md bg-primary"
               onPress={returnHome}

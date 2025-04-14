@@ -18,8 +18,8 @@ const socketConnection = (server) => {
     );
 
     // handle exam event
-    socket.on("takeExam", (data) =>
-      handler.takeExam({ socket, activeUsers, data })
+    socket.on("takeExam", (examId) =>
+      handler.takeExam({ socket, activeUsers, examId })
     );
 
     // handle exam progress event

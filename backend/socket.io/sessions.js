@@ -1,5 +1,6 @@
-const fs = require("fs").promises;
+const fs = require("fs/promises");
 const path = require("path");
+const CustomError = require("../utils/customError");
 
 const createSession = async (examId, sessionData) => {
   const sessionPath = path.join(__dirname, "temp", `exam-${examId}.json`);
@@ -10,4 +11,13 @@ const createSession = async (examId, sessionData) => {
   }
 };
 
-module.exports = { createSession };
+const getSession = async (examId) => {
+  try {
+    const sessionPath = path.join(__dirname, "temp", `exam-${examId}.json`);
+    return JSON.parse(await fs.readFile(sessionPath, "utf-8"));
+  } catch (error) {
+    return null;
+  }
+};
+
+module.exports = { createSession, getSession };

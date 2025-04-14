@@ -1,4 +1,4 @@
-const { createSession } = require("./sessions");
+const { createSession, getSession } = require("./sessions");
 
 const onconnect = ({ socket, activeUsers }) => {
   const query = socket.handshake.query;
@@ -19,7 +19,7 @@ const onconnect = ({ socket, activeUsers }) => {
 };
 
 const startExam = async ({ socket, activeUsers, data }) => {
-  console.log("exam started:", data);
+  console.log(data?.stop ? "exam stopped" : "exam started");
   const examId = data?.exam?.id;
   const endTime =
     Date.now() +
@@ -27,17 +27,23 @@ const startExam = async ({ socket, activeUsers, data }) => {
       60 *
       1000;
   await createSession(examId, { examId, endTime });
+  console.log(await getSession(examId));
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );
 };
 
-const takeExam = async ({ socket, activeUsers, data }) => {
+const takeExam = async ({ socket, activeUsers, examId }) => {
+  const session = await getSession(examId);
   const userId = Object.keys(activeUsers).find(
     (id) => activeUsers[id].socketId === socket.id
   );
 
-  console.log(activeUsers[userId].name + " is taking exam on examId: " + data);
+  console.log(
+    activeUsers[userId].name + " is taking exam on examId: " + examId,
+    session
+  );
+  socket.emit("examStatus", session);
 };
 
 const examProgress = ({ socket, activeUsers, data }) => {

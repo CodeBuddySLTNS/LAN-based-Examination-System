@@ -51,8 +51,8 @@ const ShowResults = ({ result, setResults, setStatus }) => {
               <View className="p-2 items-center rounded bg-gray-200">
                 <Text className="font-Nunito-SemiBold">Your Score:</Text>
                 <Text className="font-Nunito-Bold text-2xl">
-                  {result.data?.total_score || "00"} /{" "}
-                  {result.data?.max_score || "00"}
+                  {result.data?.total_score || "0"} /{" "}
+                  {result.data?.max_score || "0"}
                 </Text>
               </View>
             </ModalBody>

@@ -24,6 +24,7 @@ export const ExamCard = ({ item, setStatus }) => {
     setRefreshing(true);
     await queryClient.invalidateQueries(["exam"]);
     setRefreshing(false);
+    SecureStore.deleteItemAsync("takingExam");
   };
 
   const checkIfCompleted = () => {
