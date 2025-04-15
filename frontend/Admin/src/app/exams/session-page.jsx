@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 
 const SessionPage = () => {
   const { sessionId } = useParams();
+  const user = useMainStore((state) => state.user);
   const socket = useMainStore((state) => state.socket);
   const [session, setSession] = useState({});
   const [usersTakingExam, setUsersTakingExam] = useState([]);
@@ -18,9 +19,16 @@ const SessionPage = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("userTakingExam", (user) => {
-        setUsersTakingExam((prev) => [...prev, user]);
-        console.log(user.name, "is taking exam");
+      socket.emit("getUsersTakingExam", sessionId);
+      socket.on("allUsersTakingExam", (users) => setUsersTakingExam(users));
+      socket.on("userTakingExam", (event) => {
+        if (
+          event.examinerId === user.id &&
+          event.examId === Number(sessionId)
+        ) {
+          setUsersTakingExam((prev) => [...prev, event.user]);
+          console.log(event.user.name, "is taking exam");
+        }
       });
     }
     return () => {
@@ -28,7 +36,7 @@ const SessionPage = () => {
         socket.off("userTakingExam");
       }
     };
-  }, [socket, usersTakingExam]);
+  }, [socket, sessionId, user, usersTakingExam]);
 
   useEffect(() => {
     if (data) {
@@ -55,11 +63,24 @@ const SessionPage = () => {
 
       <div className="w-full grid md:grid-cols-2 px-6 mt-6 gap-5">
         <Card className="h-[300px] max-h-[300px] py-2 px-5 gap-0">
-          <div>Students taking exam</div>
+          <div className="grid grid-cols-[1fr_65px_65px] gap-3 text-center">
+            <p className="text-left">Students taking exam</p>
+            <p className="">Progress</p>
+            <p className="">Status</p>
+          </div>
           <Separator className="my-1.5" />
           <div className="text-sm font-light">
             {usersTakingExam.length > 0 ? (
-              usersTakingExam.map((user) => <p key={user.id}>{user.name}</p>)
+              usersTakingExam.map((user, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-[1fr_65px_65px] gap-3 text-center"
+                >
+                  <p className="text-left">{user.name}</p>
+                  <p>{user.progress}</p>
+                  <p>{user.completed ? "completed" : "ongoing"}</p>
+                </div>
+              ))
             ) : (
               <p>No Students taking this exam.</p>
             )}

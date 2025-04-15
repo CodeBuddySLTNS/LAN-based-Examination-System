@@ -65,6 +65,7 @@ const StartExam = ({
       addCompletedExam({ exam_id: examId });
       setStatus((prev) => ({ ...prev, submitted: true }));
       setResults((prev) => ({ ...prev, loading: false, data }));
+      socket.emit("finishExam", { examId, userId: String(user.id) });
     },
   });
 

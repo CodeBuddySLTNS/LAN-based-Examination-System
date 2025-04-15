@@ -1,4 +1,10 @@
-const { createSession, getSession } = require("./sessions");
+const {
+  createSession,
+  getSession,
+  addUserTakingExam,
+  getAllUsersTakingExam,
+  updateUsersTakingExam,
+} = require("./sessions");
 
 const onconnect = ({ socket, activeUsers }) => {
   const query = socket.handshake.query;
@@ -18,24 +24,6 @@ const onconnect = ({ socket, activeUsers }) => {
   }
 };
 
-const startExam = async ({ socket, activeUsers, data }) => {
-  const examId = data?.exam?.id;
-  const endTime =
-    Date.now() +
-    (data?.exam?.duration_hours * 60 + data?.exam?.duration_minutes) *
-      60 *
-      1000;
-  await createSession(examId, {
-    examId,
-    endTime,
-    examinerId: data?.exam?.examiner_id,
-  });
-  console.log(data);
-  const userId = Object.keys(activeUsers).find(
-    (id) => activeUsers[id].socketId === socket.id
-  );
-};
-
 const takeExam = async ({ io, socket, activeUsers, examId }) => {
   const session = await getSession(examId);
   const userId = Object.keys(activeUsers).find(
@@ -46,10 +34,20 @@ const takeExam = async ({ io, socket, activeUsers, examId }) => {
     activeUsers[userId].name + " is taking exam on examId: " + examId,
     session
   );
+
+  const user = {
+    id: activeUsers[userId].id,
+    name: activeUsers[userId].name,
+    completed: false,
+    progress: 0,
+  };
+
+  await addUserTakingExam(examId, user);
+
   // send to the mobile app (students)
   socket.emit("examStatus", session);
   // send to the web app (faculty)
-  io.emit("userTakingExam", activeUsers[userId]);
+  io.emit("userTakingExam", { ...session, user: activeUsers[userId] });
 };
 
 const examProgress = ({ socket, activeUsers, data }) => {
@@ -62,8 +60,11 @@ const examProgress = ({ socket, activeUsers, data }) => {
   );
 };
 
-const finishExam = ({ socket, activeUsers, data }) => {
+const finishExam = async ({ socket, activeUsers, data }) => {
   console.log(data);
+  await updateUsersTakingExam(data.examId, data.userId);
+  const users = await getAllUsersTakingExam(data.examId);
+  socket.emit("allUsersTakingExam", users);
 };
 
 const disconnect = ({ socket, activeUsers }) => {
@@ -77,7 +78,6 @@ const disconnect = ({ socket, activeUsers }) => {
 
 module.exports = {
   onconnect,
-  startExam,
   takeExam,
   examProgress,
   finishExam,

@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const handler = require("./events-handler");
+const webappHandler = require("./webapp-event-listeners");
 
 const activeUsers = new Object();
 
@@ -12,10 +13,19 @@ const socketConnection = (server) => {
     // handle connection event
     handler.onconnect({ socket, activeUsers });
 
+    /* For Web App (Faculty) event listeners */
+
     // handle start exam event
     socket.on("startExam", (data) =>
-      handler.startExam({ io, socket, activeUsers, data })
+      webappHandler.startExam({ io, socket, activeUsers, data })
     );
+
+    // for fetching the current users taking exam
+    socket.on("getUsersTakingExam", (examId) =>
+      webappHandler.usersTakingExam({ io, socket, activeUsers, examId })
+    );
+
+    /* For Mobile App (Students) event listeners */
 
     // handle exam event
     socket.on("takeExam", (examId) =>
