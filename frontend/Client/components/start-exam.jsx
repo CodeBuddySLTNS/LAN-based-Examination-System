@@ -90,7 +90,15 @@ const StartExam = ({
     } catch (error) {
       console.log(error);
     }
+
     setAnswer({ status: true, data: answer });
+    if (status.count + 1 === questions.length) {
+      socket.emit("examProgress", {
+        examId,
+        userId: String(user.id),
+        progress: status.count + 2,
+      });
+    }
   };
 
   const handleNext = async () => {
@@ -111,13 +119,11 @@ const StartExam = ({
       return;
     }
 
-    socket.emit("examProgress", { examId, progress: status.count + 2 });
-
     setAnswer({ status: false, data: null });
     setStatus((prev) => ({ ...prev, count: prev.count + 1 }));
   };
 
-  async function submitExam() {
+  const submitExam = async () => {
     try {
       await submit({
         examId,
@@ -129,18 +135,9 @@ const StartExam = ({
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const handleOutOfTime = async () => {
-    if (status.submitted) {
-      setResults((prev) => ({ ...prev, status: true }));
-      return;
-    }
-    setResults((prev) => ({ ...prev, status: true }));
-    submitExam();
   };
 
-  const returnHome = () => {
+  function returnHome() {
     setStatus({
       takingExam: false,
       count: 0,
@@ -148,9 +145,18 @@ const StartExam = ({
       submitted: false,
     });
     router.replace("/(drawer)/home");
-  };
+  }
 
-  const renderChoices = (array) => {
+  function handleOutOfTime() {
+    if (status.submitted) {
+      setResults((prev) => ({ ...prev, status: true }));
+      return;
+    }
+    setResults((prev) => ({ ...prev, status: true }));
+    submitExam();
+  }
+
+  function renderChoices(array) {
     const choices = array || [];
     return (
       <VStack className="gap-3">
@@ -171,7 +177,7 @@ const StartExam = ({
         ))}
       </VStack>
     );
-  };
+  }
 
   useEffect(() => {
     if (socket) {

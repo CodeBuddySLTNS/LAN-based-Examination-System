@@ -1,6 +1,13 @@
 {
   "examId": 3,
-  "endTime": 1744686516570,
+  "endTime": 1744732514671,
   "examinerId": 4,
-  "usersTakingExam": []
+  "usersTakingExam": [
+    {
+      "id": "5",
+      "name": "Dela Cruz, Juan S.",
+      "completed": false,
+      "progress": 5
+    }
+  ]
 }

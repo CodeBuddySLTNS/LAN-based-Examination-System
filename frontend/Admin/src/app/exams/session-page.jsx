@@ -70,7 +70,7 @@ const SessionPage = () => {
           </div>
           <Separator className="my-1.5" />
           <div className="text-sm font-light">
-            {usersTakingExam.length > 0 ? (
+            {usersTakingExam?.length > 0 ? (
               usersTakingExam.map((user, index) => (
                 <div
                   key={index}

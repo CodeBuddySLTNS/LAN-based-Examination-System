@@ -39,7 +39,7 @@ const takeExam = async ({ io, socket, activeUsers, examId }) => {
     id: activeUsers[userId].id,
     name: activeUsers[userId].name,
     completed: false,
-    progress: 0,
+    progress: 1,
   };
 
   await addUserTakingExam(examId, user);
@@ -50,19 +50,19 @@ const takeExam = async ({ io, socket, activeUsers, examId }) => {
   io.emit("userTakingExam", { ...session, user: activeUsers[userId] });
 };
 
-const examProgress = ({ socket, activeUsers, data }) => {
-  const userId = Object.keys(activeUsers).find(
-    (id) => activeUsers[id].socketId === socket.id
+const examProgress = async ({ socket, activeUsers, data }) => {
+  await updateUsersTakingExam(
+    data.examId,
+    data.userId,
+    "progress",
+    data.progress
   );
-
-  console.log(
-    `${activeUsers[userId].name} is on number ${data.progress} at examId: ${data.examId}`
-  );
+  const users = await getAllUsersTakingExam(data.examId);
+  socket.emit("allUsersTakingExam", users);
 };
 
 const finishExam = async ({ socket, activeUsers, data }) => {
-  console.log(data);
-  await updateUsersTakingExam(data.examId, data.userId);
+  await updateUsersTakingExam(data.examId, data.userId, "completed", true);
   const users = await getAllUsersTakingExam(data.examId);
   socket.emit("allUsersTakingExam", users);
 };

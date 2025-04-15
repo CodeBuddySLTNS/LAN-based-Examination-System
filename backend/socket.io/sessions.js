@@ -16,6 +16,7 @@ const getSession = async (examId) => {
     const sessionPath = path.join(__dirname, "temp", `exam-${examId}.json`);
     return JSON.parse(await fs.readFile(sessionPath, "utf-8"));
   } catch (error) {
+    console.log("Error getting session:", error);
     return null;
   }
 };
@@ -39,11 +40,8 @@ const addUserTakingExam = async (examId, user) => {
     });
 
     if (notFound) {
-      console.log("notfound");
       session.usersTakingExam.push(user);
       await fs.writeFile(sessionPath, JSON.stringify(session, null, 2));
-    } else {
-      console.log("found");
     }
   } catch (error) {
     console.log("Error Adding UserTakingExam:", error);
@@ -51,17 +49,24 @@ const addUserTakingExam = async (examId, user) => {
   }
 };
 
-const updateUsersTakingExam = async (examId, userId, property, data) => {
+const updateUsersTakingExam = async (examId, userId, property, value) => {
   try {
     if (property) {
       const sessionPath = path.join(__dirname, "temp", `exam-${examId}.json`);
       const session = JSON.parse(await fs.readFile(sessionPath, "utf-8"));
 
       switch (property) {
-        case "usersTakingExam":
-          session.usersTakingExam = session.usersTakingExam.filter(
-            (u) => u.id !== userId
-          );
+        case "progress":
+          session.usersTakingExam = session.usersTakingExam.map((user) => {
+            if (user.id === userId) {
+              return { ...user, progress: value };
+            }
+            return user;
+          });
+          break;
+
+        case "completed":
+          session.completed = value || session.completed;
           break;
       }
 
