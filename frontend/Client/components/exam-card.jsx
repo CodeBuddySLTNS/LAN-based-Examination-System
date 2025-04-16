@@ -24,6 +24,7 @@ export const ExamCard = ({ item, setStatus }) => {
     setRefreshing(true);
     await queryClient.invalidateQueries(["exam"]);
     setRefreshing(false);
+    // SecureStore.deleteItemAsync("takingExam");
   };
 
   const checkIfCompleted = () => {
@@ -44,13 +45,17 @@ export const ExamCard = ({ item, setStatus }) => {
     takingExam.status && takingExam.examId !== item.id;
 
   const takeExam = async () => {
-    if (!takingExam.status) {
+    const takingExamSync = JSON.parse(
+      SecureStore.getItem("takingExam") || "{}"
+    );
+    if (!takingExamSync.status) {
       await SecureStore.setItemAsync(
         "takingExam",
         JSON.stringify({
           examId: item.id,
           subject: item.subject,
           status: true,
+          completed: false,
           progress: 0,
         })
       );
