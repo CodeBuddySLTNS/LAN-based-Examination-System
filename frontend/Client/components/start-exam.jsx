@@ -2,20 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
-import { useMainStore, useSocketStore } from "@/states/store";
+import { useMainStore, useSocketStore, useTakeExamStore } from "@/states/store";
 import { useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { response } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import { Icon } from "./ui/icon";
-import {
-  ChartNoAxesColumn,
-  House,
-  SendHorizontal,
-  Upload,
-} from "lucide-react-native";
+import { ChartNoAxesColumn, House, Upload } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import Countdown, { zeroPad } from "react-countdown";
@@ -28,48 +23,41 @@ import {
   AlertDialogFooter,
 } from "./ui/alert-dialog";
 
-const StartExam = ({
-  examId,
-  subject,
-  duration,
-  questions,
-  status,
-  setStatus,
-}) => {
+const StartExam = ({ examId, subject, duration, questions }) => {
   const router = useRouter();
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const countdownRef = useRef(null);
   const user = useMainStore((state) => state.user);
   const socket = useSocketStore((state) => state.socket);
-  const addCompletedExam = useMainStore((state) => state.addCompletedExam);
+  const resetStatus = useTakeExamStore((state) => state.resetStatus);
   const [endTime, setEndTime] = useState(Date.now() + duration);
   const [outOfTime, setOutOfTime] = useState({ status: false, show: false });
-  const [answer, setAnswer] = useState({ status: false, data: null });
-  const [results, setResults] = useState({
-    status: false,
-    loading: true,
-    data: null,
-  });
+  const { status, setStatus, answer, results, setAnswer, setResults } =
+    useTakeExamStore();
 
   const { mutateAsync: submit } = useMutation({
     mutationFn: Axios2("/exams/submit", "POST"),
     onError: (e) => {
       console.log(e.message);
-      setResults((prev) => ({ ...prev, loading: false }));
+      setResults({ loading: false });
     },
     onSuccess: (data) => {
       console.log(data);
       drizzleDb.delete(response).execute();
       SecureStore.deleteItemAsync("takingExam");
-      addCompletedExam({ exam_id: examId });
-      setStatus((prev) => ({ ...prev, submitted: true }));
-      setResults((prev) => ({ ...prev, loading: false, data }));
+      useMainStore.getState().refreshUser();
+      setStatus({ submitted: true });
+      setResults({ loading: false, data });
       socket.emit("finishExam", { examId, userId: String(user.id) });
     },
   });
 
   const handleAnswer = async (answer) => {
+    console.log(
+      "responses",
+      await drizzleDb.select().from(response).where(eq(response.examId, examId))
+    );
     try {
       await SecureStore.setItemAsync(
         "takingExam",
@@ -77,10 +65,14 @@ const StartExam = ({
           status: true,
           examId,
           subject,
-          progress: status.count + 1,
+          completed: status.count + 1 === questions.length,
+          progress:
+            status.count + 1 === questions.length
+              ? status.count
+              : status.count + 1,
         })
       );
-
+      setStatus({ completed: status.count + 1 === questions.length });
       await drizzleDb.insert(response).values({
         examId: examId,
         studentId: user.id,
@@ -92,35 +84,31 @@ const StartExam = ({
     }
 
     setAnswer({ status: true, data: answer });
-    if (status.count + 1 === questions.length) {
-      socket.emit("examProgress", {
-        examId,
-        userId: String(user.id),
-        progress: status.count + 2,
-      });
-    }
+    socket.emit("examProgress", {
+      examId,
+      userId: String(user.id),
+      progress:
+        status.count + 1 === questions.length
+          ? status.count + 1
+          : status.count + 2,
+    });
   };
 
   const handleNext = async () => {
     if (status.count + 1 === questions.length) {
       if (status.completed && status.submitted) {
-        setResults((prev) => ({ ...prev, status: true }));
+        setResults({ status: true });
         return;
       }
 
       countdownRef.current?.pause();
-      await SecureStore.setItemAsync(
-        "takingExam",
-        JSON.stringify({ status: true, examId })
-      );
-      setStatus((prev) => ({ ...prev, completed: true }));
-      setResults((prev) => ({ ...prev, status: true }));
+      setResults({ status: true });
       submitExam();
       return;
     }
 
     setAnswer({ status: false, data: null });
-    setStatus((prev) => ({ ...prev, count: prev.count + 1 }));
+    setStatus({ count: status.count + 1 });
   };
 
   const submitExam = async () => {
@@ -138,21 +126,16 @@ const StartExam = ({
   };
 
   function returnHome() {
-    setStatus({
-      takingExam: false,
-      count: 0,
-      completed: false,
-      submitted: false,
-    });
+    resetStatus();
     router.replace("/(drawer)/home");
   }
 
   function handleOutOfTime() {
     if (status.submitted) {
-      setResults((prev) => ({ ...prev, status: true }));
+      setResults({ status: true });
       return;
     }
-    setResults((prev) => ({ ...prev, status: true }));
+    setResults({ status: true });
     submitExam();
   }
 
@@ -164,11 +147,14 @@ const StartExam = ({
           <Pressable
             key={id}
             onPress={() => handleAnswer(choice)}
-            disabled={answer.status}
+            disabled={status.completed || answer.status}
           >
             <Text
               className={`p-4 text-center rounded elevation ${
-                answer.data === choice ? "bg-secondary" : "bg-gray-200"
+                (answer.status && answer.data === choice) ||
+                (status.completed && answer.data === choice)
+                  ? "bg-secondary"
+                  : "bg-gray-200"
               }`}
             >
               {choice}
@@ -183,7 +169,6 @@ const StartExam = ({
     if (socket) {
       socket.on("examStatus", (status) => {
         setEndTime(status.endTime);
-        console.log(status);
       });
     }
 
@@ -198,10 +183,12 @@ const StartExam = ({
     const savedProgress = SecureStore.getItem("takingExam");
     if (savedProgress) {
       const takingExam = JSON.parse(savedProgress);
-      setStatus((prev) => ({
-        ...prev,
-        count: takingExam.progress || prev.count,
-      }));
+      setStatus({
+        count: takingExam.progress || status.count,
+      });
+      if (takingExam.progress && takingExam.progress + 1 === questions.length)
+        countdownRef.current?.pause();
+      if (takingExam.completed) setStatus({ completed: true });
     }
   }, []);
 
@@ -267,11 +254,7 @@ const StartExam = ({
         </AlertDialogContent>
       </AlertDialog>
 
-      <ShowResults
-        result={results}
-        setResults={setResults}
-        setStatus={setStatus}
-      />
+      <ShowResults />
 
       <Countdown
         ref={countdownRef}
@@ -296,7 +279,7 @@ const StartExam = ({
                   Question:
                 </Text>
                 <Text className="pt-1 pb-3 text-xl text-center">
-                  {questions[status.count].question_text}
+                  {questions[status.count]?.question_text}
                 </Text>
               </>
             )}
@@ -304,8 +287,8 @@ const StartExam = ({
           <ScrollView>
             {questions.length !== 0 && (
               <VStack className="flex-1">
-                {questions[status.count].question_type === "multiple_choice"
-                  ? renderChoices(questions[status.count].choices)
+                {questions[status.count]?.question_type === "multiple_choice"
+                  ? renderChoices(questions[status.count]?.choices)
                   : ""}
               </VStack>
             )}
@@ -332,17 +315,17 @@ const StartExam = ({
           ) : (
             <Pressable
               className={`flex-1 p-3 elevation rounded-md ${
-                answer.status ? "bg-primary" : "bg-gray-300"
+                status.completed || answer.status ? "bg-primary" : "bg-gray-300"
               }`}
               onPress={handleNext}
-              disabled={!answer.status}
+              disabled={!answer.status && !status.completed}
             >
               <View className="flex-row gap-1.5 items-center justify-center">
-                {status.completed && (
+                {status.submitted && (
                   <Icon color="white" as={ChartNoAxesColumn} size="lg" />
                 )}
                 <Text className="font-Nunito-SemiBold text-xl text-white">
-                  {status.completed
+                  {status.submitted
                     ? "Results"
                     : status.count + 1 === questions?.length
                     ? "Finish Exam"
@@ -352,7 +335,7 @@ const StartExam = ({
             </Pressable>
           )}
 
-          {(status.completed || status.submitted) && (
+          {status.submitted && (
             <Pressable
               className="flex-1 p-3 elevation rounded-md bg-primary"
               onPress={returnHome}

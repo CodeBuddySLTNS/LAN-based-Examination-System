@@ -1,7 +1,7 @@
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
-import { useMainStore, useSocketStore } from "@/states/store";
+import { useMainStore, useSocketStore, useTakeExamStore } from "@/states/store";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import ShowAlert from "./show-alert";
@@ -10,27 +10,29 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import { response } from "@/db/schema";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const ExamCard = ({ item, setStatus }) => {
+export const ExamCard = ({ item }) => {
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const user = useMainStore((state) => state.user);
   const socket = useSocketStore((state) => state.socket);
+  const setStatus = useTakeExamStore((state) => state.setStatus);
   const queryClient = useQueryClient();
   const takingExam = JSON.parse(SecureStore.getItem("takingExam") || "{}");
-
   const handleRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries(["exam"]);
     setRefreshing(false);
-    // SecureStore.deleteItemAsync("takingExam");
+    SecureStore.deleteItemAsync("takingExam");
   };
 
   const checkIfCompleted = () => {
     let isCompleted = false;
+    console.log(user?.completed_exams);
     if (user?.completed_exams) {
       user.completed_exams.forEach((ce) => {
+        console.log(ce.exam_id === item.id);
         if (ce.exam_id === item.id) return (isCompleted = true);
       });
     }
@@ -60,8 +62,8 @@ export const ExamCard = ({ item, setStatus }) => {
         })
       );
     }
-    drizzleDb.delete(response).execute();
-    setStatus((prev) => ({ ...prev, takingExam: true }));
+
+    setStatus({ takingExam: true });
     socket.emit("takeExam", item.id);
   };
 
@@ -75,6 +77,7 @@ export const ExamCard = ({ item, setStatus }) => {
 
   const proceedStartExam = async () => {
     await SecureStore.deleteItemAsync("takingExam");
+    await drizzleDb.delete(response).execute();
     takeExam();
   };
 

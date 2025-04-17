@@ -15,15 +15,13 @@ export const useMainStore = create(
     setIsOnline: (status) => set({ isOnline: status }),
     setUser: (user) => set({ user }),
     refreshUser: async () => {
-      const updated = await Axios2("/users/user/me")();
-      set({ user: updated.user });
+      try {
+        const updated = await Axios2("/users/user/me")();
+        set({ user: updated.user });
+      } catch (error) {
+        console.error("Failed to refresh user:", error);
+      }
     },
-    addCompletedExam: (exam) =>
-      set((state) => {
-        if (state.user) {
-          state.user.completed_exams.push(exam);
-        }
-      }),
   }))
 );
 
@@ -62,15 +60,17 @@ export const useSocketStore = create(
       }
     },
 
-    refreshSocket: (newQuery, toast) => {
+    refreshSocket: async (newQuery, toast) => {
       const currentSocket = get().socket;
 
       if (currentSocket) {
-        currentSocket.disconnect();
+        await new Promise((resolve) => {
+          currentSocket.on("disconnect", resolve);
+          currentSocket.disconnect();
+        });
       }
 
       set({ socket: null });
-
       get().initializeSocket(newQuery, toast);
     },
 
@@ -83,5 +83,53 @@ export const useSocketStore = create(
 
       set({ socket: null });
     },
+  }))
+);
+
+export const useTakeExamStore = create(
+  immer((set, get) => ({
+    status: {
+      takingExam: false,
+      count: 0,
+      completed: false,
+      submitted: false,
+    },
+    results: {
+      status: false,
+      loading: true,
+      data: null,
+    },
+    answer: { status: false, data: null },
+
+    setStatus: (properties) =>
+      set((state) => {
+        state.status = { ...state.status, ...properties };
+      }),
+    setResults: (properties) =>
+      set((state) => {
+        state.results = { ...state.results, ...properties };
+      }),
+    setAnswer: (properties) =>
+      set((state) => {
+        state.answer = { ...state.answer, ...properties };
+      }),
+
+    resetStatus: () =>
+      set((state) => {
+        state.status = {
+          takingExam: false,
+          count: 0,
+          completed: false,
+          submitted: false,
+        };
+      }),
+    resetResults: () =>
+      set((state) => {
+        state.results = {
+          status: false,
+          loading: true,
+          data: null,
+        };
+      }),
   }))
 );

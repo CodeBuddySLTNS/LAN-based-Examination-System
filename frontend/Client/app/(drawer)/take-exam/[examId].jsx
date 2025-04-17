@@ -1,19 +1,18 @@
 import { View, Text, BackHandler } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ExamCard } from "@/components/exam-card";
 import { useQuery } from "@tanstack/react-query";
 import { Axios2 } from "@/lib/utils";
 import StartExam from "@/components/start-exam";
+import { useTakeExamStore } from "@/states/store";
 
 const TakeExamPage = () => {
   const { examId } = useLocalSearchParams();
-  const [status, setStatus] = useState({
-    takingExam: false,
-    count: 0,
-    completed: false,
-    submitted: false,
-  });
+  const status = useTakeExamStore((state) => state.status);
+  const setAnswer = useTakeExamStore((state) => state.setAnswer);
+  const resetStatus = useTakeExamStore((state) => state.resetStatus);
+  const resetResults = useTakeExamStore((state) => state.resetResults);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["exam", examId],
@@ -24,12 +23,9 @@ const TakeExamPage = () => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        setStatus({
-          takingExam: false,
-          count: 0,
-          completed: false,
-          submitted: false,
-        });
+        resetStatus();
+        resetResults();
+        setAnswer({ status: false });
       }
     );
 
@@ -56,11 +52,9 @@ const TakeExamPage = () => {
             1000
           }
           questions={data[0]?.questions}
-          status={status}
-          setStatus={setStatus}
         />
       ) : (
-        <ExamCard item={data[0]} status={status} setStatus={setStatus} />
+        <ExamCard item={data[0]} />
       )}
     </View>
   );

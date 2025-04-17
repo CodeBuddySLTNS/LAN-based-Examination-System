@@ -11,28 +11,27 @@ import { Icon } from "./ui/icon";
 import { House, X } from "lucide-react-native";
 import { HStack } from "./ui/hstack";
 import { useRouter } from "expo-router";
+import { useTakeExamStore } from "@/states/store";
 
-const ShowResults = ({ result, setResults, setStatus }) => {
+const ShowResults = () => {
   const router = useRouter();
+  const results = useTakeExamStore((state) => state.results);
+  const setResults = useTakeExamStore((state) => state.setResults);
+  const resetStatus = useTakeExamStore((state) => state.setStatus);
 
-  const close = () => setResults((prev) => ({ ...prev, status: false }));
+  const close = () => setResults({ status: false });
 
   const handleAction = () => {
-    setStatus({
-      takingExam: false,
-      count: 0,
-      completed: false,
-      submitted: false,
-    });
+    resetStatus();
     router.replace("/(drawer)/home");
     close(false);
   };
 
   return (
-    <Modal isOpen={result.status} onClose={close}>
+    <Modal isOpen={results.status} onClose={close}>
       <ModalBackdrop />
       <ModalContent>
-        {result?.loading ? (
+        {results?.loading ? (
           <ActivityIndicator size="large" />
         ) : (
           <>
@@ -51,8 +50,8 @@ const ShowResults = ({ result, setResults, setStatus }) => {
               <View className="p-2 items-center rounded bg-gray-200">
                 <Text className="font-Nunito-SemiBold">Your Score:</Text>
                 <Text className="font-Nunito-Bold text-2xl">
-                  {result.data?.total_score || "0"} /{" "}
-                  {result.data?.max_score || "0"}
+                  {results.data?.total_score || "0"} /{" "}
+                  {results.data?.max_score || "0"}
                 </Text>
               </View>
             </ModalBody>
